@@ -1,0 +1,73 @@
+@import '../admin-shared.css';
+
+.section {
+    background: #ffffff;
+    border-radius: 10px;
+    padding: 22px 24px;
+    margin-bottom: 24px;
+    box-shadow: 0 4px 18px -8px rgba(20, 24, 33, 0.18);
+}
+
+.section-title {
+    margin: 0 0 16px;
+    font-family: var(--brand-serif);
+    font-size: 1.2rem;
+    font-weight: 600;
+    color: #1f2430;
+}
+
+.search-row {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    margin-bottom: 18px;
+}
+
+.search-field {
+    flex: 1;
+    max-width: 420px;
+}
+
+.search-btn {
+    height: 40px;
+    margin-top: 4px;
+    background: #1f2430 !important;
+    color: #e7e9ee !important;
+}
+
+.role-badge {
+    display: inline-block;
+    padding: 3px 10px;
+    border-radius: 10px;
+    font-size: 0.72rem;
+    font-weight: 700;
+    background: #eef0f4;
+    color: #5b6272;
+}
+
+.role-badge.role-admin {
+    background: #d7f3ec;
+    color: #1e6b3a;
+}
+
+.grant-btn {
+    background: #2f6f65 !important;
+    color: #ffffff !important;
+    font-size: 0.78rem;
+}
+
+.revoke-btn {
+    background: #b3261e !important;
+    color: #ffffff !important;
+    font-size: 0.78rem;
+}
+
+.self-badge {
+    display: inline-block;
+    padding: 3px 10px;
+    border-radius: 10px;
+    font-size: 0.72rem;
+    font-weight: 700;
+    background: #eef0f4;
+    color: #5b6272;
+}

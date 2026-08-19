@@ -1,0 +1,198 @@
+.app-container {
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 48px 40px 60px;
+    font-family: var(--brand-sans);
+    color: var(--brand-ink);
+}
+
+/* Khối tiêu đề kiểu bìa thực đơn nhà hàng */
+.menu-header {
+    text-align: center;
+    margin-bottom: 36px;
+}
+
+.menu-eyebrow {
+    display: block;
+    font-size: 0.72rem;
+    font-weight: 700;
+    letter-spacing: 5px;
+    text-transform: uppercase;
+    color: var(--brand-gold);
+    margin-bottom: 18px;
+}
+
+.main-title {
+    margin: 0 0 18px;
+    font-family: var(--brand-serif);
+    font-size: 2.7rem;
+    font-weight: 600;
+    color: var(--brand-burgundy);
+    letter-spacing: 0.2px;
+}
+
+.menu-subtitle {
+    margin: 0 auto;
+    max-width: 480px;
+    font-size: 0.95rem;
+    color: var(--brand-ink-soft);
+    opacity: 0.8;
+}
+
+/* Khu vực nút thêm và tìm kiếm */
+.top-actions {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 12px;
+}
+
+
+.search-field {
+    width: 100%;
+    max-width: 420px;
+}
+
+.status-message {
+    margin-top: 32px;
+    padding: 32px 24px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    border-radius: 6px;
+    background: var(--brand-ivory);
+    box-shadow: var(--brand-shadow-soft);
+    font-size: 16px;
+    font-weight: 500;
+    color: var(--brand-ink-soft);
+}
+
+.spin-icon {
+    animation: spin 1s linear infinite;
+    color: var(--brand-gold);
+}
+
+@keyframes spin {
+    from {
+        transform: rotate(0deg);
+    }
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+/* Lưới món ăn — bố cục dạng thẻ thực đơn */
+.recipe-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 24px;
+    margin-top: 36px;
+}
+
+/* Card món ăn */
+.recipe-card {
+    display: flex;
+    align-items: center;
+    gap: 18px;
+
+    min-width: 0;
+    padding: 18px;
+
+    border-radius: 10px;
+    border: 1px solid var(--brand-cream-dark);
+    background: var(--brand-ivory);
+    color: inherit;
+    text-decoration: none;
+
+    box-shadow: none;
+
+    transition:
+        transform 0.2s ease,
+        box-shadow 0.2s ease,
+        border-color 0.2s ease;
+}
+
+.recipe-card:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--brand-shadow-soft);
+    border-color: var(--brand-burgundy);
+}
+
+.recipe-card:active {
+    transform: translateY(0);
+}
+
+/* Ảnh món ăn */
+.recipe-image {
+    width: 76px;
+    height: 76px;
+    flex-shrink: 0;
+
+    object-fit: cover;
+    border-radius: 4px;
+    border: 1px solid var(--brand-cream-dark);
+}
+
+/* Nội dung card */
+.recipe-content {
+    min-width: 0;
+    flex: 1;
+}
+
+.recipe-title {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+
+    font-family: var(--brand-sans);
+    font-size: 1.25rem;
+    font-weight: 600;
+    color: var(--brand-ink);
+}
+
+.recipe-title span {
+    flex: 1;
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.recipe-subtitle {
+    margin-top: 6px;
+    color: var(--brand-ink-soft);
+    opacity: 0.75;
+    font-size: 13px;
+}
+
+.recipe-price {
+    margin-top: 6px;
+    font-family: var(--brand-mono);
+    font-weight: 700;
+    font-size: 13px;
+    color: var(--brand-burgundy);
+}
+
+/* Icon yêu thích */
+.favorite-icon {
+    flex-shrink: 0;
+    color: var(--brand-brass);
+}
+
+/* Responsive */
+@media (max-width: 700px) {
+    .app-container {
+        padding: 32px 18px 48px;
+    }
+
+    .recipe-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .main-title {
+        font-size: 1.8rem;
+    }
+}

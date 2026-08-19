@@ -1,0 +1,63 @@
+@import '../admin-shared.css';
+
+.page-header-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 12px;
+    margin-bottom: 20px;
+}
+
+.admin-page-title {
+    margin: 0;
+}
+
+.new-recipe-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    background: #1f2430 !important;
+    color: #e7e9ee !important;
+}
+
+.search-row {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    margin-bottom: 18px;
+}
+
+.search-field {
+    flex: 1;
+    max-width: 360px;
+}
+
+.search-btn {
+    height: 40px;
+    margin-top: 4px;
+    background: #eef0f4 !important;
+    color: #1f2430 !important;
+}
+
+.recipe-thumb {
+    width: 56px;
+    height: 56px;
+    object-fit: cover;
+    border-radius: 10px;
+}
+
+.favorite-icon {
+    font-size: 16px;
+    width: 16px;
+    height: 16px;
+    color: #f0b429;
+    vertical-align: middle;
+    margin-left: 4px;
+}
+
+.actions-cell {
+    display: flex;
+    gap: 4px;
+    white-space: nowrap;
+}

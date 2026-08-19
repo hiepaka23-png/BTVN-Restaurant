@@ -1,0 +1,70 @@
+.admin-nav {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 16px;
+    padding: 16px 28px;
+    background: linear-gradient(120deg, #1f2430 0%, #12151c 100%);
+    color: #e7e9ee;
+    box-shadow: 0 6px 20px -8px rgba(0, 0, 0, 0.5);
+    position: sticky;
+    top: 0;
+    z-index: 900;
+}
+
+.admin-nav-brand {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-weight: 700;
+    letter-spacing: 0.5px;
+    font-size: 1rem;
+    color: #7fd3c7;
+    margin-right: 12px;
+}
+
+.admin-nav-links {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 4px;
+    flex: 1;
+}
+
+.admin-nav-link {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding: 8px 14px;
+    border-radius: 10px;
+    color: #c6cad4;
+    text-decoration: none;
+    font-size: 0.85rem;
+    font-weight: 600;
+    transition: background 0.15s ease, color 0.15s ease;
+}
+
+.admin-nav-link mat-icon {
+    font-size: 20px;
+    width: 20px;
+    height: 20px;
+}
+
+.admin-nav-link:hover {
+    background: rgba(127, 211, 199, 0.12);
+    color: #ffffff;
+}
+
+.admin-nav-link.active {
+    background: #7fd3c7;
+    color: #12151c;
+}
+
+.admin-nav-exit {
+    margin-left: auto;
+    color: #ff9d7a;
+}
+
+.admin-nav-exit:hover {
+    background: rgba(255, 157, 122, 0.14);
+    color: #ffb499;
+}

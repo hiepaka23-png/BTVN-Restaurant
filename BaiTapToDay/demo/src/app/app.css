@@ -1,0 +1,221 @@
+/* Khung tổng toàn app — sidenav cần chiều cao xác định để hoạt động đúng */
+.app-shell {
+    display: block;
+    height: 100vh;
+    background-color: var(--brand-cream);
+    font-family: var(--brand-sans);
+}
+
+:host {
+    display: block;
+}
+
+/* Panel menu kéo ra từ bên trái — cùng tông đất nung với toolbar để liền mạch với nút 3 gạch */
+.brand-drawer {
+    width: 280px;
+    background: linear-gradient(160deg, var(--brand-burgundy) 0%, var(--brand-burgundy-dark) 100%) !important;
+    color: var(--brand-ivory) !important;
+}
+
+.drawer-logo {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 24px 20px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.12);
+}
+
+.drawer-mark {
+    width: 34px !important;
+    height: 34px !important;
+    font-size: 34px !important;
+    color: var(--brand-ivory);
+    flex-shrink: 0;
+}
+
+.drawer-text {
+    display: flex;
+    flex-direction: column;
+    line-height: 1.2;
+}
+
+.drawer-name {
+    font-size: 1rem;
+    font-weight: 700;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    color: var(--brand-ivory);
+}
+
+.drawer-tagline {
+    font-size: 0.62rem;
+    font-weight: 600;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    color: rgba(255, 253, 243, 0.78);
+}
+
+.drawer-nav {
+    display: flex;
+    flex-direction: column;
+    padding: 12px;
+    gap: 4px;
+}
+
+.drawer-nav a {
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    gap: 14px;
+    height: 48px;
+    padding: 0 14px !important;
+    border-radius: 4px;
+    color: var(--brand-ivory) !important;
+    font-weight: 600;
+    letter-spacing: 0.3px;
+    text-transform: none;
+}
+
+.drawer-nav a mat-icon {
+    color: rgba(255, 253, 243, 0.85);
+}
+
+.drawer-nav a:hover {
+    background: rgba(255, 253, 243, 0.14) !important;
+}
+
+/* Thanh điều hướng trên cùng — nền đậm đất nung, chữ trắng ngà, cố định khi cuộn */
+.brand-toolbar {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    height: 72px;
+    padding: 0 24px !important;
+    background: linear-gradient(120deg, var(--brand-burgundy) 0%, var(--brand-burgundy-dark) 100%) !important;
+    color: var(--brand-ivory) !important;
+    box-shadow: var(--brand-shadow-soft);
+    position: sticky;
+    top: 0;
+    z-index: 1000;
+}
+
+.menu-btn {
+    color: var(--brand-ivory) !important;
+    margin-right: 4px;
+}
+
+.brand-lockup {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    text-decoration: none;
+    color: inherit;
+}
+
+.brand-mark {
+    width: 38px !important;
+    height: 38px !important;
+    font-size: 38px !important;
+    color: var(--brand-ivory);
+    flex-shrink: 0;
+}
+
+.brand-text {
+    display: flex;
+    flex-direction: column;
+    line-height: 1.15;
+}
+
+.brand-name {
+    font-family: var(--brand-sans);
+    font-size: 1.15rem;
+    font-weight: 700;
+    letter-spacing: 1.5px;
+    color: var(--brand-ivory);
+    white-space: nowrap;
+}
+
+.brand-tagline {
+    font-size: 0.62rem;
+    font-weight: 600;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    color: rgba(255, 253, 243, 0.78);
+}
+
+.toolbar-spacer {
+    flex: 1 1 auto;
+}
+
+.cart-btn {
+    color: var(--brand-ivory) !important;
+    margin-right: 4px;
+}
+
+.account-link {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    text-decoration: none;
+    padding: 4px 6px;
+    border-radius: 20px;
+    transition: background-color 0.15s ease;
+}
+
+.account-link:hover,
+.account-link:focus-visible {
+    background-color: rgba(255, 255, 255, 0.1);
+}
+
+.user-icon {
+    color: var(--brand-ivory);
+}
+
+.toolbar-avatar {
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 1.5px solid var(--brand-ivory);
+}
+
+.username {
+    font-weight: 500;
+    margin-right: 4px;
+    color: var(--brand-ivory);
+}
+
+.admin-badge {
+    background-color: var(--brand-gold);
+    color: var(--brand-ivory);
+    border-radius: 9999px;
+    padding: 2px 10px;
+    font-size: 0.72rem;
+    font-weight: 700;
+    letter-spacing: 0.5px;
+    margin-right: 4px;
+}
+
+.logout-btn {
+    color: var(--brand-ivory) !important;
+}
+
+@media (max-width: 700px) {
+    .brand-toolbar {
+        padding: 0 12px !important;
+        gap: 6px;
+    }
+
+    .brand-name {
+        font-size: 0.95rem;
+        letter-spacing: 1px;
+    }
+
+    .brand-tagline {
+        display: none;
+    }
+
+    .username {
+        display: none;
+    }
+}

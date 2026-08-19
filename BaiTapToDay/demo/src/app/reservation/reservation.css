@@ -1,0 +1,114 @@
+.page-container {
+    max-width: 720px;
+    margin: 0 auto;
+    padding: 116px 24px 60px;
+    font-family: var(--brand-sans);
+    color: var(--brand-ink);
+}
+
+.page-header {
+    text-align: center;
+    margin-bottom: 32px;
+}
+
+.page-eyebrow {
+    display: block;
+    font-size: 0.72rem;
+    font-weight: 700;
+    letter-spacing: 5px;
+    text-transform: uppercase;
+    color: var(--brand-gold);
+    margin-bottom: 18px;
+}
+
+.page-title {
+    margin: 0 0 10px;
+    font-family: var(--brand-serif);
+    font-size: 2.1rem;
+    font-weight: 600;
+    color: var(--brand-burgundy);
+}
+
+.page-subtitle {
+    margin: 0 auto;
+    max-width: 480px;
+    font-size: 0.92rem;
+    color: var(--brand-ink-soft);
+    opacity: 0.8;
+}
+
+.page-card {
+    background: var(--brand-ivory);
+    border-radius: 10px;
+    box-shadow: var(--brand-shadow-strong);
+    padding: 32px;
+}
+
+.field-row {
+    display: flex;
+    gap: 14px;
+}
+
+.field-row .full-width-field {
+    flex: 1;
+}
+
+.guest-field {
+    max-width: 140px;
+    flex: 0 0 140px;
+}
+
+.full-width-field {
+    width: 100%;
+    display: block;
+    margin-bottom: 16px;
+}
+
+.server-error {
+    color: #7a1a1a;
+    background-color: #fbe9e7;
+    border-left: 3px solid #b3261e;
+    border-radius: 4px;
+    padding: 10px 12px;
+    font-size: 0.88rem;
+    margin: 8px 0 16px;
+}
+
+.server-success {
+    color: #1e4d2b;
+    background-color: #e8f3ea;
+    border-left: 3px solid #2e7d32;
+    border-radius: 4px;
+    padding: 10px 12px;
+    font-size: 0.88rem;
+    margin: 8px 0 16px;
+}
+
+.submit-btn {
+    width: 100%;
+    height: 46px;
+    margin-top: 8px;
+    font-family: var(--brand-mono);
+    font-weight: 700;
+    font-size: 0.85rem;
+    letter-spacing: 1.5px;
+    border-radius: 10px !important;
+    background: var(--brand-burgundy) !important;
+    color: var(--brand-ivory) !important;
+}
+
+.submit-btn mat-icon {
+    margin-right: 6px;
+}
+
+@media (max-width: 600px) {
+    .field-row {
+        flex-direction: column;
+        gap: 0;
+    }
+
+    .guest-field {
+        max-width: 100%;
+        flex: 1;
+    }
+}

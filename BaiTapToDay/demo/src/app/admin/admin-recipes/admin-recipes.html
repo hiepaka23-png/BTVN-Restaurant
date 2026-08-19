@@ -1,0 +1,72 @@
+<app-admin-nav></app-admin-nav>
+
+<div class="admin-recipes-container">
+    <div class="page-header-row">
+        <h1 class="admin-page-title">Quản lý công thức</h1>
+        <a mat-flat-button routerLink="/admin/recipes/new" class="new-recipe-btn">
+            <mat-icon>add</mat-icon>
+            Thêm công thức mới
+        </a>
+    </div>
+
+    @if (errorMessage()) {
+    <div class="server-error">{{ errorMessage() }}</div>
+    }
+
+    <div class="search-row">
+        <mat-form-field appearance="outline" subscriptSizing="dynamic" class="search-field">
+            <mat-label>Tìm theo tên món</mat-label>
+            <mat-icon matPrefix>search</mat-icon>
+            <input matInput [ngModel]="keyword()" (ngModelChange)="keyword.set($event)"
+                (keyup.enter)="loadRecipes()" placeholder="Nhập tên món...">
+        </mat-form-field>
+        <button mat-flat-button type="button" class="search-btn" (click)="loadRecipes()">Tìm kiếm</button>
+    </div>
+
+    @if (loading()) {
+    <div class="status-message">Đang tải danh sách công thức...</div>
+    } @else if (recipes().length === 0) {
+    <div class="status-message">Không có công thức nào.</div>
+    } @else {
+    <div class="table-wrapper">
+        <table class="admin-table">
+            <thead>
+                <tr>
+                    <th>Ảnh</th>
+                    <th>Tên món</th>
+                    <th>Giá</th>
+                    <th>Email tác giả</th>
+                    <th>Số nguyên liệu</th>
+                    <th></th>
+                </tr>
+            </thead>
+            <tbody>
+                @for (recipe of recipes(); track recipe.id) {
+                <tr>
+                    <td><img class="recipe-thumb" [src]="recipe.imgUrl" [alt]="recipe.name" /></td>
+                    <td>
+                        {{ recipe.name }}
+                        @if (recipe.isFavorite) {
+                        <mat-icon class="favorite-icon" title="Món nổi bật">star</mat-icon>
+                        }
+                    </td>
+                    <td>{{ formatPrice(recipe.price) }}</td>
+                    <td>{{ recipe.authorEmail }}</td>
+                    <td>{{ recipe.ingredients.length }}</td>
+                    <td class="actions-cell">
+                        <a mat-icon-button [routerLink]="['/admin/recipes', recipe.id, 'edit']" aria-label="Sửa"
+                            title="Sửa">
+                            <mat-icon>edit</mat-icon>
+                        </a>
+                        <button mat-icon-button type="button" aria-label="Xóa" title="Xóa"
+                            [disabled]="deletingId() === recipe.id" (click)="deleteRecipe(recipe)">
+                            <mat-icon>delete_outline</mat-icon>
+                        </button>
+                    </td>
+                </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+    }
+</div>

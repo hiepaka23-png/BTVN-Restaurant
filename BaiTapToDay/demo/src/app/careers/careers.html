@@ -1,0 +1,70 @@
+<div class="page-container">
+    <app-back-link />
+    <div class="page-header">
+        <span class="page-eyebrow">Tuyển dụng</span>
+        <h1 class="page-title">Gia nhập đội ngũ của chúng tôi</h1>
+        <p class="page-subtitle">Cùng nhau tạo nên những trải nghiệm ẩm thực đẳng cấp</p>
+    </div>
+
+    <div class="positions-list">
+        @for (position of positions; track position.title) {
+        <div class="position-item">
+            <mat-icon class="position-icon">work_outline</mat-icon>
+            <div class="position-info">
+                <span class="position-title">{{ position.title }}</span>
+                <span class="position-note">{{ position.note }}</span>
+            </div>
+        </div>
+        }
+    </div>
+
+    <form class="page-card" [formGroup]="form" (ngSubmit)="submit()">
+        <h2 class="form-title">Nộp hồ sơ ứng tuyển</h2>
+
+        <div class="field-row">
+            <mat-form-field appearance="outline" subscriptSizing="dynamic" class="full-width-field">
+                <mat-label>Họ tên</mat-label>
+                <input matInput formControlName="fullName" placeholder="Nhập họ tên của bạn" />
+                <mat-error *ngIf="form.get('fullName')?.hasError('required')">Vui lòng nhập họ tên</mat-error>
+            </mat-form-field>
+
+            <mat-form-field appearance="outline" subscriptSizing="dynamic" class="full-width-field">
+                <mat-label>Số điện thoại</mat-label>
+                <input matInput formControlName="phone" placeholder="VD: 0901234567" />
+                <mat-error *ngIf="form.get('phone')?.hasError('required')">Vui lòng nhập số điện thoại</mat-error>
+                <mat-error *ngIf="form.get('phone')?.hasError('pattern')">Số điện thoại phải bắt đầu bằng số 0 và chỉ gồm chữ số</mat-error>
+            </mat-form-field>
+        </div>
+
+        <mat-form-field appearance="outline" subscriptSizing="dynamic" class="full-width-field">
+            <mat-label>Email</mat-label>
+            <input matInput type="email" formControlName="email" placeholder="Nhập email của bạn" />
+            <mat-error *ngIf="form.get('email')?.hasError('required')">Vui lòng nhập email</mat-error>
+            <mat-error *ngIf="form.get('email')?.hasError('email')">Email không hợp lệ</mat-error>
+        </mat-form-field>
+
+        <mat-form-field appearance="outline" subscriptSizing="dynamic" class="full-width-field">
+            <mat-label>Vị trí ứng tuyển</mat-label>
+            <mat-select formControlName="position">
+                @for (position of positions; track position.title) {
+                <mat-option [value]="position.title">{{ position.title }}</mat-option>
+                }
+            </mat-select>
+            <mat-error *ngIf="form.get('position')?.hasError('required')">Vui lòng chọn vị trí ứng tuyển</mat-error>
+        </mat-form-field>
+
+        <mat-form-field appearance="outline" subscriptSizing="dynamic" class="full-width-field">
+            <mat-label>Giới thiệu bản thân (tùy chọn)</mat-label>
+            <textarea matInput formControlName="message" rows="3"
+                placeholder="Kinh nghiệm làm việc, điểm mạnh của bạn..."></textarea>
+        </mat-form-field>
+
+        <div *ngIf="errorMessage()" class="server-error">{{ errorMessage() }}</div>
+        <div *ngIf="successMessage()" class="server-success">{{ successMessage() }}</div>
+
+        <button mat-flat-button type="submit" class="submit-btn" [disabled]="submitting()">
+            <mat-icon>send</mat-icon>
+            {{ submitting() ? 'Đang gửi...' : 'Nộp hồ sơ' }}
+        </button>
+    </form>
+</div>

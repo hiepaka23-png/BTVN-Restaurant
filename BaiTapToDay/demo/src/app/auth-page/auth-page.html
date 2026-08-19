@@ -1,0 +1,268 @@
+<div class="auth-container">
+    <app-brand-header></app-brand-header>
+
+    <mat-card class="auth-card">
+
+        @if (mode() === 'login') {
+        <h2 class="auth-title">Đăng nhập</h2>
+        <p class="auth-subtitle">Đặt bàn cho trải nghiệm ẩm thực đẳng cấp của bạn</p>
+
+        <form [formGroup]="loginForm" (ngSubmit)="onLogin()">
+            <mat-form-field appearance="outline" subscriptSizing="dynamic" class="full-width-field">
+                <mat-label>Email hoặc tên đăng nhập</mat-label>
+                <input matInput formControlName="identifier" placeholder="Nhập email hoặc username"
+                    autocomplete="username">
+                @if (loginForm.get('identifier')?.hasError('required')) {
+                <mat-error>Vui lòng nhập email hoặc tên đăng nhập!</mat-error>
+                }
+            </mat-form-field>
+
+            <mat-form-field appearance="outline" subscriptSizing="dynamic" class="full-width-field">
+                <mat-label>Mật khẩu</mat-label>
+                <input matInput [type]="hidePassword() ? 'password' : 'text'" formControlName="password"
+                    placeholder="Nhập mật khẩu" autocomplete="current-password">
+                <button mat-icon-button matSuffix type="button" (click)="hidePassword.set(!hidePassword())"
+                    [attr.aria-label]="hidePassword() ? 'Hiện mật khẩu' : 'Ẩn mật khẩu'">
+                    <mat-icon>{{ hidePassword() ? 'visibility_off' : 'visibility' }}</mat-icon>
+                </button>
+                @if (loginForm.get('password')?.hasError('required')) {
+                <mat-error>Mật khẩu không được để trống!</mat-error>
+                } @else if (loginForm.get('password')?.hasError('minlength')) {
+                <mat-error>Mật khẩu phải đủ ít nhất 6 ký tự!</mat-error>
+                }
+            </mat-form-field>
+
+            @if (errorMessage()) {
+            <div class="server-error">{{ errorMessage() }}</div>
+            }
+
+            <button mat-raised-button color="primary" type="submit" class="auth-btn" [disabled]="submitting()">
+                {{ submitting() ? 'Đang xử lý...' : 'Đăng Nhập' }}
+            </button>
+
+            <div class="auth-links">
+                <a class="auth-link" (click)="switchMode('forgot-request')">Quên mật khẩu?</a>
+            </div>
+            <div class="auth-links">
+                <span>Chưa có tài khoản? </span>
+                <a class="auth-link" (click)="switchMode('register')">Đăng ký ngay</a>
+            </div>
+        </form>
+        }
+
+        @if (mode() === 'register') {
+        <button mat-icon-button class="back-btn" aria-label="Quay lại" title="Quay lại" type="button"
+            (click)="switchMode('login')">
+            <mat-icon>arrow_back</mat-icon>
+        </button>
+
+        <h2 class="auth-title">Tạo tài khoản thành viên</h2>
+        <p class="auth-subtitle">Gia nhập câu lạc bộ thực khách Nhà Hàng Michelin 5 Sao</p>
+
+        <form [formGroup]="registerForm" (ngSubmit)="onRegister()">
+            <mat-form-field class="full-width-field" appearance="outline" subscriptSizing="dynamic">
+                <mat-label>Tên đăng nhập</mat-label>
+                <input matInput formControlName="username" placeholder="Nhập username...">
+                @if (registerForm.get('username')?.hasError('required')) {
+                <mat-error>Tên đăng nhập không được để trống!</mat-error>
+                } @else if (registerForm.get('username')?.hasError('minlength')) {
+                <mat-error>Tên đăng nhập phải có ít nhất 4 ký tự!</mat-error>
+                } @else if (registerForm.get('username')?.hasError('pattern')) {
+                <mat-error>Không chứa khoảng trắng hay ký tự đặc biệt!</mat-error>
+                }
+            </mat-form-field>
+
+            <mat-form-field class="full-width-field" appearance="outline" subscriptSizing="dynamic">
+                <mat-label>Họ và tên</mat-label>
+                <input matInput formControlName="name" placeholder="Nhập họ tên đầy đủ...">
+                @if (registerForm.get('name')?.hasError('required')) {
+                <mat-error>Họ tên không được để trống!</mat-error>
+                }
+            </mat-form-field>
+
+            <mat-form-field class="full-width-field" appearance="outline" subscriptSizing="dynamic">
+                <mat-label>Email</mat-label>
+                <input matInput type="email" formControlName="email" placeholder="Nhập email của bạn">
+                @if (registerForm.get('email')?.hasError('required')) {
+                <mat-error>Email không được để trống!</mat-error>
+                } @else if (registerForm.get('email')?.hasError('email')) {
+                <mat-error>Email không đúng định dạng!</mat-error>
+                }
+            </mat-form-field>
+
+            <mat-form-field class="full-width-field" appearance="outline" subscriptSizing="dynamic">
+                <mat-label>Mật khẩu</mat-label>
+                <input matInput formControlName="password" [type]="hidePassword() ? 'password' : 'text'"
+                    (input)="recheckRegisterConfirm()" placeholder="Nhập mật khẩu...">
+                <button mat-icon-button matSuffix type="button" (click)="hidePassword.set(!hidePassword())"
+                    [attr.aria-label]="hidePassword() ? 'Hiện mật khẩu' : 'Ẩn mật khẩu'">
+                    <mat-icon>{{ hidePassword() ? 'visibility_off' : 'visibility' }}</mat-icon>
+                </button>
+                @if (registerForm.get('password')?.hasError('required')) {
+                <mat-error>Mật khẩu không được để trống!</mat-error>
+                } @else if (registerForm.get('password')?.hasError('minlength')) {
+                <mat-error>Mật khẩu phải có ít nhất 6 ký tự!</mat-error>
+                }
+            </mat-form-field>
+
+            <mat-form-field class="full-width-field" appearance="outline" subscriptSizing="dynamic">
+                <mat-label>Xác nhận mật khẩu</mat-label>
+                <input matInput formControlName="confirmPassword" [type]="hideConfirmPassword() ? 'password' : 'text'"
+                    placeholder="Nhập lại mật khẩu...">
+                <button mat-icon-button matSuffix type="button" (click)="hideConfirmPassword.set(!hideConfirmPassword())"
+                    [attr.aria-label]="hideConfirmPassword() ? 'Hiện mật khẩu' : 'Ẩn mật khẩu'">
+                    <mat-icon>{{ hideConfirmPassword() ? 'visibility_off' : 'visibility' }}</mat-icon>
+                </button>
+                @if (registerForm.get('confirmPassword')?.hasError('required')) {
+                <mat-error>Vui lòng xác nhận mật khẩu!</mat-error>
+                } @else if (registerForm.get('confirmPassword')?.hasError('passwordMismatch')) {
+                <mat-error>Mật khẩu xác nhận không khớp!</mat-error>
+                }
+            </mat-form-field>
+
+            @if (errorMessage()) {
+            <div class="server-error">{{ errorMessage() }}</div>
+            }
+            @if (successMessage()) {
+            <div class="server-success">{{ successMessage() }}</div>
+            }
+
+            <button mat-raised-button color="primary" class="auth-btn" type="submit" [disabled]="submitting()">
+                {{ submitting() ? 'Đang xử lý...' : 'Đăng ký' }}
+            </button>
+        </form>
+
+        <div class="auth-links">
+            Đã có tài khoản?
+            <a class="auth-link" (click)="switchMode('login')">Đăng nhập ngay</a>
+        </div>
+        }
+
+        @if (mode() === 'forgot-request') {
+        <button mat-icon-button class="back-btn" aria-label="Quay lại" title="Quay lại" type="button"
+            (click)="switchMode('login')">
+            <mat-icon>arrow_back</mat-icon>
+        </button>
+
+        <h2 class="auth-title">Quên mật khẩu</h2>
+        <p class="auth-subtitle">Nhập email đã đăng ký để nhận mã khôi phục</p>
+
+        <form [formGroup]="forgotRequestForm" (ngSubmit)="onForgotRequest()">
+            <mat-form-field appearance="outline" subscriptSizing="dynamic" class="full-width-field">
+                <mat-label>Email</mat-label>
+                <input matInput type="email" formControlName="email" placeholder="Nhập email của bạn">
+                @if (forgotRequestForm.get('email')?.hasError('required')) {
+                <mat-error>Email không được để trống!</mat-error>
+                } @else if (forgotRequestForm.get('email')?.hasError('email')) {
+                <mat-error>Email không đúng định dạng!</mat-error>
+                }
+            </mat-form-field>
+
+            @if (errorMessage()) {
+            <div class="server-error">{{ errorMessage() }}</div>
+            }
+
+            <button mat-raised-button color="primary" type="submit" class="auth-btn" [disabled]="submitting()">
+                {{ submitting() ? 'Đang gửi...' : 'Gửi mã khôi phục' }}
+            </button>
+
+            <div class="auth-links">
+                <span>Đã nhớ mật khẩu? </span>
+                <a class="auth-link" (click)="switchMode('login')">Đăng nhập ngay</a>
+            </div>
+        </form>
+        }
+
+        @if (mode() === 'forgot-verify') {
+        <button mat-icon-button class="back-btn" aria-label="Quay lại" title="Quay lại" type="button"
+            (click)="switchMode('forgot-request')">
+            <mat-icon>arrow_back</mat-icon>
+        </button>
+
+        <h2 class="auth-title">Xác thực mã khôi phục</h2>
+        <p class="auth-subtitle">Nhập mã đã gửi tới email của bạn để tiếp tục</p>
+
+        @if (devTokenHint()) {
+        <div class="dev-token-hint">
+            <mat-icon>info</mat-icon>
+            <span>Chưa nối dịch vụ email thật — mã demo của bạn: <strong>{{ devTokenHint() }}</strong></span>
+        </div>
+        }
+
+        <form [formGroup]="forgotVerifyForm" (ngSubmit)="onForgotVerify()">
+            <mat-form-field appearance="outline" subscriptSizing="dynamic" class="full-width-field">
+                <mat-label>Mã khôi phục (6 số)</mat-label>
+                <input matInput formControlName="token" placeholder="Nhập mã 6 số" inputmode="numeric" maxlength="6"
+                    autocomplete="one-time-code">
+                @if (forgotVerifyForm.get('token')?.hasError('required')) {
+                <mat-error>Vui lòng nhập mã khôi phục!</mat-error>
+                }
+            </mat-form-field>
+
+            @if (errorMessage()) {
+            <div class="server-error">{{ errorMessage() }}</div>
+            }
+
+            <button mat-raised-button color="primary" type="submit" class="auth-btn" [disabled]="submitting()">
+                {{ submitting() ? 'Đang xác thực...' : 'Xác thực mã' }}
+            </button>
+        </form>
+        }
+
+        @if (mode() === 'forgot-reset') {
+        <button mat-icon-button class="back-btn" aria-label="Quay lại" title="Quay lại" type="button"
+            (click)="switchMode('forgot-request')">
+            <mat-icon>arrow_back</mat-icon>
+        </button>
+
+        <h2 class="auth-title">Đặt lại mật khẩu</h2>
+        <p class="auth-subtitle">Mã khôi phục đã được xác thực — nhập mật khẩu mới của bạn</p>
+
+        @if (successMessage()) {
+        <div class="server-success">{{ successMessage() }}</div>
+        }
+
+        <form [formGroup]="forgotResetForm" (ngSubmit)="onForgotReset()">
+            <mat-form-field appearance="outline" subscriptSizing="dynamic" class="full-width-field">
+                <mat-label>Mật khẩu mới</mat-label>
+                <input matInput [type]="hideNewPassword() ? 'password' : 'text'" formControlName="newPassword"
+                    (input)="recheckResetConfirm()" placeholder="Nhập mật khẩu mới">
+                <button mat-icon-button matSuffix type="button" (click)="hideNewPassword.set(!hideNewPassword())"
+                    [attr.aria-label]="hideNewPassword() ? 'Hiện mật khẩu' : 'Ẩn mật khẩu'">
+                    <mat-icon>{{ hideNewPassword() ? 'visibility_off' : 'visibility' }}</mat-icon>
+                </button>
+                @if (forgotResetForm.get('newPassword')?.hasError('required')) {
+                <mat-error>Mật khẩu mới không được để trống!</mat-error>
+                } @else if (forgotResetForm.get('newPassword')?.hasError('minlength')) {
+                <mat-error>Mật khẩu phải có ít nhất 6 ký tự!</mat-error>
+                }
+            </mat-form-field>
+
+            <mat-form-field appearance="outline" subscriptSizing="dynamic" class="full-width-field">
+                <mat-label>Xác nhận mật khẩu mới</mat-label>
+                <input matInput [type]="hideConfirmNewPassword() ? 'password' : 'text'" formControlName="confirmPassword"
+                    placeholder="Nhập lại mật khẩu mới">
+                <button mat-icon-button matSuffix type="button"
+                    (click)="hideConfirmNewPassword.set(!hideConfirmNewPassword())"
+                    [attr.aria-label]="hideConfirmNewPassword() ? 'Hiện mật khẩu' : 'Ẩn mật khẩu'">
+                    <mat-icon>{{ hideConfirmNewPassword() ? 'visibility_off' : 'visibility' }}</mat-icon>
+                </button>
+                @if (forgotResetForm.get('confirmPassword')?.hasError('required')) {
+                <mat-error>Vui lòng xác nhận mật khẩu mới!</mat-error>
+                } @else if (forgotResetForm.get('confirmPassword')?.hasError('passwordMismatch')) {
+                <mat-error>Mật khẩu xác nhận không khớp!</mat-error>
+                }
+            </mat-form-field>
+
+            @if (errorMessage()) {
+            <div class="server-error">{{ errorMessage() }}</div>
+            }
+
+            <button mat-raised-button color="primary" type="submit" class="auth-btn" [disabled]="submitting()">
+                {{ submitting() ? 'Đang xử lý...' : 'Đặt lại mật khẩu' }}
+            </button>
+        </form>
+        }
+
+    </mat-card>
+</div>

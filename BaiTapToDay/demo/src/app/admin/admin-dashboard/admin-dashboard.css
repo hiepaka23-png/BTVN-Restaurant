@@ -1,0 +1,208 @@
+@import '../admin-shared.css';
+
+.stat-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+    gap: 16px;
+    margin-bottom: 28px;
+}
+
+.stat-tile {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 6px;
+    padding: 20px 22px;
+    border-radius: 10px;
+    background: #ffffff;
+    box-shadow: 0 4px 18px -8px rgba(20, 24, 33, 0.18);
+}
+
+.stat-tile mat-icon {
+    font-size: 26px;
+    width: 26px;
+    height: 26px;
+}
+
+.stat-value {
+    font-family: var(--brand-mono);
+    font-size: 1.9rem;
+    font-weight: 700;
+    line-height: 1;
+    color: #1f2430;
+}
+
+.stat-label {
+    font-size: 0.8rem;
+    font-weight: 600;
+    color: #5b6272;
+    letter-spacing: 0.3px;
+}
+
+.stat-total mat-icon {
+    color: #5b6272;
+}
+
+.stat-warning mat-icon {
+    color: #9a6b00;
+}
+
+.stat-warning {
+    border-left: 4px solid #f0b429;
+}
+
+.stat-good mat-icon {
+    color: #1e6b3a;
+}
+
+.stat-good {
+    border-left: 4px solid #2e9e5b;
+}
+
+.stat-critical mat-icon {
+    color: #b3261e;
+}
+
+.stat-critical {
+    border-left: 4px solid #d0453b;
+}
+
+.stat-revenue mat-icon {
+    color: #8a6d1a;
+}
+
+.stat-revenue {
+    border-left: 4px solid #d4a72c;
+}
+
+.chart-card {
+    background: #ffffff;
+    border-radius: 10px;
+    padding: 24px;
+    box-shadow: 0 4px 18px -8px rgba(20, 24, 33, 0.18);
+    margin-bottom: 24px;
+}
+
+.chart-title {
+    margin: 0 0 4px;
+    font-family: var(--brand-serif);
+    font-size: 1.3rem;
+    font-weight: 600;
+    color: #1f2430;
+}
+
+.chart-subtitle {
+    margin: 0 0 20px;
+    font-size: 0.78rem;
+    color: #7a8091;
+}
+
+/* Biểu đồ cột dọc doanh thu theo ngày — trục X là ngày, chiều cao cột là doanh thu. */
+.revenue-chart {
+    display: flex;
+    align-items: flex-end;
+    gap: 6px;
+    height: 180px;
+    padding-top: 8px;
+}
+
+.revenue-col {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    height: 100%;
+    min-width: 0;
+}
+
+.revenue-track {
+    flex: 1;
+    width: 100%;
+    display: flex;
+    align-items: flex-end;
+    justify-content: center;
+}
+
+.revenue-bar {
+    width: 60%;
+    min-width: 8px;
+    background: linear-gradient(180deg, #d4a72c 0%, #a97e15 100%);
+    border-radius: 4px 4px 0 0;
+    transition: height 0.3s ease;
+}
+
+.revenue-bar-empty {
+    background: #e5e2da;
+}
+
+.revenue-day-label {
+    margin-top: 6px;
+    font-size: 0.68rem;
+    color: #7a8091;
+    white-space: nowrap;
+}
+
+@media (max-width: 700px) {
+    .revenue-chart {
+        overflow-x: auto;
+        justify-content: flex-start;
+    }
+
+    .revenue-col {
+        min-width: 32px;
+    }
+}
+
+.bar-chart {
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+}
+
+.bar-row {
+    display: grid;
+    grid-template-columns: 160px 1fr;
+    align-items: center;
+    gap: 12px;
+}
+
+.bar-label {
+    font-size: 0.85rem;
+    color: #262b36;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.bar-track {
+    position: relative;
+    height: 22px;
+    background: #eef0f4;
+    border-radius: 11px;
+    overflow: hidden;
+}
+
+.bar-fill {
+    position: relative;
+    height: 100%;
+    min-width: 32px;
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    padding-right: 8px;
+    background: linear-gradient(90deg, #3f8f82 0%, #2f6f65 100%);
+    border-radius: 11px;
+    transition: width 0.3s ease;
+}
+
+.bar-value {
+    font-size: 0.75rem;
+    font-weight: 700;
+    color: #ffffff;
+}
+
+@media (max-width: 560px) {
+    .bar-row {
+        grid-template-columns: 100px 1fr;
+    }
+}

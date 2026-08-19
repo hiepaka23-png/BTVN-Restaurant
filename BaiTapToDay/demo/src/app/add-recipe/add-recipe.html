@@ -1,0 +1,121 @@
+<div class="main-wrapper">
+    <a mat-flat-button class="back-link" [routerLink]="returnPath()">
+        <span class="btn-label"><mat-icon>arrow_back</mat-icon>Quay lại danh sách</span>
+    </a>
+
+    <mat-card class="recipe-card-form">
+        <mat-card-content>
+            <form class="form-container" novalidate (submit)= "save($event)">
+                <mat-form-field appearance="outline" class="full-width">
+                    <mat-label>Tên món</mat-label>
+                    <input matInput type="text" [formField]="recipeForm.name" placeholder="Nhập tên món ăn..." />
+                    @for (error of recipeForm.name().errors(); track error) {
+                    <mat-error>{{ error.message }}</mat-error>
+                    }
+                </mat-form-field>
+                <mat-form-field appearance="outline" class="full-width">
+                    <mat-label>Mô tả</mat-label>
+                    <input matInput type="text" [formField]="recipeForm.description" placeholder="Nhập mô tả..." />
+                    @for (error of recipeForm.description().errors(); track error) {
+                    <mat-error>{{ error.message }}</mat-error>
+                    }
+                </mat-form-field>
+                <mat-form-field appearance="outline" class="full-width">
+                    <mat-label>Email tác giả</mat-label>
+                    <input matInput type="email" [formField]="recipeForm.authorEmail" placeholder="Nhập email..." />
+                    @for (error of recipeForm.authorEmail().errors(); track error) {
+                    <mat-error>{{ error.message }}</mat-error>
+                    }
+                </mat-form-field>
+                <mat-form-field appearance="outline" class="full-width">
+                    <mat-label>Giá (đ)</mat-label>
+                    <input matInput type="number" [formField]="recipeForm.price" placeholder="VD: 89000" />
+                    @for (error of recipeForm.price().errors(); track error) {
+                    <mat-error>{{ error.message }}</mat-error>
+                    }
+                </mat-form-field>
+                <div class="form-group">
+                    <h3>Hình ảnh món ăn</h3>
+                    <div class="image-upload">
+                        @if (imagePreviewUrl()) {
+                        <img class="image-preview" [src]="imagePreviewUrl()" alt="Ảnh xem trước món ăn" />
+                        } @else {
+                        <div class="image-placeholder">
+                            <mat-icon>image</mat-icon>
+                            <span>Chưa có ảnh</span>
+                        </div>
+                        }
+
+                        <div class="image-upload-actions">
+                            <input #fileInput type="file" accept="image/jpeg,image/png,image/webp,image/gif"
+                                hidden (change)="onImageSelected($event)" />
+                            <button mat-flat-button type="button" class="upload-btn" (click)="fileInput.click()"
+                                [disabled]="uploadingImage()">
+                                <span class="btn-label">
+                                    <mat-icon>upload</mat-icon>
+                                    {{ imagePreviewUrl() ? 'Đổi ảnh khác' : 'Tải ảnh từ máy' }}
+                                </span>
+                            </button>
+                            <span class="image-hint">JPG, PNG, WEBP, GIF — tối đa 5MB</span>
+                        </div>
+
+                        @if (imageError()) {
+                        <div class="server-error">{{ imageError() }}</div>
+                        }
+                    </div>
+                </div>
+                <div class="form-group">
+                    <h3>Nguyên liệu</h3>
+                    <div id="ingredient-list">
+                        @for (item of nguyenLieuList; track $index) {
+                        <div class="ingredient-row">
+                            <span class="ingredient-index">{{ $index + 1 }}</span>
+
+                            <div class="ingredient-fields">
+                                <mat-form-field appearance="outline" class="ingredient-name" subscriptSizing="dynamic">
+                                    <mat-label>Tên nguyên liệu</mat-label>
+                                    <input matInput type="text" [(ngModel)]="item.ten"
+                                        [ngModelOptions]="{ standalone: true }" placeholder="VD: Thịt bò" />
+                                </mat-form-field>
+
+                                <mat-form-field appearance="outline" class="ingredient-quantity" subscriptSizing="dynamic">
+                                    <mat-label>Số lượng</mat-label>
+                                    <input matInput type="number" [(ngModel)]="item.soLuong"
+                                        [ngModelOptions]="{ standalone: true }" placeholder="VD: 500" />
+                                </mat-form-field>
+                                <mat-form-field appearance="outline" class="ingredient-unit" subscriptSizing="dynamic">
+                                    <mat-label>Đơn vị</mat-label>
+                                    <input matInput type="text" [(ngModel)]="item.donVi"
+                                        [ngModelOptions]="{ standalone: true }" placeholder="VD: gram" />
+                                </mat-form-field>
+                            </div>
+
+                            <button mat-icon-button type="button" class="remove-btn"
+                                (click)="xoaNguyenLieu($index)" aria-label="Xóa nguyên liệu" title="Xóa nguyên liệu">
+                                <mat-icon>delete_outline</mat-icon>
+                            </button>
+                        </div>
+                        }
+                    </div>
+                    <button mat-flat-button type="button" class="add-btn" (click)="themNguyenLieu()">
+                        <mat-icon>add</mat-icon> Thêm nguyên liệu
+                    </button>
+                </div>
+                <div class="form-actions">
+                    <button mat-flat-button type="submit" class="save-btn"
+                        [disabled]="recipeForm().submitting() || uploadingImage()">
+                        <span class="btn-label">
+                            @if(uploadingImage()) {
+                            Đang tải ảnh...
+                            } @else if (recipeForm().submitting()) {
+                            Đang lưu...
+                            } @else {
+                            <mat-icon>save</mat-icon>Lưu công thức
+                            }
+                        </span>
+                    </button>
+                </div>
+            </form>
+        </mat-card-content>
+    </mat-card>
+</div>

@@ -1,0 +1,31 @@
+<div class="cancel-dialog">
+    <mat-icon class="cancel-icon">warning</mat-icon>
+
+    <h2 mat-dialog-title class="cancel-title">Huỷ đơn hàng</h2>
+    <mat-dialog-content class="cancel-message">
+        Vui lòng cho biết lý do huỷ đơn — hành động này không thể hoàn tác.
+    </mat-dialog-content>
+
+    <mat-radio-group class="reason-group" [ngModel]="selectedReason()" (ngModelChange)="selectedReason.set($event)">
+        @for (option of reasonOptions; track option) {
+        <mat-radio-button class="reason-option" [value]="option">{{ option }}</mat-radio-button>
+        }
+        <mat-radio-button class="reason-option" [value]="otherOption">{{ otherOption }}</mat-radio-button>
+    </mat-radio-group>
+
+    @if (isOtherSelected()) {
+    <mat-form-field appearance="outline" subscriptSizing="dynamic" class="custom-reason-field">
+        <mat-label>Nhập lý do của bạn</mat-label>
+        <input matInput [ngModel]="customReason()" (ngModelChange)="customReason.set($event)"
+            placeholder="Vd: đổi kế hoạch bữa ăn...">
+        @if (customReasonInvalid()) {
+        <mat-error>Vui lòng nhập lý do huỷ đơn!</mat-error>
+        }
+    </mat-form-field>
+    }
+
+    <mat-dialog-actions class="cancel-actions">
+        <button mat-flat-button class="cancel-btn" (click)="cancel()" type="button">Đóng</button>
+        <button mat-flat-button class="confirm-btn" (click)="confirm()" type="button">Xác nhận huỷ đơn</button>
+    </mat-dialog-actions>
+</div>

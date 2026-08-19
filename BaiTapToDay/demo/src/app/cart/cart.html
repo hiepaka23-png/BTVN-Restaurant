@@ -1,0 +1,123 @@
+<div class="cart-container">
+    <app-back-link />
+    <div class="cart-header">
+        <span class="cart-eyebrow">Giỏ hàng</span>
+        <h1 class="cart-title">Món bạn đã chọn</h1>
+    </div>
+
+    @if (successMessage()) {
+    <div class="server-success standalone-message">{{ successMessage() }}</div>
+    }
+
+    @if (cart.items().length === 0) {
+    <div class="empty-cart">
+        <mat-icon class="empty-icon">shopping_cart</mat-icon>
+        <p>Giỏ hàng của bạn đang trống.</p>
+        <a mat-flat-button routerLink="/recipes" class="empty-back-btn">
+            <mat-icon>restaurant_menu</mat-icon>
+            Xem thực đơn
+        </a>
+    </div>
+    } @else {
+    <div class="cart-layout">
+        <div class="cart-items">
+            <div class="cart-items-header">
+                <span>{{ cart.items().length }} món trong giỏ</span>
+                <a routerLink="/recipes" class="add-more-link">
+                    <mat-icon>add</mat-icon>
+                    Chọn thêm món khác
+                </a>
+            </div>
+            @for (item of cart.items(); track item.recipeId) {
+            <div class="cart-item">
+                <img class="cart-item-image" [src]="item.imgUrl" [alt]="item.name" />
+                <div class="cart-item-info">
+                    <span class="cart-item-name">{{ item.name }}</span>
+                    <span class="cart-item-price">{{ formatPrice(item.price) }} / phần</span>
+                </div>
+                <div class="cart-item-qty">
+                    <button mat-icon-button type="button" (click)="decrease(item.recipeId, item.quantity)"
+                        aria-label="Giảm số lượng">
+                        <mat-icon>remove</mat-icon>
+                    </button>
+                    <span class="qty-value">{{ item.quantity }}</span>
+                    <button mat-icon-button type="button" (click)="increase(item.recipeId, item.quantity)"
+                        aria-label="Tăng số lượng" [disabled]="item.quantity >= maxQuantityPerItem">
+                        <mat-icon>add</mat-icon>
+                    </button>
+                </div>
+                <span class="cart-item-total">{{ formatPrice(item.price * item.quantity) }}</span>
+                <button mat-icon-button type="button" class="cart-item-remove" (click)="cart.removeItem(item.recipeId)"
+                    aria-label="Xóa món khỏi giỏ">
+                    <mat-icon>delete_outline</mat-icon>
+                </button>
+            </div>
+            }
+
+            <div class="cart-summary">
+                <span>Tổng cộng ({{ cart.totalCount() }} phần)</span>
+                <span class="cart-summary-total">{{ formatPrice(cart.totalPrice()) }}</span>
+            </div>
+        </div>
+
+        <form class="delivery-form" [formGroup]="deliveryForm" (ngSubmit)="submitOrder()">
+            <h2 class="delivery-title">Thông tin giao hàng</h2>
+
+            @if (auth.isAdmin()) {
+            <div class="server-error">Tài khoản quản trị không thể đặt món. Vui lòng dùng tài khoản khách để đặt món.</div>
+            }
+
+            <mat-form-field appearance="outline" subscriptSizing="dynamic" class="full-width-field">
+                <mat-label>Tên người nhận</mat-label>
+                <input matInput formControlName="recipientName" placeholder="Nhập tên người nhận" />
+                <mat-error *ngIf="deliveryForm.get('recipientName')?.hasError('required')">
+                    Vui lòng nhập tên người nhận
+                </mat-error>
+                <mat-error *ngIf="!deliveryForm.get('recipientName')?.hasError('required') && deliveryForm.get('recipientName')?.hasError('minlength')">
+                    Tên phải có ít nhất 2 ký tự
+                </mat-error>
+                <mat-error *ngIf="!deliveryForm.get('recipientName')?.hasError('required') && !deliveryForm.get('recipientName')?.hasError('minlength') && deliveryForm.get('recipientName')?.hasError('pattern')">
+                    Tên chỉ được chứa chữ cái và khoảng trắng, không có số hay ký tự đặc biệt
+                </mat-error>
+            </mat-form-field>
+
+            <mat-form-field appearance="outline" subscriptSizing="dynamic" class="full-width-field">
+                <mat-label>Số điện thoại</mat-label>
+                <input matInput formControlName="phone" placeholder="VD: 0901234567" />
+                <mat-error *ngIf="deliveryForm.get('phone')?.hasError('required')">
+                    Vui lòng nhập số điện thoại
+                </mat-error>
+                <mat-error *ngIf="deliveryForm.get('phone')?.hasError('pattern')">
+                    Số điện thoại phải bắt đầu bằng số 0 và chỉ gồm chữ số
+                </mat-error>
+            </mat-form-field>
+
+            <mat-form-field appearance="outline" subscriptSizing="dynamic" class="full-width-field">
+                <mat-label>Địa chỉ giao hàng</mat-label>
+                <input matInput formControlName="address" placeholder="VD: 123 Đường ABC, Phường 1, Quận 1" />
+                <mat-error *ngIf="deliveryForm.get('address')?.hasError('required')">
+                    Vui lòng nhập địa chỉ giao hàng
+                </mat-error>
+                <mat-error *ngIf="deliveryForm.get('address')?.hasError('minlength')">
+                    Địa chỉ quá ngắn
+                </mat-error>
+                <mat-error *ngIf="!deliveryForm.get('address')?.hasError('minlength') && deliveryForm.get('address')?.hasError('pattern')">
+                    Địa chỉ cần có cả chữ và số (VD: số nhà, tên đường)
+                </mat-error>
+            </mat-form-field>
+
+            <mat-form-field appearance="outline" subscriptSizing="dynamic" class="full-width-field">
+                <mat-label>Ghi chú (tùy chọn)</mat-label>
+                <input matInput formControlName="note" placeholder="VD: Giao giờ hành chính..." />
+            </mat-form-field>
+
+            <div *ngIf="errorMessage()" class="server-error">{{ errorMessage() }}</div>
+
+            <button mat-flat-button type="submit" class="checkout-btn" [disabled]="submitting() || auth.isAdmin()">
+                <mat-icon>local_shipping</mat-icon>
+                {{ submitting() ? 'Đang gửi...' : 'Đặt món' }}
+            </button>
+        </form>
+    </div>
+    }
+</div>

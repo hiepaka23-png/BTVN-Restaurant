@@ -1,0 +1,133 @@
+<div class="orders-container">
+    <app-back-link />
+    <div class="orders-header">
+        <span class="orders-eyebrow">Tài khoản</span>
+        <h1 class="orders-title">Đơn hàng của tôi</h1>
+    </div>
+
+    @if (errorMessage()) {
+    <div class="server-error standalone-message">{{ errorMessage() }}</div>
+    }
+
+    @if (loading()) {
+    <div class="status-message">
+        <mat-icon class="spin-icon">autorenew</mat-icon>
+        <span>Đang tải danh sách đơn hàng...</span>
+    </div>
+    } @else if (orders().length === 0) {
+    <div class="empty-orders">
+        <mat-icon class="empty-icon">receipt_long</mat-icon>
+        <p>Bạn chưa có đơn hàng nào.</p>
+        <a mat-flat-button routerLink="/recipes" class="empty-back-btn">
+            <mat-icon>restaurant_menu</mat-icon>
+            Xem thực đơn
+        </a>
+    </div>
+    } @else {
+    <div class="orders-list">
+        @for (order of orders(); track order._id) {
+        <mat-card class="order-card">
+            <div class="order-card-header">
+                <div>
+                    <span class="order-id">Đơn #{{ order._id.slice(-6) }}</span>
+                    <span class="order-date">{{ formatDate(order.createdAt) }}</span>
+                </div>
+                <span class="status-badge" [attr.data-status]="order.status">
+                    {{ statusLabels[order.status] }}
+                </span>
+            </div>
+
+            <div class="order-items">
+                @for (item of order.items; track item.recipeId) {
+                <div class="order-item-row">
+                    <span>{{ item.name }} × {{ item.quantity }}</span>
+                    <span>{{ formatPrice(item.price * item.quantity) }}</span>
+                </div>
+                }
+            </div>
+
+            <div class="order-total-row">
+                <span>Tổng cộng</span>
+                <span class="order-total">{{ formatPrice(order.total) }}</span>
+            </div>
+
+            @if (order.status === 'bi_huy' && order.cancelReason) {
+            <div class="cancel-reason">
+                <mat-icon>info</mat-icon>
+                <span>Lý do huỷ: {{ order.cancelReason }}</span>
+            </div>
+            }
+
+            @if (editingId() === order._id) {
+            <form class="edit-form" [formGroup]="editForm" (ngSubmit)="saveEdit(order._id)">
+                <mat-form-field appearance="outline" subscriptSizing="dynamic" class="full-width-field">
+                    <mat-label>Tên người nhận</mat-label>
+                    <input matInput formControlName="recipientName">
+                    @if (editForm.get('recipientName')?.hasError('required')) {
+                    <mat-error>Vui lòng nhập tên người nhận</mat-error>
+                    } @else if (editForm.get('recipientName')?.hasError('minlength')) {
+                    <mat-error>Tên phải có ít nhất 2 ký tự</mat-error>
+                    } @else if (editForm.get('recipientName')?.hasError('pattern')) {
+                    <mat-error>Tên chỉ được chứa chữ cái và khoảng trắng</mat-error>
+                    }
+                </mat-form-field>
+
+                <mat-form-field appearance="outline" subscriptSizing="dynamic" class="full-width-field">
+                    <mat-label>Số điện thoại</mat-label>
+                    <input matInput formControlName="phone">
+                    @if (editForm.get('phone')?.hasError('pattern')) {
+                    <mat-error>Số điện thoại không hợp lệ</mat-error>
+                    }
+                </mat-form-field>
+
+                <mat-form-field appearance="outline" subscriptSizing="dynamic" class="full-width-field">
+                    <mat-label>Địa chỉ</mat-label>
+                    <input matInput formControlName="address">
+                    @if (editForm.get('address')?.hasError('required') || editForm.get('address')?.hasError('minlength')) {
+                    <mat-error>Địa chỉ không hợp lệ</mat-error>
+                    }
+                </mat-form-field>
+
+                <mat-form-field appearance="outline" subscriptSizing="dynamic" class="full-width-field">
+                    <mat-label>Ghi chú</mat-label>
+                    <input matInput formControlName="note">
+                </mat-form-field>
+
+                @if (editError()) {
+                <div class="server-error">{{ editError() }}</div>
+                }
+
+                <div class="edit-actions">
+                    <button mat-flat-button type="button" class="cancel-edit-btn" (click)="cancelEdit()">Hủy</button>
+                    <button mat-flat-button color="primary" type="submit" class="save-edit-btn" [disabled]="editSubmitting()">
+                        {{ editSubmitting() ? 'Đang lưu...' : 'Lưu' }}
+                    </button>
+                </div>
+            </form>
+            } @else {
+            <div class="order-delivery">
+                <span><strong>Người nhận:</strong> {{ order.recipientName }} — {{ order.phone }}</span>
+                <span><strong>Địa chỉ:</strong> {{ order.address }}</span>
+                @if (order.note) {
+                <span><strong>Ghi chú:</strong> {{ order.note }}</span>
+                }
+            </div>
+
+            @if (order.status === 'dang_lam') {
+            <div class="order-actions">
+                <button mat-flat-button type="button" class="edit-order-btn" (click)="startEdit(order)">
+                    <mat-icon>edit</mat-icon>
+                    Sửa đơn
+                </button>
+                <button mat-flat-button type="button" class="cancel-order-btn" (click)="cancelOrder(order)">
+                    <mat-icon>cancel</mat-icon>
+                    Huỷ đơn
+                </button>
+            </div>
+            }
+            }
+        </mat-card>
+        }
+    </div>
+    }
+</div>

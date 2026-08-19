@@ -1,0 +1,44 @@
+@import '../admin-shared.css';
+
+.status-cell {
+    min-width: 220px;
+}
+
+.status-select {
+    width: 160px;
+}
+
+.cancel-reason {
+    margin-top: 6px;
+    font-size: 0.78rem;
+    color: #7a1a1a;
+}
+
+.cancel-reason-form {
+    margin-top: 8px;
+    padding: 10px;
+    background: #fff6f5;
+    border: 1px solid #f3c8c3;
+    border-radius: 10px;
+}
+
+.reason-field {
+    width: 100%;
+}
+
+.cancel-reason-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 8px;
+    margin-top: 4px;
+}
+
+.cancel-btn {
+    background: #e2e4ea !important;
+    color: #1f2430 !important;
+}
+
+.confirm-btn {
+    background: #b3261e !important;
+    color: #ffffff !important;
+}

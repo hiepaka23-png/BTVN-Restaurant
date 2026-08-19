@@ -1,0 +1,58 @@
+<div class="page-container">
+    <app-back-link />
+    <div class="page-header">
+        <span class="page-eyebrow">Đặt bàn</span>
+        <h1 class="page-title">Giữ chỗ cho bữa tối của bạn</h1>
+        <p class="page-subtitle">Vui lòng đặt bàn trước ít nhất 2 giờ để chúng tôi chuẩn bị chu đáo nhất</p>
+    </div>
+
+    <form class="page-card" [formGroup]="form" (ngSubmit)="submit()">
+        <div class="field-row">
+            <mat-form-field appearance="outline" subscriptSizing="dynamic" class="full-width-field">
+                <mat-label>Họ tên</mat-label>
+                <input matInput formControlName="customerName" placeholder="Nhập họ tên của bạn" />
+                <mat-error *ngIf="form.get('customerName')?.hasError('required')">Vui lòng nhập họ tên</mat-error>
+            </mat-form-field>
+
+            <mat-form-field appearance="outline" subscriptSizing="dynamic" class="full-width-field">
+                <mat-label>Số điện thoại</mat-label>
+                <input matInput formControlName="phone" placeholder="VD: 0901234567" />
+                <mat-error *ngIf="form.get('phone')?.hasError('required')">Vui lòng nhập số điện thoại</mat-error>
+                <mat-error *ngIf="form.get('phone')?.hasError('pattern')">Số điện thoại phải bắt đầu bằng số 0 và chỉ gồm chữ số</mat-error>
+            </mat-form-field>
+        </div>
+
+        <div class="field-row">
+            <mat-form-field appearance="outline" subscriptSizing="dynamic" class="full-width-field">
+                <mat-label>Ngày đặt bàn</mat-label>
+                <input matInput type="date" formControlName="date" />
+                <mat-error *ngIf="form.get('date')?.hasError('required')">Vui lòng chọn ngày</mat-error>
+            </mat-form-field>
+
+            <mat-form-field appearance="outline" subscriptSizing="dynamic" class="full-width-field">
+                <mat-label>Giờ đặt bàn</mat-label>
+                <input matInput type="time" formControlName="time" />
+                <mat-error *ngIf="form.get('time')?.hasError('required')">Vui lòng chọn giờ</mat-error>
+            </mat-form-field>
+
+            <mat-form-field appearance="outline" subscriptSizing="dynamic" class="full-width-field guest-field">
+                <mat-label>Số khách</mat-label>
+                <input matInput type="number" min="1" formControlName="guestCount" />
+                <mat-error *ngIf="form.get('guestCount')?.hasError('required')">Vui lòng nhập số khách</mat-error>
+            </mat-form-field>
+        </div>
+
+        <mat-form-field appearance="outline" subscriptSizing="dynamic" class="full-width-field">
+            <mat-label>Ghi chú (tùy chọn)</mat-label>
+            <input matInput formControlName="note" placeholder="VD: Bàn gần cửa sổ, có trẻ nhỏ..." />
+        </mat-form-field>
+
+        <div *ngIf="errorMessage()" class="server-error">{{ errorMessage() }}</div>
+        <div *ngIf="successMessage()" class="server-success">{{ successMessage() }}</div>
+
+        <button mat-flat-button type="submit" class="submit-btn" [disabled]="submitting()">
+            <mat-icon>event_seat</mat-icon>
+            {{ submitting() ? 'Đang gửi...' : 'Xác nhận đặt bàn' }}
+        </button>
+    </form>
+</div>

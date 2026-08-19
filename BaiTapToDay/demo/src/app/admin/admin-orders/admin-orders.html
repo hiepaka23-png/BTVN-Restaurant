@@ -1,0 +1,78 @@
+<app-admin-nav></app-admin-nav>
+
+<div class="admin-orders-container">
+    <h1 class="admin-page-title">Quản lý đơn hàng</h1>
+
+    @if (errorMessage()) {
+    <div class="server-error">{{ errorMessage() }}</div>
+    }
+
+    @if (loading()) {
+    <div class="status-message">Đang tải danh sách đơn hàng...</div>
+    } @else if (orders().length === 0) {
+    <div class="status-message">Chưa có đơn hàng nào.</div>
+    } @else {
+    <div class="table-wrapper">
+        <table class="admin-table">
+            <thead>
+                <tr>
+                    <th>Mã đơn</th>
+                    <th>Khách hàng</th>
+                    <th>Món</th>
+                    <th>Tổng tiền</th>
+                    <th>Ngày tạo</th>
+                    <th>Trạng thái</th>
+                </tr>
+            </thead>
+            <tbody>
+                @for (order of orders(); track order._id) {
+                <tr>
+                    <td>#{{ order._id.slice(-6) }}</td>
+                    <td>
+                        <div>{{ order.username }}</div>
+                        <div class="muted">{{ order.recipientName }} — {{ order.phone }}</div>
+                    </td>
+                    <td>
+                        @for (item of order.items; track item.recipeId) {
+                        <div class="item-row">{{ item.name }} × {{ item.quantity }}</div>
+                        }
+                    </td>
+                    <td>{{ formatPrice(order.total) }}</td>
+                    <td>{{ formatDate(order.createdAt) }}</td>
+                    <td class="status-cell">
+                        <mat-form-field appearance="outline" subscriptSizing="dynamic" class="status-select">
+                            <mat-select [value]="order.status" [disabled]="updatingId() === order._id"
+                                (selectionChange)="onStatusSelected(order, $event.value)">
+                                @for (option of statusOptions; track option) {
+                                <mat-option [value]="option">{{ statusLabels[option] }}</mat-option>
+                                }
+                            </mat-select>
+                        </mat-form-field>
+
+                        @if (order.status === 'bi_huy' && order.cancelReason) {
+                        <div class="cancel-reason">Lý do: {{ order.cancelReason }}</div>
+                        }
+
+                        @if (pendingCancelId() === order._id) {
+                        <div class="cancel-reason-form">
+                            <mat-form-field appearance="outline" subscriptSizing="dynamic" class="reason-field">
+                                <mat-label>Lý do huỷ</mat-label>
+                                <input matInput [ngModel]="cancelReasonDraft()"
+                                    (ngModelChange)="cancelReasonDraft.set($event)" placeholder="Bắt buộc nhập lý do">
+                            </mat-form-field>
+                            <div class="cancel-reason-actions">
+                                <button mat-flat-button type="button" class="cancel-btn" (click)="cancelPendingCancel()">Hủy</button>
+                                <button mat-flat-button type="button" class="confirm-btn" (click)="confirmCancelStatus(order)">
+                                    Xác nhận huỷ
+                                </button>
+                            </div>
+                        </div>
+                        }
+                    </td>
+                </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+    }
+</div>

@@ -1,0 +1,54 @@
+<div class="page-container">
+    <app-back-link />
+    <div class="page-header">
+        <span class="page-eyebrow">Liên hệ</span>
+        <h1 class="page-title">Chúng tôi luôn lắng nghe bạn</h1>
+        <p class="page-subtitle">Gửi câu hỏi, góp ý hoặc yêu cầu hỗ trợ — đội ngũ Nhà Hàng Michelin sẽ phản hồi sớm nhất</p>
+    </div>
+
+    <div class="contact-info">
+        <div class="contact-info-item">
+            <mat-icon>call</mat-icon>
+            <span>1900 1234</span>
+        </div>
+        <div class="contact-info-item">
+            <mat-icon>mail_outline</mat-icon>
+            <span>lienhe&#64;michelin5star.vn</span>
+        </div>
+        <div class="contact-info-item">
+            <mat-icon>place</mat-icon>
+            <span>123 Đường Ẩm Thực, Quận 1, TP.HCM</span>
+        </div>
+    </div>
+
+    <form class="page-card" [formGroup]="form" (ngSubmit)="submit()">
+        <mat-form-field appearance="outline" subscriptSizing="dynamic" class="full-width-field">
+            <mat-label>Họ tên</mat-label>
+            <input matInput formControlName="fullName" placeholder="Nhập họ tên của bạn" />
+            <mat-error *ngIf="form.get('fullName')?.hasError('required')">Vui lòng nhập họ tên</mat-error>
+        </mat-form-field>
+
+        <mat-form-field appearance="outline" subscriptSizing="dynamic" class="full-width-field">
+            <mat-label>Email</mat-label>
+            <input matInput type="email" formControlName="email" placeholder="Nhập email của bạn" />
+            <mat-error *ngIf="form.get('email')?.hasError('required')">Vui lòng nhập email</mat-error>
+            <mat-error *ngIf="form.get('email')?.hasError('email')">Email không hợp lệ</mat-error>
+        </mat-form-field>
+
+        <mat-form-field appearance="outline" subscriptSizing="dynamic" class="full-width-field">
+            <mat-label>Nội dung</mat-label>
+            <textarea matInput formControlName="message" rows="4"
+                placeholder="Bạn muốn chia sẻ điều gì với chúng tôi?"></textarea>
+            <mat-error *ngIf="form.get('message')?.hasError('required')">Vui lòng nhập nội dung</mat-error>
+            <mat-error *ngIf="form.get('message')?.hasError('minlength')">Nội dung cần ít nhất 10 ký tự</mat-error>
+        </mat-form-field>
+
+        <div *ngIf="errorMessage()" class="server-error">{{ errorMessage() }}</div>
+        <div *ngIf="successMessage()" class="server-success">{{ successMessage() }}</div>
+
+        <button mat-flat-button type="submit" class="submit-btn" [disabled]="submitting()">
+            <mat-icon>send</mat-icon>
+            {{ submitting() ? 'Đang gửi...' : 'Gửi liên hệ' }}
+        </button>
+    </form>
+</div>

@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="vi">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Test Auth NestJS</title>
+</head>
+
+<body>
+    <h2>Đăng nhập</h2>
+    <input type="text" id="username" placeholder="Username">
+    <input type="password" id="password" placeholder="Password">
+    <button onclick="login()">Đăng nhập</button>
+
+    <h2>Test Route</h2>
+    <button onclick="getProfile()">Lấy Profile (Cần Token)</button>
+    <button onclick="getAdmin()">Test Admin Route (Cần Role Admin)</button>
+
+    <pre id="result"></pre>
+
+    <script>
+        const API_URL = 'http://localhost:3000';
+
+        async function login() {
+            const username = document.getElementById('username').value;
+            const password = document.getElementById('password').value;
+
+            const res = await fetch(`${API_URL}/auth/login`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ username, password })
+            });
+            const data = await res.json();
+
+            if (data.access_token) {
+                // Client lưu token vào localStorage
+                localStorage.setItem('token', data.access_token);
+                document.getElementById('result').innerText = "Đăng nhập thành công! Đã lưu token.";
+            } else {
+                document.getElementById('result').innerText = JSON.stringify(data, null, 2);
+            }
+        }
+
+        async function fetchWithToken(endpoint) {
+            const token = localStorage.getItem('token');
+            const res = await fetch(`${API_URL}${endpoint}`, {
+                headers: {
+                    // Gửi token qua Authorization: Bearer
+                    'Authorization': `Bearer ${token}`
+                }
+            });
+            const data = await res.json();
+            document.getElementById('result').innerText = JSON.stringify(data, null, 2);
+        }
+
+        function getProfile() { fetchWithToken('/profile'); }
+        function getAdmin() { fetchWithToken('/admin-only'); }
+    </script>
+</body>
+
+</html>

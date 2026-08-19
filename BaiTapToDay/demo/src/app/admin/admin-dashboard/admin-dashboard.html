@@ -1,0 +1,80 @@
+<app-admin-nav></app-admin-nav>
+
+<div class="admin-dashboard-container">
+    <h1 class="admin-page-title">Thống kê đơn hàng</h1>
+
+    @if (errorMessage()) {
+    <div class="server-error">{{ errorMessage() }}</div>
+    }
+
+    @if (loading() && !stats()) {
+    <div class="status-message">Đang tải số liệu...</div>
+    } @else if (stats(); as data) {
+
+    <div class="stat-grid">
+        <div class="stat-tile stat-revenue">
+            <mat-icon>payments</mat-icon>
+            <div class="stat-value">{{ formatCurrency(data.totalRevenue) }}</div>
+            <div class="stat-label">Tổng doanh thu</div>
+        </div>
+        <div class="stat-tile stat-total">
+            <mat-icon>receipt_long</mat-icon>
+            <div class="stat-value">{{ data.total }}</div>
+            <div class="stat-label">Tổng số đơn</div>
+        </div>
+        <div class="stat-tile stat-warning">
+            <mat-icon>schedule</mat-icon>
+            <div class="stat-value">{{ data.byStatus.dang_lam }}</div>
+            <div class="stat-label">Đang làm</div>
+        </div>
+        <div class="stat-tile stat-good">
+            <mat-icon>check_circle</mat-icon>
+            <div class="stat-value">{{ data.byStatus.hoan_thanh }}</div>
+            <div class="stat-label">Hoàn thành</div>
+        </div>
+        <div class="stat-tile stat-critical">
+            <mat-icon>cancel</mat-icon>
+            <div class="stat-value">{{ data.byStatus.bi_huy }}</div>
+            <div class="stat-label">Bị huỷ</div>
+        </div>
+    </div>
+
+    <div class="chart-card">
+        <h2 class="chart-title">Doanh thu 14 ngày gần nhất</h2>
+        <p class="chart-subtitle">Tính trên đơn Đang làm + Hoàn thành, không tính đơn Bị huỷ</p>
+        <div class="revenue-chart" role="img" aria-label="Biểu đồ cột doanh thu 14 ngày gần nhất">
+            @for (day of revenueByDay(); track day.date) {
+            <div class="revenue-col">
+                <div class="revenue-track">
+                    <div class="revenue-bar" [class.revenue-bar-empty]="day.revenue === 0"
+                        [style.height.%]="revenueBarHeightPercent(day.revenue)"
+                        [title]="formatDayLabel(day.date) + ': ' + formatCurrency(day.revenue) + ' (' + day.orders + ' đơn)'">
+                    </div>
+                </div>
+                <span class="revenue-day-label">{{ formatDayLabel(day.date) }}</span>
+            </div>
+            }
+        </div>
+    </div>
+
+    <div class="chart-card">
+        <h2 class="chart-title">Top 5 món bán chạy nhất</h2>
+        @if (topRecipes().length === 0) {
+        <div class="status-message">Chưa có dữ liệu bán hàng.</div>
+        } @else {
+        <div class="bar-chart" role="img" aria-label="Biểu đồ cột top 5 món bán chạy nhất">
+            @for (recipe of topRecipes(); track recipe.name) {
+            <div class="bar-row">
+                <span class="bar-label" [title]="recipe.name">{{ recipe.name }}</span>
+                <div class="bar-track">
+                    <div class="bar-fill" [style.width.%]="barWidthPercent(recipe.quantity)">
+                        <span class="bar-value">{{ recipe.quantity }}</span>
+                    </div>
+                </div>
+            </div>
+            }
+        </div>
+        }
+    </div>
+    }
+</div>

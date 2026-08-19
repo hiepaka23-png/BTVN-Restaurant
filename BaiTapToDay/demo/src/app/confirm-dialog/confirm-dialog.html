@@ -1,0 +1,19 @@
+<div class="confirm-dialog">
+    <mat-icon class="confirm-icon" [class.danger]="data.danger">
+        {{ data.danger ? 'warning' : 'help_outline' }}
+    </mat-icon>
+
+    <h2 mat-dialog-title class="confirm-title">{{ data.title }}</h2>
+
+    <mat-dialog-content class="confirm-message">{{ data.message }}</mat-dialog-content>
+
+    <mat-dialog-actions class="confirm-actions">
+        <button mat-flat-button class="cancel-btn" (click)="dialogRef.close(false)" type="button">
+            {{ data.cancelText || 'Hủy' }}
+        </button>
+        <button mat-flat-button class="confirm-btn" [class.danger]="data.danger" (click)="dialogRef.close(true)"
+            type="button">
+            {{ data.confirmText || 'Xác nhận' }}
+        </button>
+    </mat-dialog-actions>
+</div>

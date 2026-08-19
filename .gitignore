@@ -1,0 +1,4 @@
+# Công cụ Claude Code cục bộ — không phải một phần của ứng dụng
+.claude/
+.agents/
+skills-lock.json

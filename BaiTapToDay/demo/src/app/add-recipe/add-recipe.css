@@ -1,0 +1,350 @@
+:host {
+    display: block;
+    min-height: 100vh;
+    padding: 40px 20px 60px;
+    background: var(--brand-cream);
+    box-sizing: border-box;
+}
+
+* {
+    box-sizing: border-box;
+    font-family: var(--brand-sans);
+}
+
+.mat-icon {
+    font-family: 'Material Icons' !important;
+}
+
+/* Khung bao ngoài */
+.main-wrapper {
+    width: 100%;
+    max-width: 750px;
+    margin: 0 auto;
+}
+
+/* Nút quay lại — cùng tông đỏ với nút "Quay lại danh sách" ở trang chi tiết món */
+.back-link {
+    width: 100%;
+    height: 48px;
+    border-radius: 10px 10px 0 0 !important;
+    background: var(--brand-red) !important;
+    color: var(--brand-ivory) !important;
+    font-family: var(--brand-mono);
+    font-size: 13px;
+    font-weight: 700;
+    letter-spacing: 1.5px;
+}
+
+/* Khối nội dung bên trong nút (icon + chữ) — luôn canh giữa theo chiều dọc, không lệch
+   dù nút đang ở trạng thái nào (đang lưu / đã sẵn sàng) */
+.btn-label {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    width: 100%;
+    height: 100%;
+}
+
+/* Card lớn */
+.recipe-card-form {
+    padding: 20px;
+    border-radius: 0 0 10px 10px;
+    background: var(--brand-cream-dark);
+    box-shadow: var(--brand-shadow-strong);
+}
+
+mat-card-content {
+    padding: 0 !important;
+}
+
+/* Form trắng bên trong */
+.form-container {
+    width: 100%;
+    max-width: none;
+    padding: 35px 40px;
+    background: var(--brand-ivory);
+    border-radius: 10px;
+    box-shadow: none;
+}
+
+/* Ô tên món và mô tả */
+.full-width {
+    display: block;
+    width: 100%;
+    margin-bottom: 20px;
+}
+
+.full-width input {
+    font-size: 16px;
+}
+
+.full-width textarea {
+    min-height: 110px;
+    font-size: 16px;
+    resize: none;
+}
+
+/* Nền và bo góc Material */
+::ng-deep .full-width .mat-mdc-text-field-wrapper {
+    width: 100%;
+    min-height: 62px;
+    background: var(--brand-ivory);
+    border-radius: 4px;
+}
+
+/* Padding trong ô */
+::ng-deep .full-width .mat-mdc-form-field-infix {
+    padding-top: 18px;
+    padding-bottom: 18px;
+}
+
+/* Viền Material bình thường */
+::ng-deep .full-width .mdc-notched-outline__leading,
+::ng-deep .full-width .mdc-notched-outline__notch,
+::ng-deep .full-width .mdc-notched-outline__trailing {
+    border-color: var(--brand-cream-dark) !important;
+}
+
+/* Viền khi bấm vào */
+::ng-deep .full-width .mdc-text-field--focused .mdc-notched-outline__leading,
+::ng-deep .full-width .mdc-text-field--focused .mdc-notched-outline__notch,
+::ng-deep .full-width .mdc-text-field--focused .mdc-notched-outline__trailing {
+    border-color: var(--brand-burgundy) !important;
+    border-width: 2px !important;
+}
+
+/* Khu nguyên liệu */
+.form-group {
+    margin-top: 10px;
+    margin-bottom: 20px;
+}
+
+.form-group h3 {
+    margin: 0 0 18px;
+    font-family: var(--brand-serif);
+    font-size: 1.25rem;
+    font-weight: 600;
+    color: var(--brand-burgundy);
+}
+
+/* Khu tải ảnh món ăn */
+.image-upload {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    flex-wrap: wrap;
+}
+
+.image-preview {
+    width: 120px;
+    height: 120px;
+    flex-shrink: 0;
+    object-fit: cover;
+    border-radius: 6px;
+    border: 1px solid var(--brand-cream-dark);
+    box-shadow: var(--brand-shadow-soft);
+}
+
+.image-placeholder {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 4px;
+    width: 120px;
+    height: 120px;
+    flex-shrink: 0;
+    border-radius: 6px;
+    border: 1.5px dashed var(--brand-cream-dark);
+    background: var(--brand-cream);
+    color: var(--brand-ink-soft);
+}
+
+.image-placeholder mat-icon {
+    color: var(--brand-brass);
+}
+
+.image-placeholder span {
+    font-size: 0.75rem;
+}
+
+.image-upload-actions {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+.upload-btn {
+    border-radius: 10px !important;
+    font-family: var(--brand-mono);
+    font-weight: 700;
+    font-size: 0.8rem;
+    letter-spacing: 0.5px;
+    background: var(--brand-ivory) !important;
+    color: var(--brand-burgundy) !important;
+    border: 1.5px solid var(--brand-burgundy) !important;
+    width: fit-content;
+}
+
+.image-hint {
+    font-size: 0.75rem;
+    color: var(--brand-ink-soft);
+    opacity: 0.75;
+}
+
+.server-error {
+    width: 100%;
+    color: #7a1a1a;
+    background-color: #fbe9e7;
+    border-left: 3px solid #b3261e;
+    border-radius: 4px;
+    padding: 8px 12px;
+    font-size: 0.85rem;
+}
+
+::ng-deep .full-width .mdc-notched-outline__leading {
+    border-right: none !important;
+    border-radius: 4px 0 0 4px !important;
+}
+
+::ng-deep .full-width .mdc-notched-outline__notch {
+    border-left: none !important;
+    border-right: none !important;
+}
+
+::ng-deep .full-width .mdc-notched-outline__trailing {
+    border-left: none !important;
+    border-radius: 0 4px 4px 0 !important;
+}
+
+#ingredient-list {
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+    margin-bottom: 16px;
+}
+
+/* Một hàng nguyên liệu — khung viền riêng, số thứ tự bên trái, nút xóa bên phải */
+.ingredient-row {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    padding: 14px 16px;
+    background: var(--brand-cream);
+    border: 1px solid var(--brand-cream-dark);
+    border-radius: 6px;
+    transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.ingredient-row:hover,
+.ingredient-row:focus-within {
+    border-color: var(--brand-brass);
+    box-shadow: 0 2px 10px -4px rgba(36, 28, 20, 0.15);
+}
+
+/* Số thứ tự nguyên liệu */
+.ingredient-index {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    width: 26px;
+    height: 26px;
+    border-radius: 50%;
+    background: var(--brand-burgundy);
+    color: var(--brand-ivory);
+    font-size: 12px;
+    font-weight: 700;
+}
+
+.ingredient-fields {
+    flex: 1;
+    min-width: 0;
+    display: grid;
+    grid-template-columns: 2fr 1fr 1fr;
+    gap: 12px;
+}
+
+.ingredient-fields mat-form-field {
+    width: 100%;
+}
+
+/* Nút xóa */
+.remove-btn {
+    flex-shrink: 0;
+    color: var(--brand-brass) !important;
+    transition: color 0.2s ease, background-color 0.2s ease;
+}
+
+.remove-btn:hover {
+    color: #ffffff !important;
+    background-color: #b3261e !important;
+}
+
+/* Nút thêm nguyên liệu — kiểu viền (secondary), phân biệt với nút Lưu (primary) */
+.add-btn {
+    width: 33%;
+    min-width: 200px;
+    height: 40px;
+    margin-top: 5px;
+    font-family: var(--brand-mono);
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 0.5px;
+    border-radius: 10px !important;
+    background: var(--brand-ivory) !important;
+    color: var(--brand-burgundy) !important;
+    border: 1.5px solid var(--brand-burgundy) !important;
+    cursor: pointer;
+}
+
+/* Khu nút lưu */
+.form-actions {
+    margin-top: 24px;
+}
+
+.save-btn {
+    min-width: 200px;
+    height: 44px;
+    padding: 0 24px;
+    border-radius: 10px !important;
+    color: var(--brand-ivory) !important;
+    background: var(--brand-burgundy) !important;
+    font-family: var(--brand-mono);
+    font-size: 13px;
+    font-weight: 700;
+    letter-spacing: 1.5px;
+}
+
+
+/* Responsive */
+@media (max-width: 700px) {
+    :host {
+        padding: 20px 10px;
+    }
+
+    .recipe-card-form {
+        padding: 12px;
+    }
+
+    .form-container {
+        padding: 25px 16px;
+    }
+
+    .ingredient-row {
+        align-items: flex-start;
+    }
+
+    .ingredient-fields {
+        grid-template-columns: 1fr 1fr;
+    }
+
+    .ingredient-fields mat-form-field:first-child {
+        grid-column: 1 / -1;
+    }
+
+    .save-btn {
+        width: 100%;
+    }
+}

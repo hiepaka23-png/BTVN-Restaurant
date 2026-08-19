@@ -1,0 +1,92 @@
+<div class="detail-actions">
+    <a mat-flat-button class="back-link" routerLink="/recipes">
+        <span class="btn-label"><mat-icon>arrow_back</mat-icon>Quay lại danh sách</span>
+    </a>
+</div>
+@if (selectedRecipe(); as recipe) {
+<mat-card class="recipe-card">
+    <img class="recipe-image" [src]="recipe.imgUrl" [alt]="'Ảnh của ' + recipe.name" />
+    <mat-card-header class="recipe-header">
+        <mat-card-title>
+            <h2>{{ menuNumber() }} - {{ recipe.name }}</h2>
+        </mat-card-title>
+
+        <mat-card-subtitle>
+            <p class="description">
+                {{ recipe.description }}
+            </p>
+        </mat-card-subtitle>
+    </mat-card-header>
+    <mat-card-content>
+        <hr class="divider" />
+        <div class="price-tag">{{ formatPrice(recipe.price) }}</div>
+        <div class="portion-controller">
+            <button mat-icon-button color="primary" type="button" class="btn-icon" (click)="giamSoPhanAn()"
+                aria-label="Giảm số phần ăn" [disabled]="soPhanAn() <= 1">
+                <mat-icon>remove</mat-icon>
+            </button>
+            <span class="portion-text">
+                Số phần ăn:
+                <strong>{{ soPhanAn() }}</strong>
+            </span>
+
+            <button mat-icon-button color="primary" type="button" class="btn-icon" (click)="tangSoPhanAn()"
+                aria-label="Tăng số phần ăn" [disabled]="soPhanAn() >= maxSoPhanAn">
+                <mat-icon>add</mat-icon>
+            </button>
+        </div>
+        @if (soPhanAn() >= maxSoPhanAn) {
+        <p class="portion-max-hint">Số phần ăn tối đa {{ maxSoPhanAn }}</p>
+        }
+
+        <div class="recipe-info">
+            <h4 class="section-title">Thành phần</h4>
+            @defer(on viewport){
+            <div class="ingredients-container">
+                @for (
+                ingredient of adjustedIngredients();
+                track ingredient.name
+                ) {
+                <div class="ingredient-item">
+                    <span class="ingredient-name">
+                        {{ ingredient.name }}
+                    </span>
+
+                    <span class="ingredient-amount">
+                        {{ ingredient.quantity }}
+                        {{ ingredient.unit }}
+                    </span>
+                </div>
+                } @empty {
+                <div class="ingredient-empty">
+                    Không có nguyên liệu nào.
+                </div>
+                }
+
+            </div>
+            }
+            @placeholder {
+            <p> Đang tải danh sách nguyên liệu...</p>
+            }
+        </div>
+
+        @if (!auth.isAdmin()) {
+        <button mat-flat-button type="button" class="add-to-cart-btn" (click)="themVaoGioHang()">
+            <span class="btn-label"><mat-icon>add_shopping_cart</mat-icon>Đặt món</span>
+        </button>
+        } @else {
+        <div class="admin-cart-note">Tài khoản quản trị không thể đặt món.</div>
+        }
+        @if (addedMessage()) {
+        <div class="added-message">
+            <mat-icon>check_circle</mat-icon>
+            Đã thêm vào giỏ hàng!
+        </div>
+        }
+    </mat-card-content>
+</mat-card>
+} @else {
+<p class="not-found">
+    Không tìm thấy công thức này.
+</p>
+}

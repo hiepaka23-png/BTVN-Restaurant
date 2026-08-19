@@ -1,0 +1,117 @@
+<div class="profile-container">
+    <app-back-link />
+    <div class="profile-header">
+        <span class="profile-eyebrow">Tài khoản</span>
+        <h1 class="profile-title">Hồ sơ cá nhân</h1>
+    </div>
+
+    <div class="profile-layout">
+
+        <mat-card class="profile-card avatar-card">
+            <h2 class="card-title">Ảnh đại diện</h2>
+            <img class="avatar-preview" [src]="auth.currentUser()?.avatarUrl || defaultAvatar"
+                [alt]="'Ảnh đại diện của ' + (auth.currentUser()?.name ?? '')" />
+
+            <label class="avatar-upload-btn" for="avatar-input">
+                <mat-icon>upload</mat-icon>
+                {{ avatarUploading() ? 'Đang tải lên...' : 'Đổi ảnh đại diện' }}
+            </label>
+            <input id="avatar-input" type="file" accept="image/*" class="avatar-input"
+                [disabled]="avatarUploading()" (change)="onAvatarSelected($event)" />
+
+            @if (avatarError()) {
+            <div class="server-error">{{ avatarError() }}</div>
+            }
+        </mat-card>
+
+        <mat-card class="profile-card">
+            <h2 class="card-title">Thông tin cá nhân</h2>
+            <form [formGroup]="profileForm" (ngSubmit)="onSaveProfile()">
+                <mat-form-field appearance="outline" subscriptSizing="dynamic" class="full-width-field">
+                    <mat-label>Họ và tên</mat-label>
+                    <input matInput formControlName="name" placeholder="Nhập họ tên">
+                    @if (profileForm.get('name')?.hasError('required')) {
+                    <mat-error>Họ tên không được để trống!</mat-error>
+                    }
+                </mat-form-field>
+
+                <mat-form-field appearance="outline" subscriptSizing="dynamic" class="full-width-field">
+                    <mat-label>Email</mat-label>
+                    <input matInput type="email" formControlName="email" placeholder="Nhập email">
+                    @if (profileForm.get('email')?.hasError('required')) {
+                    <mat-error>Email không được để trống!</mat-error>
+                    } @else if (profileForm.get('email')?.hasError('email')) {
+                    <mat-error>Email không đúng định dạng!</mat-error>
+                    }
+                </mat-form-field>
+
+                @if (profileError()) {
+                <div class="server-error">{{ profileError() }}</div>
+                }
+                @if (profileSuccess()) {
+                <div class="server-success">{{ profileSuccess() }}</div>
+                }
+
+                <button mat-raised-button color="primary" type="submit" class="save-btn" [disabled]="profileSubmitting()">
+                    {{ profileSubmitting() ? 'Đang lưu...' : 'Lưu thay đổi' }}
+                </button>
+            </form>
+        </mat-card>
+
+        <mat-card class="profile-card">
+            <h2 class="card-title">Đổi mật khẩu</h2>
+            <form [formGroup]="passwordForm" #passwordFormDirective="ngForm" (ngSubmit)="onChangePassword()">
+                <mat-form-field appearance="outline" subscriptSizing="dynamic" class="full-width-field">
+                    <mat-label>Mật khẩu hiện tại</mat-label>
+                    <input matInput type="password" formControlName="currentPassword" placeholder="Nhập mật khẩu hiện tại">
+                    @if (passwordForm.get('currentPassword')?.hasError('required')) {
+                    <mat-error>Vui lòng nhập mật khẩu hiện tại!</mat-error>
+                    }
+                </mat-form-field>
+
+                <mat-form-field appearance="outline" subscriptSizing="dynamic" class="full-width-field">
+                    <mat-label>Mật khẩu mới</mat-label>
+                    <input matInput type="password" formControlName="newPassword" placeholder="Nhập mật khẩu mới">
+                    @if (passwordForm.get('newPassword')?.hasError('required')) {
+                    <mat-error>Vui lòng nhập mật khẩu mới!</mat-error>
+                    } @else if (passwordForm.get('newPassword')?.hasError('minlength')) {
+                    <mat-error>Mật khẩu phải có ít nhất 6 ký tự!</mat-error>
+                    }
+                </mat-form-field>
+
+                <mat-form-field appearance="outline" subscriptSizing="dynamic" class="full-width-field">
+                    <mat-label>Xác nhận mật khẩu mới</mat-label>
+                    <input matInput type="password" formControlName="confirmPassword" placeholder="Nhập lại mật khẩu mới">
+                    @if (passwordForm.get('confirmPassword')?.hasError('required')) {
+                    <mat-error>Vui lòng xác nhận mật khẩu mới!</mat-error>
+                    }
+                </mat-form-field>
+
+                @if (passwordError()) {
+                <div class="server-error">{{ passwordError() }}</div>
+                }
+                @if (passwordSuccess()) {
+                <div class="server-success">{{ passwordSuccess() }}</div>
+                }
+
+                <button mat-raised-button color="primary" type="submit" class="save-btn" [disabled]="passwordSubmitting()">
+                    {{ passwordSubmitting() ? 'Đang lưu...' : 'Đổi mật khẩu' }}
+                </button>
+            </form>
+        </mat-card>
+
+        <mat-card class="profile-card danger-card">
+            <h2 class="card-title">Vùng nguy hiểm</h2>
+            <p class="danger-text">Xóa tài khoản sẽ xóa vĩnh viễn toàn bộ dữ liệu cá nhân của bạn. Hành động này không thể hoàn tác.</p>
+            @if (deleteError()) {
+            <div class="server-error">{{ deleteError() }}</div>
+            }
+            <button mat-flat-button type="button" class="delete-account-btn" [disabled]="deleteSubmitting()"
+                (click)="onDeleteAccount()">
+                <mat-icon>delete_forever</mat-icon>
+                {{ deleteSubmitting() ? 'Đang xóa...' : 'Xóa tài khoản' }}
+            </button>
+        </mat-card>
+
+    </div>
+</div>

@@ -1,0 +1,79 @@
+.cancel-dialog {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    padding: 8px 8px 4px;
+    font-family: var(--brand-sans);
+}
+
+.cancel-icon {
+    width: 40px !important;
+    height: 40px !important;
+    font-size: 40px !important;
+    color: var(--brand-red);
+    margin-bottom: 8px;
+}
+
+.cancel-title {
+    margin: 0 0 8px !important;
+    font-family: var(--brand-serif);
+    font-size: 1.4rem !important;
+    font-weight: 600;
+    color: var(--brand-ink);
+}
+
+.cancel-message {
+    color: var(--brand-ink-soft);
+    font-size: 0.92rem;
+    line-height: 1.5;
+    padding: 0 !important;
+    margin-bottom: 4px;
+}
+
+.reason-group {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 4px;
+    width: 100%;
+    margin-top: 8px;
+    text-align: left;
+}
+
+.reason-option {
+    width: 100%;
+}
+
+.custom-reason-field {
+    width: 100%;
+    margin-top: 8px;
+}
+
+.cancel-actions {
+    display: flex;
+    justify-content: center;
+    gap: 12px;
+    padding: 16px 0 4px !important;
+    margin: 0 !important;
+}
+
+.cancel-btn {
+    border-radius: 10px !important;
+    font-family: var(--brand-mono);
+    font-weight: 700;
+    font-size: 0.8rem;
+    letter-spacing: 0.5px;
+    background: var(--brand-cream) !important;
+    color: var(--brand-ink-soft) !important;
+}
+
+.confirm-btn {
+    border-radius: 10px !important;
+    font-family: var(--brand-mono);
+    font-weight: 700;
+    font-size: 0.8rem;
+    letter-spacing: 0.5px;
+    background: var(--brand-red) !important;
+    color: var(--brand-ivory) !important;
+}

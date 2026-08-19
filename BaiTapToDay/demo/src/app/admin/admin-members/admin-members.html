@@ -1,0 +1,121 @@
+<app-admin-nav></app-admin-nav>
+
+<div class="admin-members-container">
+    <h1 class="admin-page-title">Quản lý thành viên</h1>
+
+    @if (actionMessage()) {
+    <div class="server-success">{{ actionMessage() }}</div>
+    }
+    @if (actionError()) {
+    <div class="server-error">{{ actionError() }}</div>
+    }
+
+    <section class="section">
+        <h2 class="section-title">Quản trị viên hiện tại</h2>
+        @if (adminsLoading()) {
+        <div class="status-message">Đang tải...</div>
+        } @else if (adminsError()) {
+        <div class="server-error">{{ adminsError() }}</div>
+        } @else if (admins().length === 0) {
+        <div class="status-message">Chưa có quản trị viên nào.</div>
+        } @else {
+        <div class="table-wrapper">
+            <table class="admin-table">
+                <thead>
+                    <tr>
+                        <th>Username</th>
+                        <th>Họ tên</th>
+                        <th>Email</th>
+                        <th></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @for (user of admins(); track user.id) {
+                    <tr>
+                        <td>{{ user.username }}</td>
+                        <td>{{ user.name }}</td>
+                        <td>{{ user.email }}</td>
+                        <td>
+                            @if (user.id === auth.currentUser()?.id) {
+                            <span class="self-badge">Bạn</span>
+                            } @else {
+                            <button mat-flat-button type="button" class="revoke-btn"
+                                [disabled]="actioningId() === user.id" (click)="revokeAdmin(user)">
+                                Thu hồi admin
+                            </button>
+                            }
+                        </td>
+                    </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+        }
+    </section>
+
+    <section class="section">
+        <h2 class="section-title">Tìm kiếm thành viên</h2>
+        <div class="search-row">
+            <mat-form-field appearance="outline" subscriptSizing="dynamic" class="search-field">
+                <mat-label>Tìm theo username / email / họ tên</mat-label>
+                <mat-icon matPrefix>search</mat-icon>
+                <input matInput [ngModel]="searchKeyword()" (ngModelChange)="searchKeyword.set($event)"
+                    (keyup.enter)="runSearch()" placeholder="Nhập từ khóa...">
+            </mat-form-field>
+            <button mat-flat-button type="button" class="search-btn" (click)="runSearch()">Tìm kiếm</button>
+        </div>
+
+        @if (searchLoading()) {
+        <div class="status-message">Đang tìm kiếm...</div>
+        } @else if (searchError()) {
+        <div class="server-error">{{ searchError() }}</div>
+        } @else if (searchResults().length === 0) {
+        <div class="status-message">Không tìm thấy thành viên nào.</div>
+        } @else {
+        <div class="table-wrapper">
+            <table class="admin-table">
+                <thead>
+                    <tr>
+                        <th>Username</th>
+                        <th>Họ tên</th>
+                        <th>Email</th>
+                        <th>Vai trò</th>
+                        <th></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @for (user of searchResults(); track user.id) {
+                    <tr>
+                        <td>{{ user.username }}</td>
+                        <td>{{ user.name }}</td>
+                        <td>{{ user.email }}</td>
+                        <td>
+                            <span class="role-badge" [class.role-admin]="user.role === 'admin'">
+                                {{ user.role === 'admin' ? 'Admin' : 'User' }}
+                            </span>
+                        </td>
+                        <td>
+                            @if (user.role === 'admin') {
+                            @if (user.id === auth.currentUser()?.id) {
+                            <span class="self-badge">Bạn</span>
+                            } @else {
+                            <button mat-flat-button type="button" class="revoke-btn"
+                                [disabled]="actioningId() === user.id" (click)="revokeAdmin(user)">
+                                Thu hồi admin
+                            </button>
+                            }
+                            } @else {
+                            <button mat-flat-button type="button" class="grant-btn"
+                                [disabled]="actioningId() === user.id" (click)="grantAdmin(user)">
+                                Cấp quyền admin
+                            </button>
+                            }
+                        </td>
+                    </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+        }
+    </section>
+</div>

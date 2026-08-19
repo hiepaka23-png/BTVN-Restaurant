@@ -1,0 +1,50 @@
+/* You can add global styles to this file, and also import other style files */
+
+@import 'tailwindcss';
+
+:root {
+  /* Bảng màu "Bếp Nhà" — đất nung + ngọc bích, lấy chất liệu gốm Bát Tràng và nồi đất Việt. */
+  --brand-ink: #241c14;
+  --brand-ink-soft: #4a3a2a;
+  --brand-burgundy: #c1502e;
+  --brand-burgundy-light: #d97347;
+  --brand-burgundy-dark: #96371c;
+  --brand-gold: #2f5d50;
+  --brand-gold-light: #457a6b;
+  --brand-gold-soft: #dce8e0;
+  --brand-cream: #f3ecdd;
+  --brand-cream-dark: #e8dcc4;
+  --brand-ivory: #fdfaf3;
+  --brand-red: #a8321e;
+  --brand-red-dark: #7e2416;
+  --brand-brass: #b8863b;
+
+  --brand-sans: 'Be Vietnam Pro', 'Inter', 'Roboto', system-ui, -apple-system, sans-serif;
+  --brand-serif: 'Playfair Display', 'Georgia', serif;
+  --brand-mono: 'JetBrains Mono', 'Courier New', monospace;
+
+  --brand-shadow-soft: 0 10px 30px -8px rgba(36, 28, 20, 0.18);
+  --brand-shadow-strong: 0 20px 45px -12px rgba(36, 28, 20, 0.3);
+}
+
+/* Ép các component Material dùng color="primary" (nút, viền ô nhập khi focus, ripple...) đi theo
+   đúng màu đất nung của thương hiệu thay vì màu đỏ mặc định của theme Material. */
+:root {
+  --mat-sys-primary: var(--brand-burgundy);
+  --mat-sys-on-primary: var(--brand-ivory);
+  --mat-sys-tertiary: var(--brand-gold);
+  --mat-sys-on-tertiary: var(--brand-ivory);
+}
+
+body {
+  font-family: var(--brand-sans);
+}
+
+/* Panel của MatDialog (ConfirmDialog) — render qua CDK overlay ngoài phạm vi style scoped
+   của component, nên cần định nghĩa global ở đây. */
+.brand-dialog-panel .mat-mdc-dialog-surface {
+  background: var(--brand-ivory);
+  border-radius: 2px;
+  border-top: 3px solid var(--brand-brass);
+  padding: 20px 24px;
+}

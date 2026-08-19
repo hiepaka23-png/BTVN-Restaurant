@@ -1,0 +1,54 @@
+<div class="app-container">
+    <div class="menu-header">
+        <span class="menu-eyebrow">Thực đơn</span>
+        <h1 class="main-title">Tinh Hoa Ẩm Thực</h1>
+        <p class="menu-subtitle">Tuyển chọn những công thức được chăm chút tỉ mỉ đến từng chi tiết</p>
+    </div>
+    <div class="top-actions">
+        <mat-form-field appearance="outline" class="search-field">
+            <mat-label for="recipe-search">Tìm món ăn</mat-label>
+            <mat-icon matPrefix>search</mat-icon>
+            <input matInput id="recipe-search" type="text" [ngModel]="store.keyword()" (ngModelChange)="store.setKeyword($event)"
+                placeholder="Nhập tên món ăn..." />
+        </mat-form-field>
+    </div>
+    @if (store.isLoading()) {
+    <div class="status-message">
+        <mat-icon class="spin-icon">autorenew</mat-icon>
+        <span>Đang tải danh sách món ăn...</span>
+    </div>
+    } @else if (store.recipes().length === 0 && store.keyword().trim() !== '') {
+    <div class="status-message">
+        <mat-icon>search_off</mat-icon>
+        <span>
+            Không tìm thấy món ăn
+            "<strong>{{ store.keyword() }}</strong>"
+        </span>
+    </div>
+    } @else {
+    <div class="recipe-grid">
+        @for (recipe of store.recipes(); track recipe.id) {
+        <a class="recipe-card" [routerLink]="['/recipes', recipe.id]">
+
+            <img class="recipe-image" [src]="recipe.imgUrl" [alt]="recipe.name" />
+
+            <div class="recipe-content">
+                <div class="recipe-title">
+                    <span [title]="recipe.name">{{ recipe.name }}</span>
+
+                    @if(recipe.isFavorite){
+                    <mat-icon class="favorite-icon">star</mat-icon>
+                    }
+                </div>
+
+                <div class="recipe-subtitle">
+                    Nhấn để xem chi tiết công thức
+                </div>
+                <div class="recipe-price">{{ formatPrice(recipe.price) }}</div>
+            </div>
+
+        </a>
+        }
+    </div>
+    }
+</div>
