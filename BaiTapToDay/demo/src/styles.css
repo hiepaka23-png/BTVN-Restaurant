@@ -55,3 +55,19 @@ body {
   border-top: 3px solid var(--brand-brass);
   padding: 20px 24px;
 }
+
+/* Panel của MatSnackBar khi mở bằng openFromComponent(NotificationToast) — bỏ hết nền/khoảng
+   cách/bóng đổ mặc định (tối màu, bo góc vuông) của Material để thẻ trắng tự thiết kế bên trong
+   NotificationToast hiện đúng, không bị 2 lớp nền chồng nhau. Cũng render qua CDK overlay ngoài
+   phạm vi style scoped của component nên phải định nghĩa global ở đây (giống brand-dialog-panel). */
+.brand-toast-panel .mat-mdc-snackbar-surface {
+  background: var(--brand-ivory) !important;
+  color: inherit !important;
+  border-radius: var(--radius-lg) !important;
+  box-shadow: var(--brand-shadow-strong) !important;
+  padding: 0 !important;
+}
+
+.brand-toast-panel .mat-mdc-snack-bar-label {
+  padding: 0 !important;
+}

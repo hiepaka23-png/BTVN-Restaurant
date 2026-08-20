@@ -1,0 +1,12 @@
+<div class="toast">
+    <span class="toast-icon">
+        <mat-icon>notifications</mat-icon>
+    </span>
+    <div class="toast-body">
+        <p class="toast-title">{{ data.title }}</p>
+        <p class="toast-message">{{ data.message }}</p>
+    </div>
+    <button type="button" class="toast-close" (click)="close()" aria-label="Đóng">
+        <mat-icon>close</mat-icon>
+    </button>
+</div>

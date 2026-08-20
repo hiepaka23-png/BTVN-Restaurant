@@ -3,10 +3,10 @@ import { CommonModule } from '@angular/common';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatDialog, MatDialogModule, MatDialogRef } from '@angular/material/dialog';
-import { MatSnackBar } from '@angular/material/snack-bar';
 import { firstValueFrom } from 'rxjs';
 import { PromoCode } from '../models';
 import { PromoService } from '../promo-service';
+import { ToastService } from '../toast-service';
 import { GiftRewardDialog } from '../gift-reward-dialog/gift-reward-dialog';
 
 const GIFT_BOX_COUNT = 5;
@@ -26,7 +26,7 @@ const GIFT_BOX_COUNT = 5;
 export class LuckyGift implements OnInit {
   private readonly promoService = inject(PromoService);
   private readonly dialog = inject(MatDialog);
-  private readonly snackBar = inject(MatSnackBar);
+  private readonly toast = inject(ToastService);
   private readonly panelRef = inject(MatDialogRef<LuckyGift>);
 
   protected readonly boxIndexes = Array.from({ length: GIFT_BOX_COUNT }, (_, i) => i);
@@ -78,7 +78,7 @@ export class LuckyGift implements OnInit {
       }
     } catch {
       this.openingIndex.set(null);
-      this.snackBar.open('Không mở được hộp quà, vui lòng thử lại.', 'Đóng', { duration: 3000 });
+      this.toast.show('Không mở được hộp quà, vui lòng thử lại.');
     }
   }
 
@@ -89,11 +89,9 @@ export class LuckyGift implements OnInit {
   protected async copyCode(code: string): Promise<void> {
     try {
       await navigator.clipboard.writeText(code);
-      this.snackBar.open(`Đã sao chép mã ${code} — dùng khi đặt món nhé!`, 'Đóng', {
-        duration: 4000,
-      });
+      this.toast.show(`Đã sao chép mã ${code} — dùng khi đặt món nhé!`);
     } catch {
-      this.snackBar.open(`Mã ưu đãi của bạn: ${code}`, 'Đóng', { duration: 5000 });
+      this.toast.show(`Mã ưu đãi của bạn: ${code}`, 'Thông báo', 5000);
     }
   }
 }

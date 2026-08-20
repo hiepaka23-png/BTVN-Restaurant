@@ -10,7 +10,6 @@ import { MatCardModule } from '@angular/material/card';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatDialog } from '@angular/material/dialog';
-import { MatSnackBar } from '@angular/material/snack-bar';
 
 import { Order } from '../models';
 import { OrderService } from '../order-service';
@@ -20,6 +19,7 @@ import { AuthService } from '../auth-service';
 import { CancelOrderDialog } from '../cancel-order-dialog/cancel-order-dialog';
 import { NAME_PATTERN, VN_PHONE_PATTERN, ADDRESS_PATTERN } from '../validators';
 import { NotificationService } from '../notification-service';
+import { ToastService } from '../toast-service';
 import { AutofillSyncDirective } from '../autofill-sync-directive';
 import { resolveImageUrl } from '../api-config';
 import { buildBankQrUrl } from '../bank-config';
@@ -106,7 +106,7 @@ export class MyOrdersPage implements OnInit, OnDestroy {
   private readonly dialog = inject(MatDialog);
   private readonly fb = inject(FormBuilder);
   private readonly notifications = inject(NotificationService);
-  private readonly snackBar = inject(MatSnackBar);
+  private readonly toast = inject(ToastService);
 
   protected readonly statusLabels = STATUS_LABELS;
   protected readonly statusIcons = STATUS_ICONS;
@@ -254,14 +254,14 @@ export class MyOrdersPage implements OnInit, OnDestroy {
       }
 
       if (addedCount === 0) {
-        this.snackBar.open('Các món trong đơn này không còn trong thực đơn.', 'Đóng', { duration: 4000 });
+        this.toast.show('Các món trong đơn này không còn trong thực đơn.');
         return;
       }
       const message =
         missingCount > 0
           ? `Đã thêm ${addedCount} món vào giỏ (${missingCount} món không còn bán).`
           : `Đã thêm ${addedCount} món vào giỏ hàng.`;
-      this.snackBar.open(message, 'Đóng', { duration: 4000 });
+      this.toast.show(message);
       this.router.navigate(['/cart']);
     } finally {
       this.reorderingId.set(null);

@@ -1,9 +1,9 @@
 import { effect, inject, Injectable } from '@angular/core';
-import { MatSnackBar } from '@angular/material/snack-bar';
 import { Subject } from 'rxjs';
 import { AuthService } from './auth-service';
 import { Order } from './models';
 import { API_ORIGIN } from './api-config';
+import { ToastService } from './toast-service';
 
 export const SSE_URL = `${API_ORIGIN}/notifications/sse`;
 
@@ -30,7 +30,7 @@ const STATUS_LABELS: Record<Order['status'], string> = {
 @Injectable({ providedIn: 'root' })
 export class NotificationService {
   private readonly authService = inject(AuthService);
-  private readonly snackBar = inject(MatSnackBar);
+  private readonly toast = inject(ToastService);
 
   readonly events$ = new Subject<NotificationEvent>();
 
@@ -77,9 +77,9 @@ export class NotificationService {
     const statusLabel = STATUS_LABELS[event.order.status];
     const message =
       event.type === 'order_created'
-        ? `Đơn hàng mới #${event.order._id.slice(-6)} vừa được tạo.`
+        ? `Đơn hàng #${event.order._id.slice(-6)} vừa được tạo.`
         : `Đơn hàng #${event.order._id.slice(-6)} đã chuyển sang trạng thái "${statusLabel}".`;
 
-    this.snackBar.open(message, 'Đóng', { duration: 5000 });
+    this.toast.show(message, 'Thông báo', 5000);
   }
 }

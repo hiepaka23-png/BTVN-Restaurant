@@ -9,7 +9,6 @@ import { MatInputModule } from '@angular/material/input';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatDialog } from '@angular/material/dialog';
-import { MatSnackBar } from '@angular/material/snack-bar';
 import { firstValueFrom } from 'rxjs';
 
 import { AuthService } from '../auth-service';
@@ -19,6 +18,7 @@ import { ConfirmDialog } from '../confirm-dialog/confirm-dialog';
 import { AvatarCropDialog, AvatarCropDialogData } from '../avatar-crop-dialog/avatar-crop-dialog';
 import { DeleteAccountDialog, DeleteAccountDialogData } from '../delete-account-dialog/delete-account-dialog';
 import { AutofillSyncDirective } from '../autofill-sync-directive';
+import { ToastService } from '../toast-service';
 import { resolveImageUrl } from '../api-config';
 import { BackLink } from '../back-link/back-link';
 
@@ -64,7 +64,7 @@ export class ProfilePage {
   private readonly orderService = inject(OrderService);
   private readonly fb = inject(FormBuilder);
   private readonly dialog = inject(MatDialog);
-  private readonly snackBar = inject(MatSnackBar);
+  private readonly toast = inject(ToastService);
   private readonly router = inject(Router);
 
   protected readonly defaultAvatar = DEFAULT_AVATAR;
@@ -181,7 +181,7 @@ export class ProfilePage {
   // Lỗi avatar hiện ngay trên màn hình bằng snackbar (nổi lên rồi tự tắt) thay vì dòng chữ nhỏ nằm
   // dưới nút — vị trí đó dễ bị bỏ lỡ nếu người dùng đã lướt mắt sang chỗ khác của trang.
   private showAvatarError(message: string): void {
-    this.snackBar.open(message, 'Đóng', { duration: 4000 });
+    this.toast.show(message);
   }
 
   protected async onAvatarSelected(event: Event): Promise<void> {

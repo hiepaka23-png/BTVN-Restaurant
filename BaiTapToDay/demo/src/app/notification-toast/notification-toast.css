@@ -1,0 +1,77 @@
+:host {
+    display: block;
+}
+
+.toast {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    width: 320px;
+    max-width: 100%;
+    padding: 16px;
+    font-family: var(--brand-sans);
+}
+
+.toast-icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background: var(--brand-gold-soft);
+    color: var(--brand-burgundy);
+}
+
+.toast-icon mat-icon {
+    width: 20px;
+    height: 20px;
+    font-size: 20px;
+}
+
+.toast-body {
+    flex: 1;
+    min-width: 0;
+}
+
+.toast-title {
+    margin: 0 0 2px;
+    font-weight: 700;
+    font-size: 0.92rem;
+    color: var(--brand-ink);
+}
+
+.toast-message {
+    margin: 0;
+    font-size: 0.84rem;
+    line-height: 1.45;
+    color: var(--brand-ink-soft);
+}
+
+.toast-close {
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 26px;
+    height: 26px;
+    margin: -4px -4px 0 0;
+    padding: 0;
+    border: none;
+    border-radius: 50%;
+    background: none;
+    color: var(--brand-ink-soft);
+    cursor: pointer;
+    transition: background-color 0.15s ease;
+}
+
+.toast-close:hover {
+    background: var(--brand-cream);
+}
+
+.toast-close mat-icon {
+    width: 16px;
+    height: 16px;
+    font-size: 16px;
+}
