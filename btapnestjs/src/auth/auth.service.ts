@@ -1,6 +1,7 @@
 import {
   BadRequestException,
   ConflictException,
+  ForbiddenException,
   Injectable,
   NotFoundException,
   UnauthorizedException,
@@ -24,6 +25,11 @@ const ACCESS_TOKEN_TTL_SECONDS = 10 * 60; // 10 phút
 const REFRESH_TOKEN_TTL_SECONDS = 7 * 24 * 60 * 60; // 7 ngày
 const RESET_TOKEN_TTL_MINUTES = 15;
 
+// Dùng chung cho cả lúc chặn đăng nhập lẫn lúc đá tài khoản đang có phiên hoạt động (SSE event
+// 'user_banned', xem notification-service.ts phía frontend) — cùng 1 câu để nhất quán.
+export const BANNED_ACCOUNT_MESSAGE =
+  'Tài khoản của bạn đã bị ban, vui lòng liên hệ tổng đài 1900 2211 để được hỗ trợ.';
+
 function hashToken(token: string): string {
   return createHash('sha256').update(token).digest('hex');
 }
@@ -42,6 +48,8 @@ function toPublicUser(user: User) {
     name: user.name,
     role: user.role,
     avatarUrl: user.avatarUrl,
+    isSuperAdmin: user.isSuperAdmin,
+    isBanned: user.isBanned,
   };
 }
 
@@ -92,6 +100,9 @@ export class AuthService {
     if (!user || !passwordMatches) {
       throw new UnauthorizedException('Tài khoản hoặc mật khẩu không đúng');
     }
+    if (user.isBanned) {
+      throw new ForbiddenException(BANNED_ACCOUNT_MESSAGE);
+    }
 
     return { ...(await this.issueTokens(user)), user: toPublicUser(user) };
   }
@@ -129,6 +140,9 @@ export class AuthService {
     const matches = await bcrypt.compare(refreshToken, user.refreshTokenHash);
     if (!matches) {
       throw new UnauthorizedException('Refresh token không hợp lệ');
+    }
+    if (user.isBanned) {
+      throw new ForbiddenException(BANNED_ACCOUNT_MESSAGE);
     }
 
     // Rotate: refresh token cũ bị vô hiệu hoá ngay khi cấp token mới.

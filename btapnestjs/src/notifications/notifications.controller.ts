@@ -35,7 +35,11 @@ export class NotificationsController {
     const username = decoded.username as string;
 
     return this.notificationsService.stream$.pipe(
-      filter((event) => role === 'admin' || event.order.username === username),
+      filter((event) =>
+        event.type === 'user_banned'
+          ? event.userId === decoded.sub
+          : role === 'admin' || event.order.username === username,
+      ),
       map((event) => ({ data: event })),
     );
   }

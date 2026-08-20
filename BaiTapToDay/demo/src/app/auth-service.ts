@@ -15,6 +15,8 @@ export interface AuthUser {
   name: string;
   role: string;
   avatarUrl?: string | null;
+  isSuperAdmin?: boolean;
+  isBanned?: boolean;
 }
 
 interface AuthResponse {
@@ -176,9 +178,10 @@ export class AuthService {
     }
   }
 
-  // Dùng bởi interceptor khi refresh token cũng đã hết hạn/không hợp lệ — không gọi /auth/logout
-  // vì phiên coi như đã chết ở phía server, chỉ cần dọn cục bộ và điều hướng kèm lý do.
-  forceLogout(reason: 'expired' | 'invalid'): void {
+  // Dùng bởi interceptor khi refresh token cũng đã hết hạn/không hợp lệ, hoặc khi tài khoản vừa bị
+  // admin ban (nhận qua SSE, xem notification-service.ts) — không gọi /auth/logout vì phiên coi như
+  // đã chết ở phía server, chỉ cần dọn cục bộ và điều hướng kèm lý do.
+  forceLogout(reason: 'expired' | 'invalid' | 'banned'): void {
     this.clearSession();
     this.router.navigate(['/login'], { queryParams: { reason } });
   }

@@ -7,13 +7,22 @@ import { ToastService } from './toast-service';
 
 export const SSE_URL = `${API_ORIGIN}/notifications/sse`;
 
-export type NotificationEventType = 'order_created' | 'order_status_changed';
+export type NotificationEventType = 'order_created' | 'order_status_changed' | 'user_banned';
 
-export interface NotificationEvent {
-  type: NotificationEventType;
+export interface OrderNotificationEvent {
+  type: 'order_created' | 'order_status_changed';
   order: Order;
   timestamp: string;
 }
+
+// Backend chỉ gửi sự kiện này cho đúng người bị ban (đã lọc theo userId ở NotificationsController),
+// nên nhận được là biết chắc "mình" vừa bị ban — không cần kiểm tra thêm gì ở đây.
+export interface UserBannedNotificationEvent {
+  type: 'user_banned';
+  timestamp: string;
+}
+
+export type NotificationEvent = OrderNotificationEvent | UserBannedNotificationEvent;
 
 // Câu tự nhiên theo từng trạng thái (thay vì "đã chuyển sang trạng thái X" nghe cứng/máy móc) —
 // ghép sau "Đơn hàng #xxx (của bạn)" nên viết liền mạch, không lặp lại chữ "đơn hàng"/"trạng thái".
@@ -59,6 +68,13 @@ export class NotificationService {
     this.eventSource.onmessage = (message: MessageEvent<string>) => {
       try {
         const event = JSON.parse(message.data) as NotificationEvent;
+        if (event.type === 'user_banned') {
+          // Đá ngay về trang đăng nhập, không đợi access token hết hạn — không cần phát qua events$
+          // (không có trang nào khác cần biết) hay hiện toast (trang sẽ điều hướng đi ngay).
+          this.disconnect();
+          this.authService.forceLogout('banned');
+          return;
+        }
         this.events$.next(event);
         this.showToast(event);
       } catch {
@@ -75,7 +91,7 @@ export class NotificationService {
     this.eventSource = null;
   }
 
-  private showToast(event: NotificationEvent): void {
+  private showToast(event: OrderNotificationEvent): void {
     const code = `#${event.order._id.slice(-6)}`;
     // Chỉ thêm "của bạn" khi đúng là đơn của người đang xem — admin xem đơn của người khác thì
     // không thêm, tránh nghe như đang nhận nhầm đơn hàng của chính mình.

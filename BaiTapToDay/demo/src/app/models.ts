@@ -89,3 +89,29 @@ export interface OrderStats {
     totalRevenue: number;
     revenueByDay: RevenueByDay[];
 }
+
+// Hồ sơ ứng tuyển gửi từ trang /careers — admin xem qua GET /job-applications.
+export interface JobApplication {
+    _id: string;
+    username: string;
+    fullName: string;
+    email: string;
+    phone: string;
+    position: string;
+    message: string;
+    cvUrl: string;
+    cvFileName: string;
+    createdAt: string;
+}
+
+// Tin nhắn liên hệ gửi từ trang /contact — admin xem qua GET /contact-messages.
+export interface ContactMessage {
+    _id: string;
+    username: string;
+    fullName: string;
+    email: string;
+    phone: string;
+    subject: string;
+    message: string;
+    createdAt: string;
+}

@@ -81,6 +81,19 @@ export const routes: Routes = [
         canActivate: [authGuard, adminGuard],
     },
     {
+        path: 'admin/careers',
+        loadComponent: () => import('./admin/admin-careers/admin-careers').then((m) => m.AdminCareersPage),
+        canActivate: [authGuard, adminGuard],
+    },
+    {
+        path: 'admin/contact-messages',
+        loadComponent: () =>
+            import('./admin/admin-contact-messages/admin-contact-messages').then(
+                (m) => m.AdminContactMessagesPage,
+            ),
+        canActivate: [authGuard, adminGuard],
+    },
+    {
         path: 'admin/recipes/new',
         loadComponent: () => import('./add-recipe/add-recipe').then((m) => m.AddRecipe),
         canActivate: [authGuard, adminGuard],

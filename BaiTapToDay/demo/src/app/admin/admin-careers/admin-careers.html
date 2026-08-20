@@ -1,0 +1,48 @@
+<app-admin-nav></app-admin-nav>
+
+<div class="admin-careers-container">
+    <h1 class="admin-page-title">Hồ sơ ứng tuyển</h1>
+
+    @if (loading()) {
+    <div class="status-message">Đang tải...</div>
+    } @else if (errorMessage()) {
+    <div class="server-error">{{ errorMessage() }}</div>
+    } @else if (applications().length === 0) {
+    <div class="status-message">Chưa có hồ sơ ứng tuyển nào.</div>
+    } @else {
+    <div class="table-wrapper">
+        <table class="admin-table">
+            <thead>
+                <tr>
+                    <th>Ngày nộp</th>
+                    <th>Họ tên</th>
+                    <th>Liên hệ</th>
+                    <th>Vị trí</th>
+                    <th>Lời nhắn</th>
+                    <th>CV</th>
+                </tr>
+            </thead>
+            <tbody>
+                @for (app of applications(); track app._id) {
+                <tr>
+                    <td class="nowrap">{{ formatDate(app.createdAt) }}</td>
+                    <td>{{ app.fullName }}</td>
+                    <td>
+                        <div>{{ app.email }}</div>
+                        <div class="muted">{{ app.phone }}</div>
+                    </td>
+                    <td>{{ app.position }}</td>
+                    <td class="message-cell">{{ app.message || '—' }}</td>
+                    <td class="nowrap">
+                        <a [href]="app.cvUrl" target="_blank" rel="noopener" class="cv-link">
+                            <mat-icon>description</mat-icon>
+                            Xem CV
+                        </a>
+                    </td>
+                </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+    }
+</div>

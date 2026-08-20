@@ -1,0 +1,43 @@
+<app-admin-nav></app-admin-nav>
+
+<div class="admin-contact-container">
+    <h1 class="admin-page-title">Tin nhắn liên hệ</h1>
+
+    @if (loading()) {
+    <div class="status-message">Đang tải...</div>
+    } @else if (errorMessage()) {
+    <div class="server-error">{{ errorMessage() }}</div>
+    } @else if (messages().length === 0) {
+    <div class="status-message">Chưa có tin nhắn liên hệ nào.</div>
+    } @else {
+    <div class="table-wrapper">
+        <table class="admin-table">
+            <thead>
+                <tr>
+                    <th>Ngày gửi</th>
+                    <th>Họ tên</th>
+                    <th>Liên hệ</th>
+                    <th>Chủ đề</th>
+                    <th>Nội dung</th>
+                </tr>
+            </thead>
+            <tbody>
+                @for (msg of messages(); track msg._id) {
+                <tr>
+                    <td class="nowrap">{{ formatDate(msg.createdAt) }}</td>
+                    <td>{{ msg.fullName }}</td>
+                    <td>
+                        <div>{{ msg.email }}</div>
+                        @if (msg.phone) {
+                        <div class="muted">{{ msg.phone }}</div>
+                        }
+                    </td>
+                    <td>{{ msg.subject }}</td>
+                    <td class="message-cell">{{ msg.message }}</td>
+                </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+    }
+</div>

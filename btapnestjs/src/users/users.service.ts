@@ -1,4 +1,9 @@
-import { BadRequestException, Injectable } from '@nestjs/common';
+import {
+  BadRequestException,
+  Injectable,
+  Logger,
+  OnModuleInit,
+} from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import * as bcrypt from 'bcrypt';
@@ -6,6 +11,11 @@ import { randomInt, createHash } from 'crypto';
 import { User } from './user.schema';
 import { RegisterDto } from '../auth/dto/register.dto';
 import { MailService } from '../mail/mail.service';
+
+// Username của tài khoản chủ hệ thống — người DUY NHẤT có quyền ban/unban tài khoản khác. Không có
+// cơ chế cấp quyền super admin qua API (khác với role 'admin' thường), chỉ đánh dấu một lần lúc
+// server khởi động (xem onModuleInit bên dưới).
+const SUPER_ADMIN_USERNAME = 'hiepaka';
 
 const SALT_ROUNDS = 10;
 const DELETE_TOKEN_TTL_MINUTES = 10;
@@ -20,11 +30,32 @@ function generateDeleteCode(): string {
 }
 
 @Injectable()
-export class UsersService {
+export class UsersService implements OnModuleInit {
+  private readonly logger = new Logger(UsersService.name);
+
   constructor(
     @InjectModel(User.name) private userModel: Model<User>,
     private readonly mailService: MailService,
   ) {}
+
+  // Đảm bảo tài khoản chủ hệ thống luôn có isSuperAdmin=true — chạy lại mỗi lần server khởi động
+  // (idempotent, chỉ update nếu cần) thay vì chạy script thủ công một lần, vì môi trường deploy
+  // (Render) không có cách thuận tiện để chạy migration script riêng.
+  async onModuleInit(): Promise<void> {
+    try {
+      const result = await this.userModel
+        .updateOne(
+          { username: SUPER_ADMIN_USERNAME, isSuperAdmin: { $ne: true } },
+          { isSuperAdmin: true },
+        )
+        .exec();
+      if (result.modifiedCount > 0) {
+        this.logger.log(`Đã đánh dấu "${SUPER_ADMIN_USERNAME}" là super admin.`);
+      }
+    } catch (error) {
+      this.logger.error('Không thể bootstrap super admin', error as Error);
+    }
+  }
 
   async findByUsername(username: string): Promise<User | null> {
     return this.userModel.findOne({ username }).exec();
@@ -190,5 +221,11 @@ export class UsersService {
 
   async setRole(id: string, role: 'user' | 'admin'): Promise<User | null> {
     return this.userModel.findByIdAndUpdate(id, { role }, { new: true }).exec();
+  }
+
+  async setBanned(id: string, banned: boolean): Promise<User | null> {
+    return this.userModel
+      .findByIdAndUpdate(id, { isBanned: banned }, { new: true })
+      .exec();
   }
 }

@@ -11,7 +11,9 @@
 .admin-orders-container,
 .admin-dashboard-container,
 .admin-members-container,
-.admin-recipes-container {
+.admin-recipes-container,
+.admin-careers-container,
+.admin-contact-container {
     max-width: 1200px;
     margin: 0 auto;
     padding: 32px 28px 60px;
@@ -100,7 +102,9 @@
     .admin-orders-container,
     .admin-dashboard-container,
     .admin-members-container,
-    .admin-recipes-container {
+    .admin-recipes-container,
+    .admin-careers-container,
+    .admin-contact-container {
         padding: 20px 14px 40px;
     }
 

@@ -51,6 +51,10 @@ export class AdminMembersPage implements OnInit {
   protected readonly actionMessage = signal('');
   protected readonly actionError = signal('');
 
+  // Chỉ tài khoản chủ hệ thống mới thấy nút ban/unban — admin thường (kể cả vừa được cấp quyền)
+  // không có, đúng yêu cầu "chỉ mình tôi ban được".
+  protected readonly isSuperAdmin = () => this.auth.currentUser()?.isSuperAdmin === true;
+
   ngOnInit(): void {
     this.loadAdmins();
     this.runSearch();
@@ -124,6 +128,51 @@ export class AdminMembersPage implements OnInit {
       } else {
         this.actionError.set(error?.error?.message || 'Thu hồi quyền admin thất bại.');
       }
+    } finally {
+      this.actioningId.set(null);
+    }
+  }
+
+  protected async banUser(user: AuthUser): Promise<void> {
+    this.actionMessage.set('');
+    this.actionError.set('');
+
+    const dialogRef = this.dialog.open(ConfirmDialog, {
+      panelClass: 'brand-dialog-panel',
+      data: {
+        title: 'Ban tài khoản',
+        message: `Bạn có chắc muốn ban tài khoản "${user.username}"? Tài khoản này sẽ bị đăng xuất ngay và không thể đăng nhập lại.`,
+        confirmText: 'Ban',
+        danger: true,
+      },
+    });
+    const confirmed = await firstValueFrom(dialogRef.afterClosed());
+    if (!confirmed) {
+      return;
+    }
+
+    this.actioningId.set(user.id);
+    try {
+      await this.userService.banUser(user.id);
+      this.actionMessage.set(`Đã ban tài khoản ${user.username}.`);
+      await Promise.all([this.loadAdmins(), this.runSearch()]);
+    } catch (error: any) {
+      this.actionError.set(error?.error?.message || 'Ban tài khoản thất bại.');
+    } finally {
+      this.actioningId.set(null);
+    }
+  }
+
+  protected async unbanUser(user: AuthUser): Promise<void> {
+    this.actionMessage.set('');
+    this.actionError.set('');
+    this.actioningId.set(user.id);
+    try {
+      await this.userService.unbanUser(user.id);
+      this.actionMessage.set(`Đã bỏ ban tài khoản ${user.username}.`);
+      await Promise.all([this.loadAdmins(), this.runSearch()]);
+    } catch (error: any) {
+      this.actionError.set(error?.error?.message || 'Bỏ ban tài khoản thất bại.');
     } finally {
       this.actioningId.set(null);
     }

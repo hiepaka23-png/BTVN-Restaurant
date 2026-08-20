@@ -72,3 +72,27 @@
     background: #eef0f4;
     color: #5b6272;
 }
+
+.banned-badge {
+    margin-left: 6px;
+    background: #fbe9e7;
+    color: #b3261e;
+}
+
+.action-cell {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+}
+
+.ban-btn {
+    background: #b3261e !important;
+    color: #ffffff !important;
+    font-size: 0.78rem;
+}
+
+.unban-btn {
+    background: #2f6f65 !important;
+    color: #ffffff !important;
+    font-size: 0.78rem;
+}

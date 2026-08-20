@@ -21,6 +21,17 @@ export class User extends Document {
   @Prop({ default: '' })
   avatarUrl: string;
 
+  // Chỉ tài khoản chủ hệ thống (đánh dấu 1 lần khi khởi động, xem UsersService.onModuleInit) mới có
+  // isSuperAdmin=true — admin được cấp quyền qua PATCH /users/:id/role KHÔNG có quyền ban/unban, chỉ
+  // super admin mới thao tác được (xem SuperAdminGuard).
+  @Prop({ default: false })
+  isSuperAdmin: boolean;
+
+  // Tài khoản bị ban thì không đăng nhập lại được (auth.service.ts) và bị đá ngay khỏi phiên đang
+  // mở qua sự kiện SSE 'user_banned' (notifications module) thay vì phải đợi access token hết hạn.
+  @Prop({ default: false })
+  isBanned: boolean;
+
   // Hash của refresh token hiện hành — cho phép thu hồi (BE-06) bằng cách xoá field này.
   @Prop({ type: String, default: null })
   refreshTokenHash: string | null;

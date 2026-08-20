@@ -1,0 +1,29 @@
+@import '../admin-shared.css';
+
+.nowrap {
+    white-space: nowrap;
+}
+
+.message-cell {
+    max-width: 260px;
+    white-space: pre-wrap;
+}
+
+.cv-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    color: #2f6f65;
+    font-weight: 600;
+    text-decoration: none;
+}
+
+.cv-link:hover {
+    text-decoration: underline;
+}
+
+.cv-link mat-icon {
+    width: 18px;
+    height: 18px;
+    font-size: 18px;
+}

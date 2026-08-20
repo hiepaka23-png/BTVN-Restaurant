@@ -82,4 +82,14 @@ export class UserService {
   updateRole(id: string, role: 'user' | 'admin'): Promise<AuthUser> {
     return firstValueFrom(this.http.patch<AuthUser>(`${USERS_API_URL}/${id}/role`, { role }));
   }
+
+  // Chỉ super admin (chủ hệ thống) mới gọi được — backend tự chặn (403) nếu không phải, kể cả với
+  // tài khoản admin thường.
+  banUser(id: string): Promise<AuthUser> {
+    return firstValueFrom(this.http.patch<AuthUser>(`${USERS_API_URL}/${id}/ban`, {}));
+  }
+
+  unbanUser(id: string): Promise<AuthUser> {
+    return firstValueFrom(this.http.patch<AuthUser>(`${USERS_API_URL}/${id}/unban`, {}));
+  }
 }

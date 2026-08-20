@@ -26,6 +26,7 @@
                         <th>Username</th>
                         <th>Họ tên</th>
                         <th>Email</th>
+                        <th>Trạng thái</th>
                         <th></th>
                     </tr>
                 </thead>
@@ -36,14 +37,34 @@
                         <td>{{ user.name }}</td>
                         <td>{{ user.email }}</td>
                         <td>
-                            @if (user.id === auth.currentUser()?.id) {
-                            <span class="self-badge">Bạn</span>
-                            } @else {
-                            <button mat-flat-button type="button" class="revoke-btn"
-                                [disabled]="actioningId() === user.id" (click)="revokeAdmin(user)">
-                                Thu hồi admin
-                            </button>
+                            @if (user.isBanned) {
+                            <span class="role-badge banned-badge">Đã ban</span>
                             }
+                        </td>
+                        <td>
+                            <div class="action-cell">
+                                @if (user.id === auth.currentUser()?.id) {
+                                <span class="self-badge">Bạn</span>
+                                } @else {
+                                <button mat-flat-button type="button" class="revoke-btn"
+                                    [disabled]="actioningId() === user.id" (click)="revokeAdmin(user)">
+                                    Thu hồi admin
+                                </button>
+                                @if (isSuperAdmin()) {
+                                @if (user.isBanned) {
+                                <button mat-flat-button type="button" class="unban-btn"
+                                    [disabled]="actioningId() === user.id" (click)="unbanUser(user)">
+                                    Bỏ ban
+                                </button>
+                                } @else {
+                                <button mat-flat-button type="button" class="ban-btn"
+                                    [disabled]="actioningId() === user.id" (click)="banUser(user)">
+                                    Ban
+                                </button>
+                                }
+                                }
+                                }
+                            </div>
                         </td>
                     </tr>
                     }
@@ -93,23 +114,41 @@
                             <span class="role-badge" [class.role-admin]="user.role === 'admin'">
                                 {{ user.role === 'admin' ? 'Admin' : 'User' }}
                             </span>
+                            @if (user.isBanned) {
+                            <span class="role-badge banned-badge">Đã ban</span>
+                            }
                         </td>
                         <td>
-                            @if (user.role === 'admin') {
-                            @if (user.id === auth.currentUser()?.id) {
-                            <span class="self-badge">Bạn</span>
-                            } @else {
-                            <button mat-flat-button type="button" class="revoke-btn"
-                                [disabled]="actioningId() === user.id" (click)="revokeAdmin(user)">
-                                Thu hồi admin
-                            </button>
-                            }
-                            } @else {
-                            <button mat-flat-button type="button" class="grant-btn"
-                                [disabled]="actioningId() === user.id" (click)="grantAdmin(user)">
-                                Cấp quyền admin
-                            </button>
-                            }
+                            <div class="action-cell">
+                                @if (user.role === 'admin') {
+                                @if (user.id === auth.currentUser()?.id) {
+                                <span class="self-badge">Bạn</span>
+                                } @else {
+                                <button mat-flat-button type="button" class="revoke-btn"
+                                    [disabled]="actioningId() === user.id" (click)="revokeAdmin(user)">
+                                    Thu hồi admin
+                                </button>
+                                }
+                                } @else {
+                                <button mat-flat-button type="button" class="grant-btn"
+                                    [disabled]="actioningId() === user.id" (click)="grantAdmin(user)">
+                                    Cấp quyền admin
+                                </button>
+                                }
+                                @if (isSuperAdmin() && user.id !== auth.currentUser()?.id) {
+                                @if (user.isBanned) {
+                                <button mat-flat-button type="button" class="unban-btn"
+                                    [disabled]="actioningId() === user.id" (click)="unbanUser(user)">
+                                    Bỏ ban
+                                </button>
+                                } @else {
+                                <button mat-flat-button type="button" class="ban-btn"
+                                    [disabled]="actioningId() === user.id" (click)="banUser(user)">
+                                    Ban
+                                </button>
+                                }
+                                }
+                            </div>
                         </td>
                     </tr>
                     }

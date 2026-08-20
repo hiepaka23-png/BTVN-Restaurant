@@ -25,6 +25,7 @@ type AuthMode = 'login' | 'register' | 'forgot-request' | 'forgot-verify' | 'for
 const REDIRECT_REASON_MESSAGES: Record<string, string> = {
   expired: 'Phiên đăng nhập đã hết hạn. Vui lòng đăng nhập lại.',
   invalid: 'Phiên đăng nhập không hợp lệ. Vui lòng đăng nhập lại.',
+  banned: 'Tài khoản của bạn đã bị ban, vui lòng liên hệ tổng đài 1900 2211 để được hỗ trợ.',
 };
 
 // So khớp mật khẩu / xác nhận mật khẩu — gắn thẳng vào control confirm (không phải validator cấp
