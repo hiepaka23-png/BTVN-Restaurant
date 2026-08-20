@@ -115,3 +115,16 @@ export interface ContactMessage {
     message: string;
     createdAt: string;
 }
+
+// Yêu cầu đặt bàn gửi từ trang /reservation — admin xem qua GET /reservations.
+export interface Reservation {
+    _id: string;
+    username: string;
+    customerName: string;
+    phone: string;
+    date: string;
+    time: string;
+    guestCount: number;
+    note: string;
+    createdAt: string;
+}

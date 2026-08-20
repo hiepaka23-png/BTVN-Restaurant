@@ -1,0 +1,40 @@
+<app-admin-nav></app-admin-nav>
+
+<div class="admin-reservations-container">
+    <h1 class="admin-page-title">Yêu cầu đặt bàn</h1>
+
+    @if (loading()) {
+    <div class="status-message">Đang tải...</div>
+    } @else if (errorMessage()) {
+    <div class="server-error">{{ errorMessage() }}</div>
+    } @else if (reservations().length === 0) {
+    <div class="status-message">Chưa có yêu cầu đặt bàn nào.</div>
+    } @else {
+    <div class="table-wrapper">
+        <table class="admin-table">
+            <thead>
+                <tr>
+                    <th>Ngày / giờ đặt</th>
+                    <th>Khách</th>
+                    <th>SĐT</th>
+                    <th>Số khách</th>
+                    <th>Ghi chú</th>
+                    <th>Gửi lúc</th>
+                </tr>
+            </thead>
+            <tbody>
+                @for (res of reservations(); track res._id) {
+                <tr>
+                    <td class="nowrap">{{ formatBookingDate(res.date) }} — {{ res.time }}</td>
+                    <td>{{ res.customerName }}</td>
+                    <td class="nowrap">{{ res.phone }}</td>
+                    <td>{{ res.guestCount }}</td>
+                    <td class="message-cell">{{ res.note || '—' }}</td>
+                    <td class="nowrap muted">{{ formatCreatedAt(res.createdAt) }}</td>
+                </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+    }
+</div>

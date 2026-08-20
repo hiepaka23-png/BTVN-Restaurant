@@ -13,7 +13,8 @@
 .admin-members-container,
 .admin-recipes-container,
 .admin-careers-container,
-.admin-contact-container {
+.admin-contact-container,
+.admin-reservations-container {
     max-width: 1200px;
     margin: 0 auto;
     padding: 32px 28px 60px;
@@ -104,7 +105,8 @@
     .admin-members-container,
     .admin-recipes-container,
     .admin-careers-container,
-    .admin-contact-container {
+    .admin-contact-container,
+    .admin-reservations-container {
         padding: 20px 14px 40px;
     }
 

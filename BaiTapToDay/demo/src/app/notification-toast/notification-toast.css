@@ -12,6 +12,10 @@
     font-family: var(--brand-sans);
 }
 
+.toast.clickable {
+    cursor: pointer;
+}
+
 .toast-icon {
     display: flex;
     align-items: center;

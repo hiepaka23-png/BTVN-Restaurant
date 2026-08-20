@@ -6,12 +6,14 @@ import {
   JobApplication,
   JobApplicationSchema,
 } from './schemas/job-application.schema';
+import { NotificationsModule } from '../notifications/notifications.module';
 
 @Module({
   imports: [
     MongooseModule.forFeature([
       { name: JobApplication.name, schema: JobApplicationSchema },
     ]),
+    NotificationsModule,
   ],
   controllers: [JobApplicationsController],
   providers: [JobApplicationsService],

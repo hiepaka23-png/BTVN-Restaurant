@@ -86,6 +86,12 @@ export const routes: Routes = [
         canActivate: [authGuard, adminGuard],
     },
     {
+        path: 'admin/reservations',
+        loadComponent: () =>
+            import('./admin/admin-reservations/admin-reservations').then((m) => m.AdminReservationsPage),
+        canActivate: [authGuard, adminGuard],
+    },
+    {
         path: 'admin/contact-messages',
         loadComponent: () =>
             import('./admin/admin-contact-messages/admin-contact-messages').then(

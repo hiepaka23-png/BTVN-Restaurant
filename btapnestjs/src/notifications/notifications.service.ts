@@ -20,9 +20,49 @@ export interface UserBannedNotificationEvent {
   timestamp: string;
 }
 
+export interface ReservationEventPayload {
+  id: string;
+  customerName: string;
+  date: string;
+  time: string;
+}
+
+export interface ReservationNotificationEvent {
+  type: 'reservation_created';
+  reservation: ReservationEventPayload;
+  timestamp: string;
+}
+
+export interface ContactMessageEventPayload {
+  id: string;
+  fullName: string;
+  subject: string;
+}
+
+export interface ContactMessageNotificationEvent {
+  type: 'contact_message_created';
+  contactMessage: ContactMessageEventPayload;
+  timestamp: string;
+}
+
+export interface JobApplicationEventPayload {
+  id: string;
+  fullName: string;
+  position: string;
+}
+
+export interface JobApplicationNotificationEvent {
+  type: 'job_application_created';
+  jobApplication: JobApplicationEventPayload;
+  timestamp: string;
+}
+
 export type AppNotificationEvent =
   | OrderNotificationEvent
-  | UserBannedNotificationEvent;
+  | UserBannedNotificationEvent
+  | ReservationNotificationEvent
+  | ContactMessageNotificationEvent
+  | JobApplicationNotificationEvent;
 
 // BE-18: bus thông báo realtime dùng RxJS Subject, phát qua SSE ở NotificationsController.
 @Injectable()
@@ -51,6 +91,33 @@ export class NotificationsService {
     this.events$.next({
       type: 'user_banned',
       userId,
+      timestamp: new Date().toISOString(),
+    });
+  }
+
+  // Ba sự kiện dưới đây CHỈ dành cho admin (lọc theo role ở NotificationsController) — người dùng
+  // gửi liên hệ/hồ sơ/đặt bàn không cần nhận lại thông báo của chính họ (đã có successMessage trên
+  // form ngay khi gửi).
+  emitReservationCreated(reservation: ReservationEventPayload): void {
+    this.events$.next({
+      type: 'reservation_created',
+      reservation,
+      timestamp: new Date().toISOString(),
+    });
+  }
+
+  emitContactMessageCreated(contactMessage: ContactMessageEventPayload): void {
+    this.events$.next({
+      type: 'contact_message_created',
+      contactMessage,
+      timestamp: new Date().toISOString(),
+    });
+  }
+
+  emitJobApplicationCreated(jobApplication: JobApplicationEventPayload): void {
+    this.events$.next({
+      type: 'job_application_created',
+      jobApplication,
       timestamp: new Date().toISOString(),
     });
   }

@@ -9,9 +9,9 @@ import { NotificationToast } from './notification-toast/notification-toast';
 export class ToastService {
   private readonly snackBar = inject(MatSnackBar);
 
-  show(message: string, title = 'Thông báo', duration = 4000): void {
+  show(message: string, title = 'Thông báo', duration = 4000, route?: string): void {
     this.snackBar.openFromComponent(NotificationToast, {
-      data: { title, message },
+      data: { title, message, route },
       panelClass: 'brand-toast-panel',
       duration,
     });

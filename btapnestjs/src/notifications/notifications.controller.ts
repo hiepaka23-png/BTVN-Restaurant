@@ -35,11 +35,17 @@ export class NotificationsController {
     const username = decoded.username as string;
 
     return this.notificationsService.stream$.pipe(
-      filter((event) =>
-        event.type === 'user_banned'
-          ? event.userId === decoded.sub
-          : role === 'admin' || event.order.username === username,
-      ),
+      filter((event) => {
+        if (event.type === 'user_banned') {
+          return event.userId === decoded.sub;
+        }
+        if (event.type === 'order_created' || event.type === 'order_status_changed') {
+          return role === 'admin' || event.order.username === username;
+        }
+        // reservation_created / contact_message_created / job_application_created: chỉ admin cần
+        // biết, người gửi đã thấy successMessage ngay trên form rồi.
+        return role === 'admin';
+      }),
       map((event) => ({ data: event })),
     );
   }

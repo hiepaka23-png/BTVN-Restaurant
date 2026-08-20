@@ -1,4 +1,4 @@
-<div class="toast">
+<div class="toast" [class.clickable]="data.route" (click)="open()">
     <span class="toast-icon">
         <mat-icon>notifications</mat-icon>
     </span>
@@ -6,7 +6,7 @@
         <p class="toast-title">{{ data.title }}</p>
         <p class="toast-message">{{ data.message }}</p>
     </div>
-    <button type="button" class="toast-close" (click)="close()" aria-label="Đóng">
+    <button type="button" class="toast-close" (click)="close($event)" aria-label="Đóng">
         <mat-icon>close</mat-icon>
     </button>
 </div>
