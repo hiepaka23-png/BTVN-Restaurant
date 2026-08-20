@@ -1,7 +1,12 @@
 <app-admin-nav></app-admin-nav>
 
 <div class="admin-dashboard-container">
-    <h1 class="admin-page-title">Thống kê đơn hàng</h1>
+    <div class="dashboard-header">
+        <div>
+            <h1 class="admin-page-title">Bảng quản trị</h1>
+            <p class="dashboard-welcome">Chào mừng trở lại, {{ auth.currentUser()?.username ?? 'Admin' }} 👋</p>
+        </div>
+    </div>
 
     @if (errorMessage()) {
     <div class="server-error">{{ errorMessage() }}</div>
@@ -16,6 +21,12 @@
             <mat-icon>payments</mat-icon>
             <div class="stat-value">{{ formatCurrency(data.totalRevenue) }}</div>
             <div class="stat-label">Tổng doanh thu</div>
+            @if (revenueTrendPercent(); as trend) {
+            <span class="stat-trend" [class.trend-down]="trend < 0">
+                <mat-icon>{{ trend < 0 ? 'trending_down' : 'trending_up' }}</mat-icon>
+                {{ trend > 0 ? '+' : '' }}{{ trend }}% so với 7 ngày trước
+            </span>
+            }
         </div>
         <div class="stat-tile stat-total">
             <mat-icon>receipt_long</mat-icon>
@@ -39,42 +50,122 @@
         </div>
     </div>
 
-    <div class="chart-card">
-        <h2 class="chart-title">Doanh thu 14 ngày gần nhất</h2>
-        <p class="chart-subtitle">Tính trên đơn Đang làm + Hoàn thành, không tính đơn Bị huỷ</p>
-        <div class="revenue-chart" role="img" aria-label="Biểu đồ cột doanh thu 14 ngày gần nhất">
-            @for (day of revenueByDay(); track day.date) {
-            <div class="revenue-col">
-                <div class="revenue-track">
-                    <div class="revenue-bar" [class.revenue-bar-empty]="day.revenue === 0"
-                        [style.height.%]="revenueBarHeightPercent(day.revenue)"
-                        [title]="formatDayLabel(day.date) + ': ' + formatCurrency(day.revenue) + ' (' + day.orders + ' đơn)'">
+    <div class="dashboard-grid">
+        <div class="chart-card">
+            <h2 class="chart-title">Doanh thu 14 ngày gần nhất</h2>
+            <p class="chart-subtitle">Tính trên đơn Đang làm + Hoàn thành, không tính đơn Bị huỷ</p>
+            <div class="revenue-chart" role="img" aria-label="Biểu đồ cột doanh thu 14 ngày gần nhất">
+                @for (day of revenueByDay(); track day.date) {
+                <div class="revenue-col">
+                    <div class="revenue-track">
+                        <div class="revenue-bar" [class.revenue-bar-empty]="day.revenue === 0"
+                            [style.height.%]="revenueBarHeightPercent(day.revenue)"
+                            [title]="formatDayLabel(day.date) + ': ' + formatCurrency(day.revenue) + ' (' + day.orders + ' đơn)'">
+                        </div>
+                    </div>
+                    <span class="revenue-day-label">{{ formatDayLabel(day.date) }}</span>
+                </div>
+                }
+            </div>
+        </div>
+
+        <div class="chart-card donut-card">
+            <h2 class="chart-title">Phân bố đơn hàng</h2>
+            <p class="chart-subtitle">Theo trạng thái, toàn bộ thời gian</p>
+            @if (data.total === 0) {
+            <div class="status-message">Chưa có đơn hàng nào.</div>
+            } @else {
+            <div class="donut-layout">
+                <div class="donut" [style.background]="donutGradient()">
+                    <div class="donut-hole">
+                        <span class="donut-total">{{ data.total }}</span>
+                        <span class="donut-total-label">Tổng đơn</span>
                     </div>
                 </div>
-                <span class="revenue-day-label">{{ formatDayLabel(day.date) }}</span>
+                <ul class="donut-legend">
+                    @for (slice of statusSlices(); track slice.status) {
+                    <li>
+                        <span class="legend-dot" [style.background]="statusColor(slice.status)"></span>
+                        <span class="legend-label">{{ statusLabels[slice.status] }}</span>
+                        <span class="legend-value">{{ slice.count }} ({{ slice.percent | number: '1.0-1' }}%)</span>
+                    </li>
+                    }
+                </ul>
             </div>
             }
         </div>
     </div>
 
-    <div class="chart-card">
-        <h2 class="chart-title">Top 5 món bán chạy nhất</h2>
-        @if (topRecipes().length === 0) {
-        <div class="status-message">Chưa có dữ liệu bán hàng.</div>
-        } @else {
-        <div class="bar-chart" role="img" aria-label="Biểu đồ cột top 5 món bán chạy nhất">
-            @for (recipe of topRecipes(); track recipe.name) {
-            <div class="bar-row">
-                <span class="bar-label" [title]="recipe.name">{{ recipe.name }}</span>
-                <div class="bar-track">
-                    <div class="bar-fill" [style.width.%]="barWidthPercent(recipe.quantity)">
-                        <span class="bar-value">{{ recipe.quantity }}</span>
-                    </div>
-                </div>
+    <div class="dashboard-grid">
+        <div class="chart-card">
+            <div class="card-title-row">
+                <h2 class="chart-title">Đơn hàng gần đây</h2>
+                <a class="card-link" routerLink="/admin/orders">Xem tất cả đơn hàng →</a>
+            </div>
+            @if (recentOrders().length === 0) {
+            <div class="status-message">Chưa có đơn hàng nào.</div>
+            } @else {
+            <div class="table-wrapper recent-orders-table">
+                <table class="admin-table">
+                    <thead>
+                        <tr>
+                            <th>Mã đơn</th>
+                            <th>Khách hàng</th>
+                            <th>Ngày đặt</th>
+                            <th>Số món</th>
+                            <th>Trạng thái</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @for (order of recentOrders(); track order._id) {
+                        <tr>
+                            <td>{{ formatOrderCode(order._id) }}</td>
+                            <td>{{ order.recipientName }}</td>
+                            <td>
+                                {{ formatDate(order.createdAt) }}
+                                <div class="muted">{{ formatTime(order.createdAt) }}</div>
+                            </td>
+                            <td>{{ itemCount(order) }}</td>
+                            <td>
+                                <span class="status-badge" [style.background]="statusColor(order.status) + '1a'"
+                                    [style.color]="statusColor(order.status)">
+                                    {{ statusLabels[order.status] }}
+                                </span>
+                            </td>
+                        </tr>
+                        }
+                    </tbody>
+                </table>
             </div>
             }
         </div>
-        }
+
+        <div class="chart-card">
+            <div class="card-title-row">
+                <h2 class="chart-title">Món ăn bán chạy</h2>
+                <a class="card-link" routerLink="/admin/recipes">Xem toàn bộ thực đơn →</a>
+            </div>
+            @if (topRecipes().length === 0) {
+            <div class="status-message">Chưa có dữ liệu bán hàng.</div>
+            } @else {
+            <ul class="top-dish-list">
+                @for (recipe of topRecipes(); track recipe.name; let i = $index) {
+                <li class="top-dish-row">
+                    <span class="top-dish-rank">{{ i + 1 }}</span>
+                    @if (recipe.imgUrl) {
+                    <img class="top-dish-img" [src]="resolveImageUrl(recipe.imgUrl)" [alt]="recipe.name" />
+                    } @else {
+                    <span class="top-dish-img top-dish-img-fallback"><mat-icon>restaurant</mat-icon></span>
+                    }
+                    <div class="top-dish-info">
+                        <span class="top-dish-name" [title]="recipe.name">{{ recipe.name }}</span>
+                        <span class="top-dish-qty">{{ recipe.quantity }} món đã bán</span>
+                    </div>
+                </li>
+                }
+            </ul>
+            }
+        </div>
     </div>
     }
 </div>

@@ -1,54 +1,167 @@
+<app-back-link />
+
 <div class="page-container">
-    <app-back-link />
     <div class="page-header">
         <span class="page-eyebrow">Liên hệ</span>
-        <h1 class="page-title">Chúng tôi luôn lắng nghe bạn</h1>
-        <p class="page-subtitle">Gửi câu hỏi, góp ý hoặc yêu cầu hỗ trợ — đội ngũ Nhà Hàng Michelin sẽ phản hồi sớm nhất</p>
+        <h1 class="page-title">Chúng tôi luôn sẵn sàng lắng nghe</h1>
+        <p class="page-subtitle">
+            Mọi ý kiến đóng góp hoặc thắc mắc của bạn đều rất quan trọng với chúng tôi. Đừng ngần
+            ngại liên hệ nhé!
+        </p>
     </div>
 
-    <div class="contact-info">
-        <div class="contact-info-item">
-            <mat-icon>call</mat-icon>
-            <span>1900 1234</span>
-        </div>
-        <div class="contact-info-item">
-            <mat-icon>mail_outline</mat-icon>
-            <span>lienhe&#64;michelin5star.vn</span>
-        </div>
-        <div class="contact-info-item">
-            <mat-icon>place</mat-icon>
-            <span>123 Đường Ẩm Thực, Quận 1, TP.HCM</span>
-        </div>
+    <div class="contact-layout">
+        <form class="info-card contact-form-card" [formGroup]="form" #contactFormDirective="ngForm"
+            (ngSubmit)="submit()">
+            <div class="card-title-row">
+                <mat-icon class="card-icon">chat_bubble_outline</mat-icon>
+                <h2 class="card-title">Gửi tin nhắn cho chúng tôi</h2>
+            </div>
+
+            <div class="field-grid">
+                <mat-form-field appearance="outline" subscriptSizing="dynamic" class="pill-field">
+                    <mat-label>Họ và tên</mat-label>
+                    <input matInput formControlName="fullName" placeholder="Nhập họ tên của bạn" />
+                    <mat-error *ngIf="form.get('fullName')?.hasError('required')">Vui lòng nhập họ tên</mat-error>
+                    <mat-error *ngIf="!form.get('fullName')?.hasError('required') && form.get('fullName')?.hasError('minlength')">
+                        Họ tên phải có ít nhất 2 ký tự
+                    </mat-error>
+                </mat-form-field>
+
+                <mat-form-field appearance="outline" subscriptSizing="dynamic" class="pill-field">
+                    <mat-label>Số điện thoại</mat-label>
+                    <input matInput formControlName="phone" placeholder="VD: 0901234567" />
+                    <mat-error *ngIf="form.get('phone')?.hasError('pattern')">
+                        Số điện thoại phải bắt đầu bằng số 0 và chỉ gồm chữ số
+                    </mat-error>
+                </mat-form-field>
+            </div>
+
+            <div class="field-grid">
+                <mat-form-field appearance="outline" subscriptSizing="dynamic" class="pill-field">
+                    <mat-label>Email</mat-label>
+                    <input matInput type="email" formControlName="email" placeholder="Nhập email của bạn" />
+                    <mat-error *ngIf="form.get('email')?.hasError('required')">Vui lòng nhập email</mat-error>
+                    <mat-error *ngIf="form.get('email')?.hasError('email')">Email không hợp lệ</mat-error>
+                </mat-form-field>
+
+                <mat-form-field appearance="outline" subscriptSizing="dynamic" class="pill-field">
+                    <mat-label>Chủ đề</mat-label>
+                    <mat-select formControlName="subject" placeholder="Chọn chủ đề">
+                        @for (option of subjectOptions; track option) {
+                        <mat-option [value]="option">{{ option }}</mat-option>
+                        }
+                    </mat-select>
+                    <mat-error *ngIf="form.get('subject')?.hasError('required')">Vui lòng chọn chủ đề</mat-error>
+                </mat-form-field>
+            </div>
+
+            <mat-form-field appearance="outline" subscriptSizing="dynamic" class="pill-field full-field">
+                <mat-label>Nội dung tin nhắn</mat-label>
+                <textarea matInput formControlName="message" rows="4"
+                    placeholder="Nhập nội dung bạn muốn gửi cho chúng tôi..."></textarea>
+                <mat-error *ngIf="form.get('message')?.hasError('required')">Vui lòng nhập nội dung</mat-error>
+                <mat-error *ngIf="!form.get('message')?.hasError('required') && form.get('message')?.hasError('minlength')">
+                    Nội dung cần ít nhất 10 ký tự
+                </mat-error>
+            </mat-form-field>
+
+            <div *ngIf="errorMessage()" class="server-error">{{ errorMessage() }}</div>
+            <div *ngIf="successMessage()" class="server-success">{{ successMessage() }}</div>
+
+            <button mat-flat-button type="submit" class="pill-btn submit-btn" [disabled]="submitting()">
+                <mat-icon>send</mat-icon>
+                {{ submitting() ? 'Đang gửi...' : 'Gửi tin nhắn' }}
+            </button>
+
+            <p class="form-privacy-note">
+                <mat-icon>lock</mat-icon>
+                Thông tin của bạn sẽ được bảo mật và chỉ sử dụng để hỗ trợ.
+            </p>
+        </form>
+
+        <aside class="info-card contact-details-card">
+            <div class="card-title-row">
+                <mat-icon class="card-icon">place</mat-icon>
+                <h2 class="card-title">Thông tin liên hệ</h2>
+            </div>
+
+            <div class="contact-detail-row">
+                <span class="contact-detail-icon"><mat-icon>call</mat-icon></span>
+                <div class="contact-detail-text">
+                    <span class="contact-detail-label">Hotline</span>
+                    <span class="contact-detail-value">{{ hotline }}</span>
+                </div>
+            </div>
+
+            <div class="contact-detail-row">
+                <span class="contact-detail-icon"><mat-icon>mail_outline</mat-icon></span>
+                <div class="contact-detail-text">
+                    <span class="contact-detail-label">Email</span>
+                    <span class="contact-detail-value">{{ contactEmail }}</span>
+                </div>
+            </div>
+
+            <div class="contact-detail-row">
+                <span class="contact-detail-icon"><mat-icon>schedule</mat-icon></span>
+                <div class="contact-detail-text">
+                    <span class="contact-detail-label">Giờ hoạt động</span>
+                    <span class="contact-detail-value">{{ hours }}</span>
+                </div>
+            </div>
+        </aside>
     </div>
 
-    <form class="page-card" [formGroup]="form" (ngSubmit)="submit()">
-        <mat-form-field appearance="outline" subscriptSizing="dynamic" class="full-width-field">
-            <mat-label>Họ tên</mat-label>
-            <input matInput formControlName="fullName" placeholder="Nhập họ tên của bạn" />
-            <mat-error *ngIf="form.get('fullName')?.hasError('required')">Vui lòng nhập họ tên</mat-error>
-        </mat-form-field>
+    <section class="info-card map-card">
+        <div class="card-title-row">
+            <mat-icon class="card-icon">map</mat-icon>
+            <h2 class="card-title">Vị trí của chúng tôi</h2>
+        </div>
 
-        <mat-form-field appearance="outline" subscriptSizing="dynamic" class="full-width-field">
-            <mat-label>Email</mat-label>
-            <input matInput type="email" formControlName="email" placeholder="Nhập email của bạn" />
-            <mat-error *ngIf="form.get('email')?.hasError('required')">Vui lòng nhập email</mat-error>
-            <mat-error *ngIf="form.get('email')?.hasError('email')">Email không hợp lệ</mat-error>
-        </mat-form-field>
+        <div class="map-layout">
+            <div class="map-placeholder">
+                <iframe class="map-iframe" [src]="mapEmbedUrl" loading="lazy" title="Vị trí Nhà Hàng Michelin 5 Sao"
+                    referrerpolicy="no-referrer-when-downgrade"></iframe>
+            </div>
+            <div class="map-info">
+                <h3 class="map-info-name">Nhà Hàng Michelin 5 Sao</h3>
+                <p class="map-info-address">{{ address }}</p>
+                <a class="pill-btn-outline" [href]="directionsUrl" target="_blank" rel="noopener noreferrer">
+                    <mat-icon>directions</mat-icon>
+                    Chỉ đường
+                </a>
+            </div>
+        </div>
+    </section>
 
-        <mat-form-field appearance="outline" subscriptSizing="dynamic" class="full-width-field">
-            <mat-label>Nội dung</mat-label>
-            <textarea matInput formControlName="message" rows="4"
-                placeholder="Bạn muốn chia sẻ điều gì với chúng tôi?"></textarea>
-            <mat-error *ngIf="form.get('message')?.hasError('required')">Vui lòng nhập nội dung</mat-error>
-            <mat-error *ngIf="form.get('message')?.hasError('minlength')">Nội dung cần ít nhất 10 ký tự</mat-error>
-        </mat-form-field>
-
-        <div *ngIf="errorMessage()" class="server-error">{{ errorMessage() }}</div>
-        <div *ngIf="successMessage()" class="server-success">{{ successMessage() }}</div>
-
-        <button mat-flat-button type="submit" class="submit-btn" [disabled]="submitting()">
-            <mat-icon>send</mat-icon>
-            {{ submitting() ? 'Đang gửi...' : 'Gửi liên hệ' }}
-        </button>
-    </form>
+    <div class="trust-row">
+        <div class="trust-item">
+            <mat-icon>support_agent</mat-icon>
+            <div>
+                <strong>Hỗ trợ nhanh chóng</strong>
+                <span>Đội ngũ CSKH luôn sẵn sàng hỗ trợ bạn 24/7</span>
+            </div>
+        </div>
+        <div class="trust-item">
+            <mat-icon>shield</mat-icon>
+            <div>
+                <strong>Bảo mật thông tin</strong>
+                <span>Cam kết bảo mật tuyệt đối thông tin của khách hàng</span>
+            </div>
+        </div>
+        <div class="trust-item">
+            <mat-icon>schedule</mat-icon>
+            <div>
+                <strong>Phản hồi trong 24h</strong>
+                <span>Chúng tôi luôn phản hồi trong vòng 24 giờ</span>
+            </div>
+        </div>
+        <div class="trust-item">
+            <mat-icon>favorite</mat-icon>
+            <div>
+                <strong>Dịch vụ tận tâm</strong>
+                <span>Mang đến trải nghiệm ẩm thực tuyệt vời nhất cho bạn</span>
+            </div>
+        </div>
+    </div>
 </div>

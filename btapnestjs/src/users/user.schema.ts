@@ -31,6 +31,14 @@ export class User extends Document {
 
   @Prop({ type: Date, default: null })
   resetTokenExpiresAt: Date | null;
+
+  // Mã xác thực xóa tài khoản gửi qua email — tách riêng khỏi resetToken ở trên để mã đặt lại
+  // mật khẩu không thể bị lợi dụng để xóa tài khoản (và ngược lại).
+  @Prop({ type: String, default: null })
+  deleteTokenHash: string | null;
+
+  @Prop({ type: Date, default: null })
+  deleteTokenExpiresAt: Date | null;
 }
 
 export const UserSchema = SchemaFactory.createForClass(User);

@@ -1,0 +1,146 @@
+.reward-dialog {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    padding: 12px 8px 4px;
+    font-family: var(--brand-sans);
+    overflow: hidden;
+}
+
+.reward-burst {
+    position: absolute;
+    inset: -20px 0 auto 0;
+    height: 160px;
+    pointer-events: none;
+}
+
+.ray {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 3px;
+    height: 90px;
+    background: linear-gradient(180deg, var(--brand-brass) 0%, transparent 100%);
+    opacity: 0.55;
+    transform-origin: top center;
+    animation: reward-ray-pop 0.6s ease-out both;
+}
+
+.ray:nth-child(1) { transform: translate(-50%, -100%) rotate(0deg); animation-delay: 0.02s; }
+.ray:nth-child(2) { transform: translate(-50%, -100%) rotate(60deg); animation-delay: 0.06s; }
+.ray:nth-child(3) { transform: translate(-50%, -100%) rotate(120deg); animation-delay: 0.1s; }
+.ray:nth-child(4) { transform: translate(-50%, -100%) rotate(180deg); animation-delay: 0.14s; }
+.ray:nth-child(5) { transform: translate(-50%, -100%) rotate(240deg); animation-delay: 0.18s; }
+.ray:nth-child(6) { transform: translate(-50%, -100%) rotate(300deg); animation-delay: 0.22s; }
+
+@keyframes reward-ray-pop {
+    from {
+        opacity: 0;
+        scale: 0.4;
+    }
+    to {
+        opacity: 0.55;
+        scale: 1;
+    }
+}
+
+.reward-icon {
+    width: 48px !important;
+    height: 48px !important;
+    font-size: 48px !important;
+    color: var(--brand-brass);
+    margin-bottom: 6px;
+    animation: reward-icon-drop 0.5s cubic-bezier(0.34, 1.56, 0.64, 1) both;
+}
+
+@keyframes reward-icon-drop {
+    from {
+        opacity: 0;
+        transform: translateY(-16px) scale(0.7);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+    }
+}
+
+.reward-title {
+    margin: 0 0 4px !important;
+    font-family: var(--brand-serif);
+    font-size: 1.35rem !important;
+    font-weight: 700;
+    letter-spacing: 0.3px;
+    color: var(--brand-ink);
+}
+
+.reward-label {
+    margin: 4px 0 0;
+    font-size: 1.6rem;
+    font-weight: 800;
+    color: var(--brand-burgundy);
+    letter-spacing: 0.2px;
+}
+
+.reward-detail {
+    margin: 4px 0 14px;
+    color: var(--brand-ink-soft);
+    font-size: 0.88rem;
+    line-height: 1.5;
+}
+
+.reward-code {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 10px 18px;
+    border: 1.5px dashed var(--brand-brass);
+    border-radius: 12px;
+    background: var(--brand-cream);
+    margin-bottom: 6px;
+}
+
+.reward-code-text {
+    font-family: var(--brand-mono);
+    font-weight: 700;
+    font-size: 1rem;
+    letter-spacing: 1.5px;
+    color: var(--brand-ink);
+}
+
+.reward-actions {
+    display: flex;
+    justify-content: center;
+    gap: 12px;
+    padding: 16px 0 4px !important;
+    margin: 0 !important;
+}
+
+.skip-btn {
+    border-radius: 10px !important;
+    font-family: var(--brand-mono);
+    font-weight: 700;
+    font-size: 0.8rem;
+    letter-spacing: 0.5px;
+    color: var(--brand-ink-soft) !important;
+}
+
+.apply-btn {
+    border-radius: 10px !important;
+    font-family: var(--brand-mono);
+    font-weight: 700;
+    font-size: 0.8rem;
+    letter-spacing: 0.5px;
+    background: var(--brand-burgundy) !important;
+    color: var(--brand-ivory) !important;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.apply-btn mat-icon {
+    width: 18px !important;
+    height: 18px !important;
+    font-size: 18px !important;
+}

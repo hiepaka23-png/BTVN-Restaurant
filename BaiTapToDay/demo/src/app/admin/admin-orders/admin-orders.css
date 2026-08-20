@@ -1,11 +1,32 @@
 @import '../admin-shared.css';
 
+/* Ghim lên đầu ô thay vì canh giữa theo chiều dọc (mặc định của .admin-table td) — nếu không,
+   khi ô Trạng thái cao hơn do có thêm dòng "Lý do", khung dropdown sẽ bị đẩy xuống giữa và lệch
+   hàng với khung dropdown ở cột Thanh toán bên cạnh. */
+.status-cell,
+.payment-cell {
+    vertical-align: top;
+}
+
 .status-cell {
     min-width: 220px;
+    /* Luôn chừa đủ chỗ cho dòng "Lý do" (dropdown + dòng chữ) dù đơn đó có bị huỷ hay không — nhờ
+       vậy mọi hàng trong bảng cao bằng nhau, viền dưới các cột thẳng hàng thay vì so le. */
+    min-height: 66px;
 }
 
 .status-select {
     width: 160px;
+}
+
+.payment-cell {
+    min-width: 200px;
+}
+
+/* Rộng hơn .status-select vì nhãn "Chưa thanh toán"/"Đã thanh toán" dài hơn các nhãn trạng thái
+   đơn hàng — dùng chung width 160px bị cắt chữ, hiện "Chưa thanh to...". */
+.payment-status-select {
+    width: 190px;
 }
 
 .cancel-reason {

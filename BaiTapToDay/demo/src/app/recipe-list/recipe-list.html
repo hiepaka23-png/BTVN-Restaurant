@@ -1,17 +1,97 @@
-<div class="app-container">
-    <div class="menu-header">
-        <span class="menu-eyebrow">Thực đơn</span>
-        <h1 class="main-title">Tinh Hoa Ẩm Thực</h1>
-        <p class="menu-subtitle">Tuyển chọn những công thức được chăm chút tỉ mỉ đến từng chi tiết</p>
+<div class="page">
+    <section class="hero">
+        <div class="hero-copy">
+            <span class="hero-eyebrow">Tinh hoa ẩm thực</span>
+            <h1 class="hero-title">Khám Phá<br /><span>Tinh Hoa Ẩm Thực</span></h1>
+            <p class="hero-desc">
+                Tuyển chọn những công thức được chế biến tinh tế từ nguyên liệu thượng hạng, mang đến trải nghiệm ẩm
+                thực đẳng cấp.
+            </p>
+
+            <label class="hero-search">
+                <mat-icon>search</mat-icon>
+                <input type="text" [ngModel]="store.keyword()" (ngModelChange)="store.setKeyword($event)"
+                    placeholder="Tìm món ăn, nguyên liệu hoặc phong cách ẩm thực..." />
+                <button type="button" class="hero-search-btn">
+                    <mat-icon>search</mat-icon>
+                    Tìm kiếm
+                </button>
+            </label>
+        </div>
+
+        @if (slotCurrentRecipe(); as current) {
+        <div class="hero-feature-viewport">
+            <div class="hero-feature-track" [class.shifting]="shifting()" [class.instant]="trackInstant()">
+                <!-- Khe trái: món SẮP hiện, nằm ngoài khung hình bên trái chờ trượt vào -->
+                @if (slotNextRecipe(); as next) {
+                <ng-container [ngTemplateOutlet]="featureCard" [ngTemplateOutletContext]="{ $implicit: next }" />
+                }
+                <!-- Khe phải: món đang hiển thị -->
+                <ng-container [ngTemplateOutlet]="featureCard" [ngTemplateOutletContext]="{ $implicit: current }" />
+            </div>
+
+            @if (featuredRecipes().length > 1) {
+            <div class="hero-feature-dots">
+                @for (item of featuredRecipes(); track item.id; let i = $index) {
+                <button type="button" class="hero-feature-dot" [class.active]="i === currentIndex() % featuredRecipes().length"
+                    [attr.aria-label]="'Xem món đặc biệt ' + (i + 1)" (click)="goToFeatured(i)">
+                </button>
+                }
+            </div>
+            }
+        </div>
+        }
+    </section>
+
+    <ng-template #featureCard let-recipe>
+        <a class="hero-feature-slide" [routerLink]="['/recipes', recipe.id]">
+            <img class="hero-feature-img" [src]="resolveImageUrl(recipe.imgUrl)" [alt]="recipe.name" />
+            <span class="hero-feature-tag">Món đặc biệt</span>
+            <div class="hero-feature-info">
+                <h3 class="hero-feature-name">{{ recipe.name }}</h3>
+                <p class="hero-feature-desc">{{ recipe.description }}</p>
+                <div class="hero-feature-footer">
+                    <span class="hero-feature-price">{{ formatPrice(recipe.price) }}</span>
+                    <span class="hero-feature-cta">
+                        Xem chi tiết
+                        <mat-icon>arrow_forward</mat-icon>
+                    </span>
+                </div>
+            </div>
+        </a>
+    </ng-template>
+
+    <div class="pill-row">
+        @for (pill of categoryPills; track pill.value) {
+        <button type="button" class="pill" [class.active]="activePill() === pill.value"
+            (click)="selectPill(pill.value)">
+            <mat-icon>{{ pill.icon }}</mat-icon>
+            {{ pill.label }}
+        </button>
+        }
+
+        <button type="button" class="pill pill-filter" [class.active]="isSortActive()" [matMenuTriggerFor]="filterMenu">
+            <mat-icon>tune</mat-icon>
+            Bộ lọc
+            <mat-icon class="pill-filter-caret">expand_more</mat-icon>
+        </button>
+
+        <mat-menu #filterMenu="matMenu">
+            <button mat-menu-item [class.filter-item-active]="favoriteOnly()" (click)="selectFavoriteFilter()">
+                <mat-icon>favorite</mat-icon>
+                <span>Yêu thích</span>
+            </button>
+            <mat-divider></mat-divider>
+            @for (item of sortMenuItems; track item.value) {
+            <button mat-menu-item [class.filter-item-active]="!favoriteOnly() && sortOption() === item.value"
+                (click)="selectSort(item.value)">
+                <mat-icon>{{ item.icon }}</mat-icon>
+                <span>{{ item.label }}</span>
+            </button>
+            }
+        </mat-menu>
     </div>
-    <div class="top-actions">
-        <mat-form-field appearance="outline" class="search-field">
-            <mat-label for="recipe-search">Tìm món ăn</mat-label>
-            <mat-icon matPrefix>search</mat-icon>
-            <input matInput id="recipe-search" type="text" [ngModel]="store.keyword()" (ngModelChange)="store.setKeyword($event)"
-                placeholder="Nhập tên món ăn..." />
-        </mat-form-field>
-    </div>
+
     @if (store.isLoading()) {
     <div class="status-message">
         <mat-icon class="spin-icon">autorenew</mat-icon>
@@ -25,28 +105,39 @@
             "<strong>{{ store.keyword() }}</strong>"
         </span>
     </div>
+    } @else if (sortedRecipes().length === 0 && favoriteOnly()) {
+    <div class="status-message">
+        <mat-icon>favorite_border</mat-icon>
+        <span>Bạn chưa lưu món yêu thích nào — bấm biểu tượng trái tim trên món ăn để lưu lại nhé.</span>
+    </div>
     } @else {
     <div class="recipe-grid">
-        @for (recipe of store.recipes(); track recipe.id) {
+        @for (recipe of sortedRecipes(); track recipe.id) {
         <a class="recipe-card" [routerLink]="['/recipes', recipe.id]">
+            <div class="recipe-media">
+                <img class="recipe-image" [src]="resolveImageUrl(recipe.imgUrl)" [alt]="recipe.name" />
 
-            <img class="recipe-image" [src]="recipe.imgUrl" [alt]="recipe.name" />
+                @if (recipe.isFavorite) {
+                <span class="recipe-special-badge">
+                    <mat-icon>star</mat-icon>
+                    Đặc biệt
+                </span>
+                }
 
-            <div class="recipe-content">
-                <div class="recipe-title">
-                    <span [title]="recipe.name">{{ recipe.name }}</span>
-
-                    @if(recipe.isFavorite){
-                    <mat-icon class="favorite-icon">star</mat-icon>
-                    }
-                </div>
-
-                <div class="recipe-subtitle">
-                    Nhấn để xem chi tiết công thức
-                </div>
-                <div class="recipe-price">{{ formatPrice(recipe.price) }}</div>
+                <button type="button" class="recipe-heart" [class.active]="myFavoriteIds().has(recipe.id)"
+                    [attr.aria-label]="myFavoriteIds().has(recipe.id) ? 'Bỏ khỏi món yêu thích' : 'Thêm vào món yêu thích'"
+                    (click)="toggleMyFavorite($event, recipe.id)">
+                    <mat-icon>{{ myFavoriteIds().has(recipe.id) ? 'favorite' : 'favorite_border' }}</mat-icon>
+                </button>
             </div>
 
+            <div class="recipe-content">
+                <h3 class="recipe-title" [title]="recipe.name">{{ recipe.name }}</h3>
+                <p class="recipe-desc">{{ recipe.description }}</p>
+                <div class="recipe-footer">
+                    <span class="recipe-price">{{ formatPrice(recipe.price) }}</span>
+                </div>
+            </div>
         </a>
         }
     </div>

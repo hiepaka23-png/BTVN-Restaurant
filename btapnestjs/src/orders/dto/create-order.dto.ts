@@ -2,6 +2,7 @@ import { Type } from 'class-transformer';
 import {
   ArrayMinSize,
   IsArray,
+  IsIn,
   IsNumber,
   IsOptional,
   IsString,
@@ -61,4 +62,11 @@ export class CreateOrderDto {
   @IsOptional()
   @IsString()
   note?: string;
+
+  @IsIn(['cod', 'bank_transfer'], { message: 'Phương thức thanh toán không hợp lệ' })
+  paymentMethod: 'cod' | 'bank_transfer';
+
+  @IsOptional()
+  @IsString()
+  promoCode?: string;
 }

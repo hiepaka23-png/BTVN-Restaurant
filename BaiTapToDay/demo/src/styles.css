@@ -3,28 +3,35 @@
 @import 'tailwindcss';
 
 :root {
-  /* Bảng màu "Bếp Nhà" — đất nung + ngọc bích, lấy chất liệu gốm Bát Tràng và nồi đất Việt. */
-  --brand-ink: #241c14;
-  --brand-ink-soft: #4a3a2a;
-  --brand-burgundy: #c1502e;
-  --brand-burgundy-light: #d97347;
-  --brand-burgundy-dark: #96371c;
-  --brand-gold: #2f5d50;
-  --brand-gold-light: #457a6b;
-  --brand-gold-soft: #dce8e0;
-  --brand-cream: #f3ecdd;
-  --brand-cream-dark: #e8dcc4;
-  --brand-ivory: #fdfaf3;
-  --brand-red: #a8321e;
-  --brand-red-dark: #7e2416;
+  /* Bảng màu "Lumière Bếp" — trắng, kem và cam ấm, tinh thần marketplace hiện đại (tham khảo tư
+     duy Airbnb) nhưng dùng cam làm màu chủ đạo thay vì hồng, giữ bản sắc ẩm thực riêng. */
+  --brand-ink: #2b241c;
+  --brand-ink-soft: #6f6154;
+  --brand-burgundy: #ef7d2f;
+  --brand-burgundy-light: #ff9d55;
+  --brand-burgundy-dark: #c85f16;
+  --brand-gold: #c98a28;
+  --brand-gold-light: #e0a94f;
+  --brand-gold-soft: #fdecd2;
+  --brand-cream: #fdf6ec;
+  --brand-cream-dark: #f3e6d2;
+  --brand-ivory: #ffffff;
+  --brand-red: #d8402a;
+  --brand-red-dark: #a92f1c;
   --brand-brass: #b8863b;
 
   --brand-sans: 'Be Vietnam Pro', 'Inter', 'Roboto', system-ui, -apple-system, sans-serif;
-  --brand-serif: 'Playfair Display', 'Georgia', serif;
-  --brand-mono: 'JetBrains Mono', 'Courier New', monospace;
+  --brand-serif: var(--brand-sans);
+  --brand-mono: var(--brand-sans);
 
-  --brand-shadow-soft: 0 10px 30px -8px rgba(36, 28, 20, 0.18);
-  --brand-shadow-strong: 0 20px 45px -12px rgba(36, 28, 20, 0.3);
+  --brand-shadow-soft: 0 8px 24px -8px rgba(43, 36, 28, 0.14);
+  --brand-shadow-strong: 0 20px 45px -14px rgba(43, 36, 28, 0.22);
+
+  /* Thang bo góc kiểu Airbnb — dùng cho các component thiết kế lại (sidebar, hero, card...). */
+  --radius-sm: 8px;
+  --radius-md: 14px;
+  --radius-lg: 20px;
+  --radius-full: 9999px;
 }
 
 /* Ép các component Material dùng color="primary" (nút, viền ô nhập khi focus, ripple...) đi theo
@@ -44,7 +51,7 @@ body {
    của component, nên cần định nghĩa global ở đây. */
 .brand-dialog-panel .mat-mdc-dialog-surface {
   background: var(--brand-ivory);
-  border-radius: 2px;
+  border-radius: var(--radius-md);
   border-top: 3px solid var(--brand-brass);
   padding: 20px 24px;
 }

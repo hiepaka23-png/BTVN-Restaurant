@@ -1,0 +1,14 @@
+<div class="announcement-bar">
+    <div class="announcement-track">
+        @for (copy of [0, 1]; track copy) {
+        <div class="announcement-group" [attr.aria-hidden]="copy === 1 ? 'true' : null">
+            @for (msg of messages; track msg) {
+            <span class="announcement-item">
+                <span class="announcement-icon">✦</span>
+                {{ msg }}
+            </span>
+            }
+        </div>
+        }
+    </div>
+</div>

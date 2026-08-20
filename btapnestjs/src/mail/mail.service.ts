@@ -54,4 +54,32 @@ export class MailService {
       return false;
     }
   }
+
+  async sendAccountDeletionCode(
+    toEmail: string,
+    code: string,
+  ): Promise<boolean> {
+    if (!this.transporter) return false;
+
+    try {
+      await this.transporter.sendMail({
+        from: `"Nhà Hàng Michelin" <${this.fromAddress}>`,
+        to: toEmail,
+        subject: 'Mã xác thực xóa tài khoản',
+        text: `Ai đó (hy vọng là bạn) vừa yêu cầu xóa vĩnh viễn tài khoản này. Mã xác thực là: ${code}\nMã có hiệu lực trong 10 phút. Nếu không phải bạn yêu cầu, hãy bỏ qua email này và đổi mật khẩu ngay.`,
+        html: `
+          <p>Ai đó (hy vọng là bạn) vừa yêu cầu xóa vĩnh viễn tài khoản này. Mã xác thực là:</p>
+          <p style="font-size:28px;font-weight:700;letter-spacing:4px;">${code}</p>
+          <p>Mã có hiệu lực trong 10 phút. Nếu không phải bạn yêu cầu, hãy bỏ qua email này và đổi mật khẩu ngay.</p>
+        `,
+      });
+      return true;
+    } catch (error) {
+      this.logger.error(
+        `Gửi email xác thực xóa tài khoản tới ${toEmail} thất bại`,
+        error,
+      );
+      return false;
+    }
+  }
 }

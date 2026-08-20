@@ -4,11 +4,13 @@ import { OrdersService } from './orders.service';
 import { OrdersController } from './orders.controller';
 import { Order, OrderSchema } from './schemas/order.schema';
 import { NotificationsModule } from '../notifications/notifications.module';
+import { PromoCodesModule } from '../promo-codes/promo-codes.module';
 
 @Module({
   imports: [
     MongooseModule.forFeature([{ name: Order.name, schema: OrderSchema }]),
     NotificationsModule,
+    PromoCodesModule,
   ],
   controllers: [OrdersController],
   providers: [OrdersService],

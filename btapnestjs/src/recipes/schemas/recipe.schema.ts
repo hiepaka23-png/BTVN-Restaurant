@@ -1,6 +1,18 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { HydratedDocument } from 'mongoose';
 
+// Danh mục món ăn thật (khác với cờ isFavorite — dùng để đánh dấu món "Đặc biệt" nổi bật, không
+// phải một danh mục). Đồng bộ tay với RECIPE_CATEGORIES ở frontend (models.ts).
+export const RECIPE_CATEGORIES = [
+  'Món chính',
+  'Khai vị',
+  'Súp & Salad',
+  'Đồ uống',
+  'Tráng miệng',
+] as const;
+export type RecipeCategory = (typeof RECIPE_CATEGORIES)[number];
+export const DEFAULT_RECIPE_CATEGORY: RecipeCategory = 'Món chính';
+
 @Schema({ _id: false })
 export class Ingredient {
   @Prop({ required: true })
@@ -37,6 +49,9 @@ export class Recipe {
 
   @Prop({ default: false })
   isFavorite: boolean;
+
+  @Prop({ enum: RECIPE_CATEGORIES, default: DEFAULT_RECIPE_CATEGORY })
+  category: RecipeCategory;
 
   @Prop({ required: true })
   authorEmail: string;

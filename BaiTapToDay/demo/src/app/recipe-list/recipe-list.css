@@ -1,58 +1,380 @@
-.app-container {
-    max-width: 1100px;
+.page {
+    max-width: 1280px;
     margin: 0 auto;
-    padding: 48px 40px 60px;
+    padding: 32px 32px 64px;
     font-family: var(--brand-sans);
     color: var(--brand-ink);
 }
 
-/* Khối tiêu đề kiểu bìa thực đơn nhà hàng */
-.menu-header {
-    text-align: center;
-    margin-bottom: 36px;
+/* ---------- Hero ---------- */
+
+.hero {
+    display: grid;
+    grid-template-columns: 1.05fr 0.95fr;
+    gap: 40px;
+    align-items: center;
+    padding: 28px 0 8px;
 }
 
-.menu-eyebrow {
-    display: block;
+.hero-eyebrow {
+    display: inline-block;
+    padding: 6px 14px;
+    border-radius: var(--radius-full);
+    background: var(--brand-gold-soft);
+    color: var(--brand-burgundy-dark);
     font-size: 0.72rem;
     font-weight: 700;
-    letter-spacing: 5px;
+    letter-spacing: 1.5px;
     text-transform: uppercase;
-    color: var(--brand-gold);
-    margin-bottom: 18px;
+    margin-bottom: 16px;
 }
 
-.main-title {
-    margin: 0 0 18px;
+.hero-title {
+    margin: 0 0 16px;
     font-family: var(--brand-serif);
-    font-size: 2.7rem;
-    font-weight: 600;
+    font-size: clamp(2.1rem, 4vw, 3.1rem);
+    line-height: 1.12;
+    font-weight: 800;
+    color: var(--brand-ink);
+    letter-spacing: -0.5px;
+}
+
+.hero-title span {
     color: var(--brand-burgundy);
-    letter-spacing: 0.2px;
 }
 
-.menu-subtitle {
-    margin: 0 auto;
-    max-width: 480px;
-    font-size: 0.95rem;
+.hero-desc {
+    margin: 0 0 26px;
+    max-width: 460px;
     color: var(--brand-ink-soft);
-    opacity: 0.8;
+    font-size: 1rem;
+    line-height: 1.65;
 }
 
-/* Khu vực nút thêm và tìm kiếm */
-.top-actions {
-    width: 100%;
+.hero-search {
     display: flex;
-    flex-direction: column;
     align-items: center;
+    gap: 10px;
+    max-width: 520px;
+    height: 56px;
+    padding: 0 0 0 20px;
+    border-radius: var(--radius-full);
+    background: var(--brand-ivory);
+    border: 1.5px solid var(--brand-cream-dark);
+    box-shadow: var(--brand-shadow-soft);
+    overflow: hidden;
+    transition: border-color 0.15s ease, box-shadow 0.15s ease;
+}
+
+.hero-search:focus-within {
+    border-color: var(--brand-burgundy);
+    box-shadow: var(--brand-shadow-strong);
+}
+
+.hero-search mat-icon {
+    color: var(--brand-ink-soft);
+    flex-shrink: 0;
+}
+
+.hero-search input {
+    flex: 1;
+    min-width: 0;
+    border: none;
+    outline: none;
+    background: transparent;
+    font-family: var(--brand-sans);
+    font-size: 0.95rem;
+    color: var(--brand-ink);
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.hero-search input::placeholder {
+    color: var(--brand-ink-soft);
+    opacity: 0.7;
+}
+
+.hero-search-btn {
+    flex-shrink: 0;
+    align-self: stretch;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 0 22px;
+    border: none;
+    /* Bo tròn khớp đúng cạnh phải của khung tìm kiếm (bên trái vuông góc, áp sát ô nhập) — để nút
+       trông liền một khối với khung thay vì như 1 viên thuốc nhỏ nổi lệch bên trong. */
+    border-radius: 0 var(--radius-full) var(--radius-full) 0;
+    background: var(--brand-burgundy);
+    color: var(--brand-ivory);
+    font-family: var(--brand-sans);
+    font-weight: 700;
+    font-size: 0.85rem;
+    cursor: pointer;
+    transition: background-color 0.15s ease;
+}
+
+.hero-search-btn:hover {
+    background: var(--brand-burgundy-light);
+}
+
+.hero-search-btn mat-icon {
+    width: 18px;
+    height: 18px;
+    font-size: 18px;
+}
+
+/* ---------- Hero: món đặc biệt ---------- */
+
+/* Khung nhìn cố định — cắt (overflow:hidden) mọi thứ nằm ngoài để chỉ thấy đúng 1 món tại 1 thời
+   điểm, còn track bên trong rộng gấp đôi và trượt qua lại bên trong khung này. */
+.hero-feature-viewport {
+    position: relative;
+    /* PHẢI là height cố định, không phải min-height — track/slide bên trong dùng height:100% để
+       phủ kín khung nhìn, mà height theo % chỉ tính được khi tổ tiên có chiều cao xác định rõ
+       ràng; chỉ có min-height thì height:100% coi như "auto" và mọi thứ co về 0, làm ảnh/tên
+       món/giá biến mất hết chỉ còn lại mỗi nhãn "MÓN ĐẶC BIỆT" (vì nó định vị bằng top/left, không
+       phụ thuộc chiều cao tổ tiên). */
+    height: 360px;
+    border-radius: var(--radius-lg);
+    overflow: hidden;
+    background: var(--brand-ink);
+    box-shadow: var(--brand-shadow-strong);
+}
+
+/* Track chứa 2 khe (khe trái = món sắp hiện, khe phải = món đang hiện) — rộng gấp đôi khung nhìn.
+   Nghỉ ở translateX(-50%) (khe phải lọt đúng khung nhìn); bật .shifting để trượt về 0% (khe trái
+   trượt vào từ bên trái, khe phải trượt ra khỏi mép phải) — trượt CHẬM (900ms) cho rõ chuyển động
+   thay vì mờ dần/xuất hiện đột ngột. .instant tắt hẳn transition để "nhảy" tức thời lúc reset. */
+.hero-feature-track {
+    display: flex;
+    width: 200%;
+    height: 100%;
+    transform: translateX(-50%);
+    transition: transform 0.9s ease;
+}
+
+.hero-feature-track.shifting {
+    transform: translateX(0%);
+}
+
+.hero-feature-track.instant {
+    transition: none;
+}
+
+.hero-feature-slide {
+    position: relative;
+    width: 50%;
+    flex-shrink: 0;
+    display: block;
+    text-decoration: none;
+    color: inherit;
+}
+
+/* Chấm chỉ báo kiểu banner quảng cáo — nổi ở góc trên phải ảnh (góc dưới đã có giá + nút "Xem chi
+   tiết" nên đặt ở đây để không đè lên nhau), bấm để nhảy thẳng tới món đặc biệt tương ứng thay vì
+   phải chờ tự động xoay vòng. */
+.hero-feature-dots {
+    position: absolute;
+    right: 20px;
+    top: 20px;
+    z-index: 3;
+    display: flex;
+    gap: 8px;
+}
+
+.hero-feature-dot {
+    width: 8px;
+    height: 8px;
+    padding: 0;
+    border: none;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.45);
+    cursor: pointer;
+    transition: background-color 0.2s ease, width 0.2s ease;
+}
+
+.hero-feature-dot:hover {
+    background: rgba(255, 255, 255, 0.7);
+}
+
+.hero-feature-dot.active {
+    width: 22px;
+    border-radius: var(--radius-full);
+    background: var(--brand-ivory);
+}
+
+.hero-feature-img {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.4s ease;
+}
+
+.hero-feature-slide:hover .hero-feature-img {
+    transform: scale(1.05);
+}
+
+.hero-feature-slide::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(0deg, rgba(20, 14, 8, 0.88) 0%, rgba(20, 14, 8, 0.35) 45%, rgba(20, 14, 8, 0.05) 70%);
+}
+
+.hero-feature-tag {
+    position: absolute;
+    top: 18px;
+    left: 18px;
+    z-index: 2;
+    padding: 6px 14px;
+    border-radius: var(--radius-full);
+    background: var(--brand-burgundy);
+    color: var(--brand-ivory);
+    font-size: 0.72rem;
+    font-weight: 800;
+    letter-spacing: 0.8px;
+    text-transform: uppercase;
+}
+
+.hero-feature-info {
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    z-index: 2;
+    padding: 24px;
+    color: var(--brand-ivory);
+}
+
+.hero-feature-name {
+    margin: 0 0 6px;
+    font-family: var(--brand-serif);
+    font-size: 1.5rem;
+    font-weight: 700;
+}
+
+.hero-feature-desc {
+    margin: 0 0 16px;
+    font-size: 0.88rem;
+    line-height: 1.5;
+    color: rgba(255, 255, 255, 0.85);
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+}
+
+.hero-feature-footer {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
     gap: 12px;
 }
 
-
-.search-field {
-    width: 100%;
-    max-width: 420px;
+.hero-feature-price {
+    font-family: var(--brand-mono);
+    font-weight: 800;
+    font-size: 1.2rem;
+    color: var(--brand-gold-light);
 }
+
+.hero-feature-cta {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 10px 18px;
+    border-radius: var(--radius-full);
+    background: var(--brand-burgundy);
+    font-weight: 700;
+    font-size: 0.85rem;
+    transition: background-color 0.15s ease, transform 0.15s ease;
+}
+
+.hero-feature-slide:hover .hero-feature-cta {
+    background: var(--brand-burgundy-light);
+    transform: translateX(2px);
+}
+
+.hero-feature-cta mat-icon {
+    width: 18px;
+    height: 18px;
+    font-size: 18px;
+}
+
+/* ---------- Pill lọc/sắp xếp ---------- */
+
+.pill-row {
+    display: flex;
+    gap: 10px;
+    overflow-x: auto;
+    padding: 28px 0 8px;
+    scrollbar-width: none;
+}
+
+.pill-row::-webkit-scrollbar {
+    display: none;
+}
+
+.pill {
+    flex-shrink: 0;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    height: 42px;
+    padding: 0 18px;
+    border-radius: var(--radius-full);
+    border: 1.5px solid rgba(239, 125, 47, 0.32);
+    background: var(--brand-ivory);
+    color: var(--brand-ink);
+    font-family: var(--brand-sans);
+    font-weight: 600;
+    font-size: 0.85rem;
+    cursor: pointer;
+    white-space: nowrap;
+    transition: background-color 0.15s ease, color 0.15s ease, border-color 0.15s ease;
+}
+
+.pill mat-icon {
+    width: 18px;
+    height: 18px;
+    font-size: 18px;
+    color: var(--brand-burgundy);
+    transition: color 0.15s ease;
+}
+
+.pill:hover {
+    border-color: var(--brand-burgundy);
+}
+
+.pill.active {
+    background: var(--brand-burgundy);
+    border-color: var(--brand-burgundy);
+    color: var(--brand-ivory);
+    box-shadow: var(--brand-shadow-soft);
+}
+
+.pill.active mat-icon {
+    color: var(--brand-ivory);
+}
+
+.pill-filter-caret {
+    margin-left: -2px;
+}
+
+::ng-deep .filter-item-active {
+    color: var(--brand-burgundy) !important;
+}
+
+::ng-deep .filter-item-active mat-icon {
+    color: var(--brand-burgundy) !important;
+}
+
+/* ---------- Trạng thái tải / rỗng ---------- */
 
 .status-message {
     margin-top: 32px;
@@ -61,7 +383,8 @@
     align-items: center;
     justify-content: center;
     gap: 10px;
-    border-radius: 6px;
+    text-align: center;
+    border-radius: var(--radius-md);
     background: var(--brand-ivory);
     box-shadow: var(--brand-shadow-soft);
     font-size: 16px;
@@ -71,128 +394,204 @@
 
 .spin-icon {
     animation: spin 1s linear infinite;
-    color: var(--brand-gold);
+    color: var(--brand-burgundy);
 }
 
 @keyframes spin {
     from {
         transform: rotate(0deg);
     }
+
     to {
         transform: rotate(360deg);
     }
 }
 
-/* Lưới món ăn — bố cục dạng thẻ thực đơn */
+/* ---------- Lưới món ăn ---------- */
+
 .recipe-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
     gap: 24px;
-    margin-top: 36px;
+    margin-top: 8px;
 }
 
-/* Card món ăn */
 .recipe-card {
     display: flex;
-    align-items: center;
-    gap: 18px;
-
-    min-width: 0;
-    padding: 18px;
-
-    border-radius: 10px;
-    border: 1px solid var(--brand-cream-dark);
+    flex-direction: column;
+    border-radius: var(--radius-lg);
+    overflow: hidden;
     background: var(--brand-ivory);
     color: inherit;
     text-decoration: none;
-
-    box-shadow: none;
-
-    transition:
-        transform 0.2s ease,
-        box-shadow 0.2s ease,
-        border-color 0.2s ease;
+    box-shadow: var(--brand-shadow-soft);
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
 }
 
 .recipe-card:hover {
-    transform: translateY(-2px);
-    box-shadow: var(--brand-shadow-soft);
-    border-color: var(--brand-burgundy);
+    transform: translateY(-4px);
+    box-shadow: var(--brand-shadow-strong);
 }
 
-.recipe-card:active {
-    transform: translateY(0);
+.recipe-media {
+    position: relative;
+    aspect-ratio: 4 / 3;
+    overflow: hidden;
+    background: var(--brand-cream-dark);
 }
 
-/* Ảnh món ăn */
 .recipe-image {
-    width: 76px;
-    height: 76px;
-    flex-shrink: 0;
-
+    width: 100%;
+    height: 100%;
     object-fit: cover;
-    border-radius: 4px;
-    border: 1px solid var(--brand-cream-dark);
+    transition: transform 0.35s ease;
 }
 
-/* Nội dung card */
+.recipe-card:hover .recipe-image {
+    transform: scale(1.06);
+}
+
+.recipe-special-badge {
+    position: absolute;
+    top: 12px;
+    left: 12px;
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    padding: 5px 10px;
+    border-radius: var(--radius-full);
+    background: var(--brand-gold);
+    color: var(--brand-ivory);
+    font-size: 0.68rem;
+    font-weight: 800;
+    letter-spacing: 0.4px;
+}
+
+.recipe-special-badge mat-icon {
+    width: 14px;
+    height: 14px;
+    font-size: 14px;
+}
+
+.recipe-heart {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    width: 36px;
+    height: 36px;
+    border: none;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.92);
+    color: var(--brand-ink-soft);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    box-shadow: var(--brand-shadow-soft);
+    transition: transform 0.15s ease, color 0.15s ease;
+}
+
+.recipe-heart:hover {
+    transform: scale(1.08);
+}
+
+.recipe-heart.active {
+    color: var(--brand-burgundy);
+}
+
 .recipe-content {
-    min-width: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
     flex: 1;
+    padding: 16px 18px 18px;
 }
 
 .recipe-title {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: 10px;
-
+    margin: 0;
     font-family: var(--brand-sans);
-    font-size: 1.25rem;
-    font-weight: 600;
+    font-size: 1.05rem;
+    font-weight: 700;
     color: var(--brand-ink);
-}
-
-.recipe-title span {
-    flex: 1;
-    min-width: 0;
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
 }
 
-.recipe-subtitle {
-    margin-top: 6px;
+.recipe-desc {
+    margin: 0;
+    min-height: 2.4em;
+    font-size: 0.82rem;
+    line-height: 1.5;
     color: var(--brand-ink-soft);
-    opacity: 0.75;
-    font-size: 13px;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+}
+
+.recipe-footer {
+    margin-top: auto;
+    padding-top: 6px;
 }
 
 .recipe-price {
-    margin-top: 6px;
     font-family: var(--brand-mono);
-    font-weight: 700;
-    font-size: 13px;
+    font-weight: 800;
+    font-size: 1rem;
     color: var(--brand-burgundy);
 }
 
-/* Icon yêu thích */
-.favorite-icon {
-    flex-shrink: 0;
-    color: var(--brand-brass);
-}
+/* ---------- Responsive ---------- */
 
-/* Responsive */
-@media (max-width: 700px) {
-    .app-container {
-        padding: 32px 18px 48px;
+@media (max-width: 900px) {
+    .hero {
+        grid-template-columns: 1fr;
     }
 
+    .hero-feature-viewport {
+        height: 280px;
+    }
+}
+
+@media (max-width: 700px) {
+    .page {
+        padding: 24px 18px 48px;
+    }
+
+    .hero-title {
+        font-size: 1.9rem;
+    }
+
+    .hero-search {
+        max-width: 100%;
+    }
+
+    .recipe-grid {
+        grid-template-columns: 1fr 1fr;
+        gap: 14px;
+    }
+}
+
+@media (max-width: 480px) {
     .recipe-grid {
         grid-template-columns: 1fr;
     }
 
-    .main-title {
-        font-size: 1.8rem;
+    /* Màn rất hẹp: nút "Tìm kiếm" chiếm quá nhiều chỗ khiến chữ placeholder bị cắt cụt giữa từ —
+       bỏ icon trong nút và thu gọn padding để ô nhập có đủ chỗ hiển thị. */
+    .hero-search {
+        height: 50px;
+        padding: 0 0 0 16px;
+    }
+
+    .hero-search-btn {
+        padding: 0 16px;
+        font-size: 0.8rem;
+    }
+
+    .hero-search-btn mat-icon {
+        display: none;
     }
 }

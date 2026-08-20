@@ -20,6 +20,7 @@
     font-family: var(--brand-serif);
     font-size: 1.4rem !important;
     font-weight: 600;
+    letter-spacing: 0.4px;
     color: var(--brand-ink);
 }
 

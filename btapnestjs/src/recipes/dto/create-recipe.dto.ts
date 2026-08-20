@@ -3,12 +3,15 @@ import {
   IsArray,
   IsBoolean,
   IsEmail,
+  IsIn,
   IsNumber,
   IsOptional,
   IsString,
   MinLength,
   ValidateNested,
 } from 'class-validator';
+import { RECIPE_CATEGORIES } from '../schemas/recipe.schema';
+import type { RecipeCategory } from '../schemas/recipe.schema';
 
 export class IngredientDto {
   @IsString()
@@ -49,6 +52,10 @@ export class CreateRecipeDto {
   @IsOptional()
   @IsBoolean()
   isFavorite?: boolean;
+
+  @IsOptional()
+  @IsIn(RECIPE_CATEGORIES, { message: 'Danh mục món ăn không hợp lệ' })
+  category?: RecipeCategory;
 
   @IsEmail({}, { message: 'Email tác giả không hợp lệ' })
   authorEmail: string;

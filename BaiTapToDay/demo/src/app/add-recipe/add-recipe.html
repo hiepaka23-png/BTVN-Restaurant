@@ -6,6 +6,9 @@
     <mat-card class="recipe-card-form">
         <mat-card-content>
             <form class="form-container" novalidate (submit)= "save($event)">
+                @if (formError()) {
+                <div class="server-error">{{ formError() }}</div>
+                }
                 <mat-form-field appearance="outline" class="full-width">
                     <mat-label>Tên món</mat-label>
                     <input matInput type="text" [formField]="recipeForm.name" placeholder="Nhập tên món ăn..." />
@@ -31,6 +34,17 @@
                     <mat-label>Giá (đ)</mat-label>
                     <input matInput type="number" [formField]="recipeForm.price" placeholder="VD: 89000" />
                     @for (error of recipeForm.price().errors(); track error) {
+                    <mat-error>{{ error.message }}</mat-error>
+                    }
+                </mat-form-field>
+                <mat-form-field appearance="outline" class="full-width">
+                    <mat-label>Danh mục món ăn</mat-label>
+                    <mat-select [formField]="recipeForm.category">
+                        @for (category of recipeCategories; track category) {
+                        <mat-option [value]="category">{{ category }}</mat-option>
+                        }
+                    </mat-select>
+                    @for (error of recipeForm.category().errors(); track error) {
                     <mat-error>{{ error.message }}</mat-error>
                     }
                 </mat-form-field>

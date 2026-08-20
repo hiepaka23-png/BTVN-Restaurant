@@ -26,14 +26,19 @@ import { JobApplicationsModule } from './job-applications/job-applications.modul
 import { ContactMessagesModule } from './contact-messages/contact-messages.module';
 import { UploadsModule } from './uploads/uploads.module';
 import { NotificationsModule } from './notifications/notifications.module';
+import { PromoCodesModule } from './promo-codes/promo-codes.module';
 import { RequestLoggerMiddleware } from './common/middleware/request-logger.middleware';
 import { HttpExceptionFilter } from './common/filters/http-exception.filter';
 
 @Module({
   imports: [
-    // 2. Cấu hình đọc file index.html từ thư mục public
+    // 2. Cấu hình đọc file index.html từ thư mục public — loại trừ /api/* để request API không bị
+    // middleware này "nuốt" mất và trả nhầm về index.html; mọi path còn lại không khớp file tĩnh
+    // nào cũng tự fallback về index.html để Angular router tự xử lý (bắt buộc để deep-link/refresh
+    // một trang con như /recipes/5 không bị 404).
     ServeStaticModule.forRoot({
       rootPath: join(process.cwd(), 'public'),
+      exclude: ['/api/{*splat}'],
     }),
     TasksModule,
     ConfigModule.forRoot({ isGlobal: true }),
@@ -54,6 +59,7 @@ import { HttpExceptionFilter } from './common/filters/http-exception.filter';
     ContactMessagesModule,
     UploadsModule,
     NotificationsModule,
+    PromoCodesModule,
   ],
   controllers: [AppController],
   providers: [

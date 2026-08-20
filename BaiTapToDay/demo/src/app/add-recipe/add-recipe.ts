@@ -3,10 +3,11 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { RecipeService } from '../recipe-service';
-import { RecipeModel } from '../models';
+import { RECIPE_CATEGORIES, RecipeCategory, RecipeModel } from '../models';
 import { MatButtonModule } from '@angular/material/button';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
+import { MatSelectModule } from '@angular/material/select';
 import { MatIconModule } from '@angular/material/icon';
 import { MatCardModule } from '@angular/material/card';
 import { form, submit, FormField, email, required, minLength, maxLength, min } from '@angular/forms/signals';
@@ -14,9 +15,9 @@ import { MatDialog } from '@angular/material/dialog';
 import { HttpClient } from '@angular/common/http';
 import { firstValueFrom } from 'rxjs';
 import { ConfirmDialog } from '../confirm-dialog/confirm-dialog';
+import { API_ORIGIN, BACKEND_ORIGIN, resolveImageUrl } from '../api-config';
 
-const BACKEND_ORIGIN = 'http://localhost:3000';
-const UPLOAD_IMAGE_API_URL = `${BACKEND_ORIGIN}/uploads/image`;
+const UPLOAD_IMAGE_API_URL = `${API_ORIGIN}/uploads/image`;
 const DEFAULT_IMG_URL = 'https://images.unsplash.com/photo-1546069901-ba9599a7e63c?w=600';
 const ALLOWED_IMAGE_TYPES = ['image/jpeg', 'image/png', 'image/webp', 'image/gif'];
 const MAX_IMAGE_SIZE_BYTES = 5 * 1024 * 1024;
@@ -33,6 +34,7 @@ const MAX_IMAGE_SIZE_BYTES = 5 * 1024 * 1024;
     MatButtonModule,
     MatFormFieldModule,
     MatInputModule,
+    MatSelectModule,
     MatIconModule,
     MatCardModule,
     FormField,
@@ -65,11 +67,18 @@ export class AddRecipe implements OnInit {
   protected readonly uploadingImage = signal(false);
   private selectedImageFile: File | null = null;
 
+  // Banner lỗi chung cho form — chủ yếu để báo khi submit() bị chặn do validate lỗi mà các
+  // mat-error riêng lẻ chưa kịp hiện (field chưa "touched"), tránh cảm giác bấm Lưu vô tri.
+  protected readonly formError = signal('');
+
+  protected readonly recipeCategories = RECIPE_CATEGORIES;
+
   protected readonly recipeModel = signal({
     name: '',
     description: '',
     authorEmail: '',
     price: 0,
+    category: RECIPE_CATEGORIES[0] as RecipeCategory,
   });
   protected readonly recipeForm = form(this.recipeModel, ((path) => {
     required(path.name, { message: 'Tên món không được để trống' });
@@ -79,6 +88,7 @@ export class AddRecipe implements OnInit {
     required(path.authorEmail, { message: 'Email không được để trống' });
     email(path.authorEmail, { message: 'Email phải đúng định dạng' });
     min(path.price, 1000, { message: 'Giá phải từ 1.000đ trở lên' });
+    required(path.category, { message: 'Vui lòng chọn danh mục món ăn' });
   }));
 
 
@@ -99,12 +109,13 @@ export class AddRecipe implements OnInit {
 
     this.editingId.set(id);
     this.existingRecipe = existing;
-    this.imagePreviewUrl.set(existing.imgUrl || null);
+    this.imagePreviewUrl.set(existing.imgUrl ? resolveImageUrl(existing.imgUrl) : null);
     this.recipeModel.set({
       name: existing.name,
       description: existing.description,
       authorEmail: existing.authorEmail,
       price: existing.price,
+      category: existing.category,
     });
     this.nguyenLieuList = existing.ingredients.length
       ? existing.ingredients.map((ingredient) => ({
@@ -180,49 +191,64 @@ export class AddRecipe implements OnInit {
 
   protected async save(event: Event): Promise<void> {
     event.preventDefault();
+    this.formError.set('');
     let didSave = false;
 
-    const ok = await submit(this.recipeForm, async () => {
-      const confirmed = await this.confirmSave();
-      if (!confirmed) {
-        return;
-      }
+    const ok = await submit(this.recipeForm, {
+      // Không cấu hình onInvalid trước đây khiến submit() lặng lẽ trả về false khi form invalid
+      // (VD: giá mặc định 0 chưa đạt min 1.000đ nhưng người dùng chưa "chạm" vào ô Giá nên
+      // mat-error cũng chưa hiện) — bấm Lưu như không có phản ứng gì. Đánh dấu touched cho từng ô
+      // để lộ hết lỗi đang ẩn, kèm banner lỗi chung để chắc chắn người dùng thấy phản hồi.
+      onInvalid: () => {
+        this.recipeForm.name().markAsTouched();
+        this.recipeForm.description().markAsTouched();
+        this.recipeForm.authorEmail().markAsTouched();
+        this.recipeForm.price().markAsTouched();
+        this.formError.set('Vui lòng kiểm tra lại các trường được đánh dấu lỗi bên dưới.');
+      },
+      action: async () => {
+        const confirmed = await this.confirmSave();
+        if (!confirmed) {
+          return;
+        }
 
-      let uploadedImgUrl: string | undefined;
-      try {
-        uploadedImgUrl = await this.uploadImageIfNeeded();
-      } catch (error: any) {
-        this.imageError.set(error?.error?.message || 'Tải ảnh lên thất bại, vui lòng thử lại.');
-        return;
-      }
+        let uploadedImgUrl: string | undefined;
+        try {
+          uploadedImgUrl = await this.uploadImageIfNeeded();
+        } catch (error: any) {
+          this.imageError.set(error?.error?.message || 'Tải ảnh lên thất bại, vui lòng thử lại.');
+          return;
+        }
 
-      const { name, description, authorEmail, price } = this.recipeModel();
+        const { name, description, authorEmail, price, category } = this.recipeModel();
 
-      const validIngredients = this.nguyenLieuList
-        .filter((item) => item.ten.trim() !== '')
-        .map((item) => ({
-          name: item.ten.trim(),
-          quantity: item.soLuong ?? 0,
-          unit: item.donVi.trim(),
-        }));
+        const validIngredients = this.nguyenLieuList
+          .filter((item) => item.ten.trim() !== '')
+          .map((item) => ({
+            name: item.ten.trim(),
+            quantity: item.soLuong ?? 0,
+            unit: item.donVi.trim(),
+          }));
 
-      const payload: Omit<RecipeModel, 'id'> = {
-        name: name.trim(),
-        description: description.trim(),
-        authorEmail: authorEmail.trim(),
-        price,
-        ingredients: validIngredients,
-        isFavorite: this.existingRecipe?.isFavorite ?? false,
-        imgUrl: uploadedImgUrl ?? this.existingRecipe?.imgUrl ?? DEFAULT_IMG_URL,
-      };
+        const payload: Omit<RecipeModel, 'id'> = {
+          name: name.trim(),
+          description: description.trim(),
+          authorEmail: authorEmail.trim(),
+          price,
+          category,
+          ingredients: validIngredients,
+          isFavorite: this.existingRecipe?.isFavorite ?? false,
+          imgUrl: uploadedImgUrl ?? this.existingRecipe?.imgUrl ?? DEFAULT_IMG_URL,
+        };
 
-      const id = this.editingId();
-      const saved = id !== null
-        ? await this.recipeService.updateRecipe(id, payload)
-        : await this.recipeService.addRecipe(payload);
+        const id = this.editingId();
+        const saved = id !== null
+          ? await this.recipeService.updateRecipe(id, payload)
+          : await this.recipeService.addRecipe(payload);
 
-      didSave = true;
-      console.log(id !== null ? 'Đã cập nhật món:' : 'Đã thêm món:', saved);
+        didSave = true;
+        console.log(id !== null ? 'Đã cập nhật món:' : 'Đã thêm món:', saved);
+      },
     });
     if (ok && didSave) {
       await this.router.navigate([this.returnPath()]);

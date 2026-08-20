@@ -22,6 +22,7 @@
                     <th>Tổng tiền</th>
                     <th>Ngày tạo</th>
                     <th>Trạng thái</th>
+                    <th>Thanh toán</th>
                 </tr>
             </thead>
             <tbody>
@@ -67,6 +68,19 @@
                                 </button>
                             </div>
                         </div>
+                        }
+                    </td>
+                    <td class="payment-cell">
+                        <mat-form-field appearance="outline" subscriptSizing="dynamic" class="payment-status-select">
+                            <mat-select [value]="order.paymentStatus" [disabled]="updatingPaymentId() === order._id"
+                                (selectionChange)="onPaymentStatusSelected(order, $event.value)">
+                                @for (option of paymentStatusOptions; track option) {
+                                <mat-option [value]="option">{{ paymentStatusLabels[option] }}</mat-option>
+                                }
+                            </mat-select>
+                        </mat-form-field>
+                        @if (order.paidAt) {
+                        <div class="muted">Lúc: {{ formatDate(order.paidAt) }}</div>
                         }
                     </td>
                 </tr>

@@ -29,4 +29,12 @@ export class CreateJobApplicationDto {
   @IsOptional()
   @IsString()
   message?: string;
+
+  @IsString()
+  @MinLength(1, { message: 'Vui lòng tải lên CV ứng tuyển' })
+  cvUrl: string;
+
+  @IsString()
+  @MinLength(1, { message: 'Vui lòng tải lên CV ứng tuyển' })
+  cvFileName: string;
 }

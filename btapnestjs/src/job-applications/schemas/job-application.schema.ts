@@ -20,6 +20,12 @@ export class JobApplication {
 
   @Prop({ default: '' })
   message: string;
+
+  @Prop({ required: true })
+  cvUrl: string;
+
+  @Prop({ required: true })
+  cvFileName: string;
 }
 
 export type JobApplicationDocument = HydratedDocument<JobApplication>;

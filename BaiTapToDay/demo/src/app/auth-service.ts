@@ -1,7 +1,8 @@
 import { computed, inject, Injectable, signal } from '@angular/core';
 import { Router } from '@angular/router';
+import { API_ORIGIN } from './api-config';
 
-export const AUTH_API_URL = 'http://localhost:3000/auth';
+export const AUTH_API_URL = `${API_ORIGIN}/auth`;
 
 const ACCESS_TOKEN_KEY = 'access_token';
 const REFRESH_TOKEN_KEY = 'refresh_token';
@@ -80,6 +81,33 @@ export class AuthService {
   setTokens(accessToken: string, refreshToken: string): void {
     localStorage.setItem(ACCESS_TOKEN_KEY, accessToken);
     localStorage.setItem(REFRESH_TOKEN_KEY, refreshToken);
+  }
+
+  // Chủ động lấy access token MỚI ngay cả khi token hiện tại chưa hết hạn — cần thiết vì role được
+  // nhúng thẳng vào JWT lúc đăng nhập: nếu admin đổi quyền của một tài khoản đang có phiên hợp lệ,
+  // access token cũ vẫn còn "sống" (chưa 401) nhưng mang role cũ, khiến các API @Roles('admin') bị
+  // chặn 403 dù tài khoản đã thật sự là admin trong DB (interceptor chỉ tự refresh khi gặp 401,
+  // không phải 403). Dùng fetch() thay vì HttpClient để tránh vòng lặp qua chính interceptor.
+  async refreshTokens(): Promise<boolean> {
+    const refreshToken = this.getRefreshToken();
+    if (!refreshToken) {
+      return false;
+    }
+    try {
+      const res = await fetch(`${AUTH_API_URL}/refresh`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ refreshToken }),
+      });
+      const data = await parseJsonSafely(res);
+      if (!res.ok || !data['access_token']) {
+        return false;
+      }
+      this.setTokens(data['access_token'] as string, data['refresh_token'] as string);
+      return true;
+    } catch {
+      return false;
+    }
   }
 
   // Cập nhật thông tin user cục bộ (sau khi PATCH /users/me) mà không cần đăng nhập lại.

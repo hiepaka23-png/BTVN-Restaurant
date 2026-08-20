@@ -1,97 +1,153 @@
-.profile-container {
-    max-width: 900px;
+.profile-page {
+    max-width: 1180px;
     margin: 0 auto;
-    padding: 116px 24px 60px;
+    padding: 18px 32px 64px;
     font-family: var(--brand-sans);
     color: var(--brand-ink);
 }
 
-.profile-header {
-    text-align: center;
-    margin-bottom: 36px;
-}
+/* ---------- Tiêu đề ---------- */
 
 .profile-eyebrow {
-    display: block;
+    display: inline-block;
+    margin-bottom: 12px;
+    padding: 6px 14px;
+    border-radius: var(--radius-full);
+    background: var(--brand-gold-soft);
+    color: var(--brand-burgundy-dark);
     font-size: 0.72rem;
     font-weight: 700;
-    letter-spacing: 5px;
+    letter-spacing: 1.5px;
     text-transform: uppercase;
-    color: var(--brand-gold);
-    margin-bottom: 18px;
+}
+
+.profile-header {
+    text-align: center;
+    margin-bottom: 32px;
 }
 
 .profile-title {
-    margin: 0;
+    margin: 0 0 26px;
     font-family: var(--brand-serif);
-    font-size: 2.4rem;
-    font-weight: 600;
-    color: var(--brand-burgundy);
+    font-size: clamp(1.9rem, 3.4vw, 2.5rem);
+    font-weight: 800;
+    letter-spacing: -0.3px;
+    color: var(--brand-ink);
 }
+
+.profile-subtitle {
+    margin: 0;
+    color: var(--brand-ink-soft);
+    font-size: 0.95rem;
+}
+
+/* ---------- Bố cục 2 cột ---------- */
 
 .profile-layout {
     display: grid;
-    grid-template-columns: 260px 1fr;
-    gap: 24px;
+    grid-template-columns: 280px 1fr;
+    gap: 20px;
     align-items: start;
 }
 
-@media (max-width: 720px) {
+.profile-right {
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+    min-width: 0;
+}
+
+@media (max-width: 900px) {
     .profile-layout {
         grid-template-columns: 1fr;
     }
 }
 
+/* ---------- Card chung ---------- */
+
 .profile-card {
     padding: 28px !important;
-    border-radius: 10px !important;
+    border-radius: var(--radius-lg) !important;
     background-color: var(--brand-ivory);
+    border: 1px solid var(--brand-cream-dark);
     box-shadow: var(--brand-shadow-soft) !important;
 }
 
+.card-title-row {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 22px;
+}
+
+.card-icon {
+    color: var(--brand-burgundy);
+    width: 22px;
+    height: 22px;
+    font-size: 22px;
+}
+
+.card-title {
+    margin: 0;
+    font-family: var(--brand-serif);
+    font-size: 1.2rem;
+    font-weight: 700;
+    letter-spacing: 0.2px;
+    color: var(--brand-ink);
+}
+
+/* ---------- Card hồ sơ (trái) ---------- */
+
 .avatar-card {
-    grid-row: span 2;
     display: flex;
     flex-direction: column;
     align-items: center;
     text-align: center;
 }
 
-.card-title {
-    margin: 0 0 20px;
-    font-family: var(--brand-serif);
-    font-size: 1.3rem;
-    font-weight: 600;
-    color: var(--brand-burgundy);
+.avatar-wrap {
+    position: relative;
+    width: 128px;
+    height: 128px;
+    margin-bottom: 16px;
 }
 
 .avatar-preview {
-    width: 140px;
-    height: 140px;
+    width: 128px;
+    height: 128px;
     border-radius: 50%;
     object-fit: cover;
-    border: 1px solid var(--brand-cream-dark);
-    margin-bottom: 18px;
+    border: 3px solid var(--brand-cream);
+    box-shadow: var(--brand-shadow-soft);
     background-color: var(--brand-cream-dark);
 }
 
-.avatar-upload-btn {
-    display: inline-flex;
+.avatar-camera-btn {
+    position: absolute;
+    right: 0;
+    bottom: 2px;
+    width: 38px;
+    height: 38px;
+    display: flex;
     align-items: center;
-    gap: 8px;
-    padding: 10px 18px;
-    border-radius: 10px;
+    justify-content: center;
+    border-radius: 50%;
     background: var(--brand-burgundy);
     color: var(--brand-ivory);
-    font-family: var(--brand-mono);
-    font-weight: 600;
-    font-size: 0.8rem;
+    border: 3px solid var(--brand-ivory);
     cursor: pointer;
-    transition: background 0.2s ease;
+    transition: background-color 0.15s ease, transform 0.15s ease;
 }
 
-.avatar-upload-btn:hover {
+.avatar-camera-btn:hover {
     background: var(--brand-burgundy-light);
+    transform: scale(1.06);
+}
+
+.avatar-camera-btn mat-icon {
+    width: 18px;
+    height: 18px;
+    font-size: 18px;
 }
 
 .avatar-input {
@@ -102,29 +158,254 @@
     clip: rect(0, 0, 0, 0);
 }
 
-.full-width-field {
-    width: 100%;
-    margin-bottom: 16px;
+.profile-username {
+    margin: 0 0 8px;
+    font-family: var(--brand-serif);
+    font-size: 1.25rem;
+    font-weight: 800;
+    color: var(--brand-ink);
 }
 
-.save-btn {
+.role-pill {
+    display: inline-block;
+    padding: 4px 14px;
+    border-radius: var(--radius-full);
+    background: var(--brand-cream);
+    color: var(--brand-ink-soft);
+    font-size: 0.72rem;
+    font-weight: 700;
+    letter-spacing: 0.4px;
+    margin-bottom: 20px;
+}
+
+.role-pill.role-admin {
+    background: var(--brand-gold);
+    color: var(--brand-ivory);
+}
+
+.profile-stats {
     width: 100%;
-    height: 44px;
-    margin-top: 6px;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    padding: 4px 0 20px;
+    border-top: 1px solid var(--brand-cream-dark);
+}
+
+.stat-row {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 10px 2px;
+    border-bottom: 1px solid var(--brand-cream-dark);
+}
+
+.stat-row:last-child {
+    border-bottom: none;
+}
+
+.stat-row mat-icon {
+    color: var(--brand-burgundy);
+    width: 19px;
+    height: 19px;
+    font-size: 19px;
+    flex-shrink: 0;
+}
+
+.stat-label {
+    flex: 1;
+    text-align: left;
+    font-size: 0.84rem;
+    color: var(--brand-ink-soft);
+}
+
+.stat-value {
     font-family: var(--brand-mono);
     font-weight: 700;
-    font-size: 0.82rem;
-    letter-spacing: 1.5px;
-    border-radius: 10px !important;
+    font-size: 0.88rem;
+    color: var(--brand-ink);
+}
+
+/* ---------- Nút dạng pill dùng chung (giống "Xem chi tiết" ở trang chủ) ---------- */
+
+.pill-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    width: 100%;
+    height: 48px;
+    margin-top: 6px;
+    border-radius: var(--radius-full) !important;
     background: var(--brand-burgundy) !important;
     color: var(--brand-ivory) !important;
+    font-family: var(--brand-sans);
+    font-weight: 700;
+    font-size: 0.88rem;
+    letter-spacing: 0.2px;
+    cursor: pointer;
+    border: none;
+    transition: background-color 0.15s ease, transform 0.15s ease;
 }
+
+.pill-btn:hover {
+    background: var(--brand-burgundy-light) !important;
+    transform: translateY(-1px);
+}
+
+.pill-btn mat-icon {
+    width: 19px;
+    height: 19px;
+    font-size: 19px;
+}
+
+.change-avatar-btn {
+    text-decoration: none;
+}
+
+/* ---------- Form: field 2 cột ---------- */
+
+.field-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 4px 16px;
+}
+
+.full-field {
+    grid-column: 1 / -1;
+}
+
+@media (max-width: 560px) {
+    .field-grid {
+        grid-template-columns: 1fr;
+    }
+}
+
+.pill-field {
+    width: 100%;
+    margin-bottom: 18px;
+}
+
+/* subscriptSizing="dynamic" chỉ chiếm đúng chiều cao nội dung lỗi cần, nhưng phần chữ lỗi lại
+   sát ngay dưới khung input — thêm khoảng đệm để dòng lỗi không dính liền vào ô nhập kế tiếp. */
+::ng-deep .pill-field .mat-mdc-form-field-subscript-wrapper {
+    padding-top: 4px;
+}
+
+::ng-deep .pill-field mat-error {
+    display: block;
+    margin-bottom: 2px;
+}
+
+/* Chỉ chỉnh chiều cao + bo góc, KHÔNG động vào padding của infix hay tự tô màu viền — những phần
+   đó Material tự tính theo đúng vị trí nhãn nổi (label) và tự lấy màu cam từ --mat-sys-primary sẵn
+   có ở styles.css khi focus, giống hệt kiểu mặc định đang dùng ở các trang khác (vd ô tìm kiếm
+   "Quản lý công thức") — tự chế thêm màu/độ dày viền là nguyên nhân làm nhãn/viền bị lệch trước đó. */
+::ng-deep .pill-field .mat-mdc-text-field-wrapper {
+    min-height: 52px;
+}
+
+::ng-deep .pill-field .mdc-notched-outline__leading {
+    border-radius: 12px 0 0 12px;
+}
+
+::ng-deep .pill-field .mdc-notched-outline__trailing {
+    border-radius: 0 12px 12px 0;
+}
+
+.locked-icon {
+    color: var(--brand-ink-soft);
+    opacity: 0.55;
+    font-size: 20px;
+}
+
+.password-toggle-btn {
+    --mdc-icon-button-state-layer-size: 36px;
+    margin-right: 4px;
+}
+
+/* ---------- Bảo mật tài khoản: form + hộp mẹo ---------- */
+
+.security-grid {
+    display: grid;
+    grid-template-columns: 1.6fr 1fr;
+    gap: 24px;
+    align-items: start;
+}
+
+@media (max-width: 720px) {
+    .security-grid {
+        grid-template-columns: 1fr;
+    }
+}
+
+.security-tips {
+    padding: 20px;
+    border-radius: var(--radius-md);
+    background: var(--brand-gold-soft);
+    border: 1px solid var(--brand-cream-dark);
+}
+
+.tips-icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 38px;
+    height: 38px;
+    border-radius: 50%;
+    background: var(--brand-ivory);
+    color: var(--brand-burgundy);
+    margin-bottom: 10px;
+}
+
+.tips-icon mat-icon {
+    width: 20px;
+    height: 20px;
+    font-size: 20px;
+}
+
+.security-tips h3 {
+    margin: 0 0 12px;
+    font-family: var(--brand-serif);
+    font-size: 1rem;
+    font-weight: 700;
+    color: var(--brand-ink);
+}
+
+.security-tips ul {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.security-tips li {
+    display: flex;
+    align-items: flex-start;
+    gap: 8px;
+    font-size: 0.82rem;
+    line-height: 1.5;
+    color: var(--brand-ink-soft);
+}
+
+.security-tips li mat-icon {
+    width: 16px;
+    height: 16px;
+    font-size: 16px;
+    color: var(--brand-burgundy);
+    flex-shrink: 0;
+    margin-top: 2px;
+}
+
+/* ---------- Trạng thái ---------- */
 
 .server-error {
     color: #7a1a1a;
     background-color: #fbe9e7;
     border-left: 3px solid #b3261e;
-    border-radius: 4px;
+    border-radius: 8px;
     padding: 10px 12px;
     font-size: 0.85rem;
     text-align: center;
@@ -135,22 +416,25 @@
     color: #1e4d2b;
     background-color: #e8f3ea;
     border-left: 3px solid #2e7d32;
-    border-radius: 4px;
+    border-radius: 8px;
     padding: 10px 12px;
     font-size: 0.85rem;
     text-align: center;
     margin: 4px 0 16px;
 }
 
+/* ---------- Vùng nguy hiểm ---------- */
+
 .danger-card {
-    border-top-color: var(--brand-red);
-    grid-column: 2;
+    border-color: rgba(216, 64, 42, 0.35);
 }
 
-@media (max-width: 720px) {
-    .danger-card {
-        grid-column: 1;
-    }
+.danger-icon {
+    color: var(--brand-red) !important;
+}
+
+.danger-title {
+    color: var(--brand-red);
 }
 
 .danger-text {
@@ -160,16 +444,11 @@
 }
 
 .delete-account-btn {
-    display: inline-flex;
-    align-items: center;
-    gap: 8px;
-    height: 44px;
-    padding: 0 20px !important;
-    font-family: var(--brand-mono);
-    font-weight: 700;
-    font-size: 0.82rem;
-    letter-spacing: 1px;
-    border-radius: 10px !important;
+    width: auto !important;
+    padding: 0 24px !important;
     background: var(--brand-red) !important;
-    color: var(--brand-ivory) !important;
+}
+
+.delete-account-btn:hover {
+    background: var(--brand-red-dark) !important;
 }

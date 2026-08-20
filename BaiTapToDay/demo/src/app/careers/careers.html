@@ -1,70 +1,134 @@
+<app-back-link />
+
 <div class="page-container">
-    <app-back-link />
     <div class="page-header">
         <span class="page-eyebrow">Tuyển dụng</span>
-        <h1 class="page-title">Gia nhập đội ngũ của chúng tôi</h1>
-        <p class="page-subtitle">Cùng nhau tạo nên những trải nghiệm ẩm thực đẳng cấp</p>
+        <h1 class="page-title">Ứng tuyển cùng Michelin 5 Sao</h1>
+        <p class="page-subtitle">
+            Điền thông tin cơ bản và tải lên CV của bạn. Chúng tôi sẽ xem xét và liên hệ trong thời
+            gian sớm nhất.
+        </p>
     </div>
 
-    <div class="positions-list">
-        @for (position of positions; track position.title) {
-        <div class="position-item">
-            <mat-icon class="position-icon">work_outline</mat-icon>
-            <div class="position-info">
-                <span class="position-title">{{ position.title }}</span>
-                <span class="position-note">{{ position.note }}</span>
-            </div>
-        </div>
-        }
-    </div>
-
-    <form class="page-card" [formGroup]="form" (ngSubmit)="submit()">
-        <h2 class="form-title">Nộp hồ sơ ứng tuyển</h2>
-
-        <div class="field-row">
-            <mat-form-field appearance="outline" subscriptSizing="dynamic" class="full-width-field">
-                <mat-label>Họ tên</mat-label>
-                <input matInput formControlName="fullName" placeholder="Nhập họ tên của bạn" />
+    <form class="info-card application-card" #applicationCard [formGroup]="form"
+        #careersFormDirective="ngForm" (ngSubmit)="submit()">
+        <div class="field-grid">
+            <mat-form-field appearance="outline" subscriptSizing="dynamic" class="pill-field">
+                <mat-label>Họ và tên</mat-label>
+                <mat-icon matPrefix>person_outline</mat-icon>
+                <input matInput formControlName="fullName" placeholder="Nhập họ và tên" />
                 <mat-error *ngIf="form.get('fullName')?.hasError('required')">Vui lòng nhập họ tên</mat-error>
+                <mat-error *ngIf="!form.get('fullName')?.hasError('required') && form.get('fullName')?.hasError('minlength')">
+                    Họ tên phải có ít nhất 2 ký tự
+                </mat-error>
             </mat-form-field>
 
-            <mat-form-field appearance="outline" subscriptSizing="dynamic" class="full-width-field">
+            <mat-form-field appearance="outline" subscriptSizing="dynamic" class="pill-field">
                 <mat-label>Số điện thoại</mat-label>
-                <input matInput formControlName="phone" placeholder="VD: 0901234567" />
+                <mat-icon matPrefix>call</mat-icon>
+                <input matInput formControlName="phone" placeholder="Nhập số điện thoại" />
                 <mat-error *ngIf="form.get('phone')?.hasError('required')">Vui lòng nhập số điện thoại</mat-error>
-                <mat-error *ngIf="form.get('phone')?.hasError('pattern')">Số điện thoại phải bắt đầu bằng số 0 và chỉ gồm chữ số</mat-error>
+                <mat-error *ngIf="!form.get('phone')?.hasError('required') && form.get('phone')?.hasError('pattern')">
+                    Số điện thoại phải bắt đầu bằng số 0 và chỉ gồm chữ số
+                </mat-error>
             </mat-form-field>
         </div>
 
-        <mat-form-field appearance="outline" subscriptSizing="dynamic" class="full-width-field">
-            <mat-label>Email</mat-label>
-            <input matInput type="email" formControlName="email" placeholder="Nhập email của bạn" />
-            <mat-error *ngIf="form.get('email')?.hasError('required')">Vui lòng nhập email</mat-error>
-            <mat-error *ngIf="form.get('email')?.hasError('email')">Email không hợp lệ</mat-error>
-        </mat-form-field>
+        <div class="field-grid">
+            <mat-form-field appearance="outline" subscriptSizing="dynamic" class="pill-field">
+                <mat-label>Email</mat-label>
+                <mat-icon matPrefix>mail_outline</mat-icon>
+                <input matInput type="email" formControlName="email" placeholder="Nhập email của bạn" />
+                <mat-error *ngIf="form.get('email')?.hasError('required')">Vui lòng nhập email</mat-error>
+                <mat-error *ngIf="form.get('email')?.hasError('email')">Email không hợp lệ</mat-error>
+            </mat-form-field>
 
-        <mat-form-field appearance="outline" subscriptSizing="dynamic" class="full-width-field">
-            <mat-label>Vị trí ứng tuyển</mat-label>
-            <mat-select formControlName="position">
-                @for (position of positions; track position.title) {
-                <mat-option [value]="position.title">{{ position.title }}</mat-option>
-                }
-            </mat-select>
-            <mat-error *ngIf="form.get('position')?.hasError('required')">Vui lòng chọn vị trí ứng tuyển</mat-error>
-        </mat-form-field>
+            <mat-form-field appearance="outline" subscriptSizing="dynamic" class="pill-field">
+                <mat-label>Vị trí ứng tuyển</mat-label>
+                <mat-icon matPrefix>work_outline</mat-icon>
+                <mat-select formControlName="position" placeholder="Chọn vị trí ứng tuyển">
+                    @for (position of positions; track position.title) {
+                    <mat-option [value]="position.title">{{ position.title }}</mat-option>
+                    }
+                </mat-select>
+                <mat-error *ngIf="form.get('position')?.hasError('required')">Vui lòng chọn vị trí ứng tuyển</mat-error>
+            </mat-form-field>
+        </div>
 
-        <mat-form-field appearance="outline" subscriptSizing="dynamic" class="full-width-field">
-            <mat-label>Giới thiệu bản thân (tùy chọn)</mat-label>
-            <textarea matInput formControlName="message" rows="3"
-                placeholder="Kinh nghiệm làm việc, điểm mạnh của bạn..."></textarea>
-        </mat-form-field>
+        <label class="upload-label">CV ứng tuyển (PDF)</label>
+        <div class="upload-zone" [class.drag-over]="dragOver()" [class.has-error]="fileError()"
+            (dragover)="onDragOver($event)" (dragleave)="onDragLeave()" (drop)="onFileDropped($event)"
+            (click)="fileInput.click()">
+            @if (!selectedFile()) {
+            <mat-icon class="upload-icon">cloud_upload</mat-icon>
+            <p class="upload-text">Chọn file PDF hoặc kéo thả tại đây</p>
+            <p class="upload-hint">Định dạng: PDF, tối đa 10MB</p>
+            } @else {
+            <div class="upload-file-chip" (click)="$event.stopPropagation()">
+                <mat-icon class="file-icon">picture_as_pdf</mat-icon>
+                <div class="file-meta">
+                    <span class="file-name">{{ selectedFile()!.name }}</span>
+                    <span class="file-size">{{ formatFileSize(selectedFile()!.size) }}</span>
+                </div>
+                <button mat-icon-button type="button" class="file-remove-btn" (click)="removeFile()">
+                    <mat-icon>close</mat-icon>
+                </button>
+            </div>
+            }
+        </div>
+        <input #fileInput type="file" accept="application/pdf" class="hidden-file-input"
+            (change)="onFileInputChange($event)" />
+        @if (fileError()) {
+        <p class="upload-error">{{ fileError() }}</p>
+        }
 
         <div *ngIf="errorMessage()" class="server-error">{{ errorMessage() }}</div>
         <div *ngIf="successMessage()" class="server-success">{{ successMessage() }}</div>
 
-        <button mat-flat-button type="submit" class="submit-btn" [disabled]="submitting()">
+        <button mat-flat-button type="submit" class="pill-btn submit-btn"
+            [disabled]="submitting() || form.invalid || !selectedFile()">
             <mat-icon>send</mat-icon>
-            {{ submitting() ? 'Đang gửi...' : 'Nộp hồ sơ' }}
+            {{ submitting() ? 'Đang gửi...' : 'Gửi CV ứng tuyển' }}
         </button>
+
+        <p class="form-privacy-note">
+            <mat-icon>info_outline</mat-icon>
+            Chúng tôi sẽ phản hồi trong 3–5 ngày làm việc.
+        </p>
     </form>
+
+    <div class="section-divider">
+        <span>Thông tin vị trí ứng tuyển</span>
+    </div>
+
+    <div class="positions-list">
+        @for (position of positions; track position.title) {
+        <div class="position-row">
+            <div class="position-title-col">
+                <span class="position-icon"><mat-icon>{{ position.icon }}</mat-icon></span>
+                <span class="position-title">{{ position.title }}</span>
+            </div>
+            <div class="position-detail">
+                <span class="position-detail-label">Bộ phận</span>
+                <span class="position-detail-value">{{ position.department }}</span>
+            </div>
+            <div class="position-detail">
+                <span class="position-detail-label">Mức lương tham khảo</span>
+                <span class="position-detail-value">{{ position.salaryRange }}</span>
+            </div>
+            <div class="position-detail">
+                <span class="position-detail-label">Ca làm việc</span>
+                <span class="position-detail-value">{{ position.shift }}</span>
+            </div>
+            <ul class="position-requirements">
+                @for (req of position.requirements; track req) {
+                <li>{{ req }}</li>
+                }
+            </ul>
+            <button type="button" class="pill-btn-outline apply-btn" (click)="selectPosition(position)">
+                Ứng tuyển vị trí này
+            </button>
+        </div>
+        }
+    </div>
 </div>

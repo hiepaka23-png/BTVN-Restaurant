@@ -1,0 +1,29 @@
+<div class="reward-dialog">
+    <div class="reward-burst" aria-hidden="true">
+        <span class="ray"></span>
+        <span class="ray"></span>
+        <span class="ray"></span>
+        <span class="ray"></span>
+        <span class="ray"></span>
+        <span class="ray"></span>
+    </div>
+
+    <mat-icon class="reward-icon">redeem</mat-icon>
+
+    <h2 mat-dialog-title class="reward-title">Chúc mừng quý khách!</h2>
+
+    <p class="reward-label">Giảm {{ data.discountPercent }}%</p>
+    <p class="reward-detail">Áp dụng cho đơn hàng tiếp theo</p>
+
+    <div class="reward-code">
+        <span class="reward-code-text">{{ data.code }}</span>
+    </div>
+
+    <div mat-dialog-actions class="reward-actions">
+        <button mat-button type="button" class="skip-btn" (click)="close()">Để sau</button>
+        <button mat-flat-button type="button" class="apply-btn" (click)="apply()">
+            <mat-icon>content_copy</mat-icon>
+            Áp dụng ngay
+        </button>
+    </div>
+</div>

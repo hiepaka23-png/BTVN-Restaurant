@@ -1,5 +1,18 @@
-<div class="auth-container">
-    <app-brand-header></app-brand-header>
+<div class="auth-split">
+    <div class="auth-visual" role="img" aria-label="Không gian nhà hàng Michelin lúc hoàng hôn">
+        <div class="auth-visual-scrim"></div>
+        <div class="auth-visual-content">
+            <mat-icon svgIcon="star-medallion" class="auth-visual-mark"></mat-icon>
+            <h1 class="auth-visual-title">Nhà Hàng Michelin</h1>
+            <p class="auth-visual-tagline">5 Sao — Trải nghiệm ẩm thực đẳng cấp</p>
+            <blockquote class="auth-visual-quote">
+                “Ánh nến, ly vang sóng sánh, và một buổi tối không thể nào quên.”
+            </blockquote>
+        </div>
+    </div>
+
+    <div class="auth-panel">
+    <app-brand-header class="auth-panel-header"></app-brand-header>
 
     <mat-card class="auth-card">
 
@@ -21,7 +34,7 @@
                 <mat-label>Mật khẩu</mat-label>
                 <input matInput [type]="hidePassword() ? 'password' : 'text'" formControlName="password"
                     placeholder="Nhập mật khẩu" autocomplete="current-password">
-                <button mat-icon-button matSuffix type="button" (click)="hidePassword.set(!hidePassword())"
+                <button mat-icon-button matSuffix type="button" class="password-toggle-btn" (click)="hidePassword.set(!hidePassword())"
                     [attr.aria-label]="hidePassword() ? 'Hiện mật khẩu' : 'Ẩn mật khẩu'">
                     <mat-icon>{{ hidePassword() ? 'visibility_off' : 'visibility' }}</mat-icon>
                 </button>
@@ -94,7 +107,7 @@
                 <mat-label>Mật khẩu</mat-label>
                 <input matInput formControlName="password" [type]="hidePassword() ? 'password' : 'text'"
                     (input)="recheckRegisterConfirm()" placeholder="Nhập mật khẩu...">
-                <button mat-icon-button matSuffix type="button" (click)="hidePassword.set(!hidePassword())"
+                <button mat-icon-button matSuffix type="button" class="password-toggle-btn" (click)="hidePassword.set(!hidePassword())"
                     [attr.aria-label]="hidePassword() ? 'Hiện mật khẩu' : 'Ẩn mật khẩu'">
                     <mat-icon>{{ hidePassword() ? 'visibility_off' : 'visibility' }}</mat-icon>
                 </button>
@@ -109,7 +122,7 @@
                 <mat-label>Xác nhận mật khẩu</mat-label>
                 <input matInput formControlName="confirmPassword" [type]="hideConfirmPassword() ? 'password' : 'text'"
                     placeholder="Nhập lại mật khẩu...">
-                <button mat-icon-button matSuffix type="button" (click)="hideConfirmPassword.set(!hideConfirmPassword())"
+                <button mat-icon-button matSuffix type="button" class="password-toggle-btn" (click)="hideConfirmPassword.set(!hideConfirmPassword())"
                     [attr.aria-label]="hideConfirmPassword() ? 'Hiện mật khẩu' : 'Ẩn mật khẩu'">
                     <mat-icon>{{ hideConfirmPassword() ? 'visibility_off' : 'visibility' }}</mat-icon>
                 </button>
@@ -227,7 +240,7 @@
                 <mat-label>Mật khẩu mới</mat-label>
                 <input matInput [type]="hideNewPassword() ? 'password' : 'text'" formControlName="newPassword"
                     (input)="recheckResetConfirm()" placeholder="Nhập mật khẩu mới">
-                <button mat-icon-button matSuffix type="button" (click)="hideNewPassword.set(!hideNewPassword())"
+                <button mat-icon-button matSuffix type="button" class="password-toggle-btn" (click)="hideNewPassword.set(!hideNewPassword())"
                     [attr.aria-label]="hideNewPassword() ? 'Hiện mật khẩu' : 'Ẩn mật khẩu'">
                     <mat-icon>{{ hideNewPassword() ? 'visibility_off' : 'visibility' }}</mat-icon>
                 </button>
@@ -242,7 +255,7 @@
                 <mat-label>Xác nhận mật khẩu mới</mat-label>
                 <input matInput [type]="hideConfirmNewPassword() ? 'password' : 'text'" formControlName="confirmPassword"
                     placeholder="Nhập lại mật khẩu mới">
-                <button mat-icon-button matSuffix type="button"
+                <button mat-icon-button matSuffix type="button" class="password-toggle-btn"
                     (click)="hideConfirmNewPassword.set(!hideConfirmNewPassword())"
                     [attr.aria-label]="hideConfirmNewPassword() ? 'Hiện mật khẩu' : 'Ẩn mật khẩu'">
                     <mat-icon>{{ hideConfirmNewPassword() ? 'visibility_off' : 'visibility' }}</mat-icon>
@@ -265,4 +278,5 @@
         }
 
     </mat-card>
+    </div>
 </div>

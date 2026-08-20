@@ -1,0 +1,44 @@
+<div class="crop-dialog">
+    <h2 class="crop-title">Cắt ảnh đại diện</h2>
+    <p class="crop-hint">Kéo để căn chỉnh, dùng thanh trượt để phóng to/thu nhỏ cho vừa khung.</p>
+
+    <div class="cropper-wrapper" #wrapper [style.height.px]="wrapperHeight()">
+        <image-cropper
+            [imageFile]="data.file"
+            [maintainAspectRatio]="true"
+            [aspectRatio]="1"
+            [roundCropper]="true"
+            [allowMoveImage]="true"
+            [transform]="transform()"
+            format="png"
+            output="blob"
+            (imageLoaded)="onImageLoaded($event)"
+            (loadImageFailed)="onLoadImageFailed()"
+            (imageCropped)="onImageCropped($event)"
+        ></image-cropper>
+
+        @if (loadError()) {
+        <div class="crop-error">
+            <mat-icon>error_outline</mat-icon>
+            Không đọc được ảnh này, vui lòng chọn ảnh khác.
+        </div>
+        }
+    </div>
+
+    @if (imageReady()) {
+    <div class="zoom-row">
+        <mat-icon>zoom_out</mat-icon>
+        <mat-slider class="zoom-slider" [min]="minZoom" [max]="maxZoom" step="0.1" discrete>
+            <input matSliderThumb [value]="zoom()" (input)="onZoomChange($any($event.target).valueAsNumber)" />
+        </mat-slider>
+        <mat-icon>zoom_in</mat-icon>
+    </div>
+    }
+
+    <div class="crop-actions">
+        <button mat-flat-button type="button" class="cancel-btn" (click)="cancel()">Huỷ</button>
+        <button mat-flat-button type="button" class="confirm-btn" [disabled]="!imageReady() || loadError()" (click)="confirm()">
+            Dùng ảnh này
+        </button>
+    </div>
+</div>

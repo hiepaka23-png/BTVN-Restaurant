@@ -22,6 +22,8 @@ export class ContactMessagesService {
       username,
       fullName: dto.fullName.trim(),
       email: dto.email.trim(),
+      phone: dto.phone?.trim() ?? '',
+      subject: dto.subject,
       message: dto.message.trim(),
     });
     return created.toObject();

@@ -43,7 +43,7 @@
             <tbody>
                 @for (recipe of recipes(); track recipe.id) {
                 <tr>
-                    <td><img class="recipe-thumb" [src]="recipe.imgUrl" [alt]="recipe.name" /></td>
+                    <td><img class="recipe-thumb" [src]="resolveImageUrl(recipe.imgUrl)" [alt]="recipe.name" /></td>
                     <td>
                         {{ recipe.name }}
                         @if (recipe.isFavorite) {
@@ -53,15 +53,17 @@
                     <td>{{ formatPrice(recipe.price) }}</td>
                     <td>{{ recipe.authorEmail }}</td>
                     <td>{{ recipe.ingredients.length }}</td>
-                    <td class="actions-cell">
-                        <a mat-icon-button [routerLink]="['/admin/recipes', recipe.id, 'edit']" aria-label="Sửa"
-                            title="Sửa">
-                            <mat-icon>edit</mat-icon>
-                        </a>
-                        <button mat-icon-button type="button" aria-label="Xóa" title="Xóa"
-                            [disabled]="deletingId() === recipe.id" (click)="deleteRecipe(recipe)">
-                            <mat-icon>delete_outline</mat-icon>
-                        </button>
+                    <td>
+                        <div class="actions-cell">
+                            <a mat-icon-button [routerLink]="['/admin/recipes', recipe.id, 'edit']" aria-label="Sửa"
+                                title="Sửa">
+                                <mat-icon>edit</mat-icon>
+                            </a>
+                            <button mat-icon-button type="button" aria-label="Xóa" title="Xóa"
+                                [disabled]="deletingId() === recipe.id" (click)="deleteRecipe(recipe)">
+                                <mat-icon>delete_outline</mat-icon>
+                            </button>
+                        </div>
                     </td>
                 </tr>
                 }

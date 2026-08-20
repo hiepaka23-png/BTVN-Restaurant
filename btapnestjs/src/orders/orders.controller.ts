@@ -12,6 +12,7 @@ import { OrdersService } from './orders.service';
 import { CreateOrderDto } from './dto/create-order.dto';
 import { UpdateOrderDto } from './dto/update-order.dto';
 import { SetOrderStatusDto } from './dto/set-order-status.dto';
+import { SetPaymentStatusDto } from './dto/set-payment-status.dto';
 import { CancelOrderDto } from './dto/cancel-order.dto';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 import { RolesGuard } from '../auth/guards/roles.guard';
@@ -51,6 +52,13 @@ export class OrdersController {
     return this.ordersService.findByUserId(req.user.userId);
   }
 
+  // Mở cho mọi người dùng đã đăng nhập (không chỉ admin) — dùng để sắp xếp "phổ biến nhất" ở
+  // trang danh sách món, không phải thông tin quản trị nhạy cảm.
+  @Get('popularity')
+  popularity() {
+    return this.ordersService.popularityByRecipe();
+  }
+
   @Patch(':id')
   update(
     @Req() req: AuthenticatedRequest,
@@ -74,5 +82,16 @@ export class OrdersController {
   @Patch(':id/status')
   setStatus(@Param('id') id: string, @Body() dto: SetOrderStatusDto) {
     return this.ordersService.setStatus(id, dto.status, dto.cancelReason);
+  }
+
+  @UseGuards(RolesGuard)
+  @Roles('admin')
+  @Patch(':id/payment-status')
+  setPaymentStatus(@Param('id') id: string, @Body() dto: SetPaymentStatusDto) {
+    return this.ordersService.setPaymentStatus(
+      id,
+      dto.paymentStatus,
+      dto.transactionId,
+    );
   }
 }

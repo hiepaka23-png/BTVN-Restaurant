@@ -15,6 +15,7 @@ import { RecipeModel } from '../../models';
 import { RECIPES_API_URL, RecipeService } from '../../recipe-service';
 import { ConfirmDialog } from '../../confirm-dialog/confirm-dialog';
 import { AdminNav } from '../admin-nav/admin-nav';
+import { resolveImageUrl } from '../../api-config';
 
 // Trang CRUD công thức dành RIÊNG cho quản trị (bảng dữ liệu dày đặc thông tin, tông màu than
 // chì) — KHÔNG tái sử dụng giao diện dạng lưới ảnh của RecipeList (trang khách), đúng yêu cầu đề
@@ -46,6 +47,7 @@ export class AdminRecipesPage implements OnInit {
   protected readonly loading = signal(true);
   protected readonly errorMessage = signal('');
   protected readonly deletingId = signal<number | null>(null);
+  protected readonly resolveImageUrl = resolveImageUrl;
 
   ngOnInit(): void {
     this.loadRecipes();

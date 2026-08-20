@@ -3,7 +3,11 @@ import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { CreateRecipeDto } from './dto/create-recipe.dto';
 import { UpdateRecipeDto } from './dto/update-recipe.dto';
-import { Recipe, RecipeDocument } from './schemas/recipe.schema';
+import {
+  DEFAULT_RECIPE_CATEGORY,
+  Recipe,
+  RecipeDocument,
+} from './schemas/recipe.schema';
 import { Counter, CounterDocument } from './schemas/counter.schema';
 
 const RECIPE_COUNTER_NAME = 'recipeId';
@@ -21,6 +25,7 @@ const SEED_RECIPES: Recipe[] = [
     authorEmail: 'author@example.com',
     price: 189000,
     isFavorite: false,
+    category: 'Món chính',
     ingredients: [
       { name: 'Mì Spaghetti', quantity: 200, unit: 'g' },
       { name: 'Thịt má heo Guanciale', quantity: 100, unit: 'g' },
@@ -38,6 +43,7 @@ const SEED_RECIPES: Recipe[] = [
     authorEmail: 'author@example.com',
     price: 129000,
     isFavorite: true,
+    category: 'Súp & Salad',
     ingredients: [
       { name: 'Cà chua', quantity: 4, unit: 'quả' },
       { name: 'Phô mai Mozzarella tươi', quantity: 200, unit: 'g' },
@@ -54,6 +60,7 @@ const SEED_RECIPES: Recipe[] = [
     authorEmail: 'author@example.com',
     price: 65000,
     isFavorite: true,
+    category: 'Món chính',
     ingredients: [
       { name: 'Bò', quantity: 100, unit: 'g' },
       { name: 'Bánh mì', quantity: 2, unit: 'ổ' },
@@ -72,6 +79,7 @@ const SEED_RECIPES: Recipe[] = [
     authorEmail: 'author@example.com',
     price: 35000,
     isFavorite: false,
+    category: 'Khai vị',
     ingredients: [
       { name: 'Bánh tráng', quantity: 1, unit: 'tấm' },
       { name: 'Rau răm', quantity: 1, unit: 'bó' },
@@ -90,6 +98,7 @@ const SEED_RECIPES: Recipe[] = [
     authorEmail: 'author@example.com',
     price: 79000,
     isFavorite: false,
+    category: 'Súp & Salad',
     ingredients: [
       { name: 'Khổ qua', quantity: 4, unit: 'quả' },
       { name: 'Thịt heo', quantity: 1, unit: 'kg' },
@@ -123,11 +132,20 @@ export class RecipesService implements OnModuleInit {
     );
   }
 
-  findAll(keyword?: string): Promise<Recipe[]> {
+  // .lean() không tự áp default khai báo trong schema cho các document đã có sẵn trong DB từ
+  // trước khi thêm field "category" — phải tự gán mặc định khi đọc để tránh trả về undefined.
+  private withCategoryDefault(recipe: Recipe): Recipe {
+    return { ...recipe, category: recipe.category ?? DEFAULT_RECIPE_CATEGORY };
+  }
+
+  async findAll(keyword?: string): Promise<Recipe[]> {
     const filter = keyword?.trim()
       ? { name: { $regex: keyword.trim(), $options: 'i' } }
       : {};
-    return this.recipeModel.find(filter, { _id: 0, __v: 0 }).lean();
+    const recipes = await this.recipeModel
+      .find(filter, { _id: 0, __v: 0 })
+      .lean();
+    return recipes.map((recipe) => this.withCategoryDefault(recipe));
   }
 
   async findOne(id: number): Promise<Recipe> {
@@ -137,7 +155,7 @@ export class RecipesService implements OnModuleInit {
     if (!recipe) {
       throw new NotFoundException(`Không tìm thấy công thức #${id}`);
     }
-    return recipe;
+    return this.withCategoryDefault(recipe);
   }
 
   async create(dto: CreateRecipeDto): Promise<Recipe> {
@@ -147,6 +165,7 @@ export class RecipesService implements OnModuleInit {
       name: dto.name.trim(),
       description: dto.description.trim(),
       ingredients: dto.ingredients ?? [],
+      category: dto.category ?? DEFAULT_RECIPE_CATEGORY,
       imgUrl: dto.imgUrl?.trim() || DEFAULT_IMG_URL,
       price: dto.price ?? 0,
       isFavorite: dto.isFavorite ?? false,
@@ -177,7 +196,7 @@ export class RecipesService implements OnModuleInit {
     if (!updated) {
       throw new NotFoundException(`Không tìm thấy công thức #${id}`);
     }
-    return updated;
+    return this.withCategoryDefault(updated);
   }
 
   async remove(id: number): Promise<void> {

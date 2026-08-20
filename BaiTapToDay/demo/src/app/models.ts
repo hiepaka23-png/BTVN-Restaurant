@@ -4,6 +4,17 @@ export interface Ingredient {
     unit: string;
 }
 
+// Khớp đúng danh sách RECIPE_CATEGORIES ở backend (recipes/schemas/recipe.schema.ts) — khác với
+// isFavorite (đánh dấu món "Đặc biệt" nổi bật, không phải một danh mục).
+export const RECIPE_CATEGORIES = [
+    'Món chính',
+    'Khai vị',
+    'Súp & Salad',
+    'Đồ uống',
+    'Tráng miệng',
+] as const;
+export type RecipeCategory = (typeof RECIPE_CATEGORIES)[number];
+
 export interface RecipeModel {
     id: number;
     name: string;
@@ -12,6 +23,7 @@ export interface RecipeModel {
     imgUrl: string;
     price: number;
     isFavorite: boolean;
+    category: RecipeCategory;
     authorEmail: string;
 }
 
@@ -24,6 +36,8 @@ export interface CartItem {
 }
 
 export type OrderStatus = 'dang_lam' | 'hoan_thanh' | 'bi_huy';
+export type PaymentMethod = 'cod' | 'bank_transfer';
+export type PaymentStatus = 'chua_thanh_toan' | 'da_thanh_toan';
 
 export interface OrderItem {
     recipeId: number;
@@ -43,8 +57,23 @@ export interface Order {
     note?: string;
     status: OrderStatus;
     cancelReason: string | null;
+    paymentMethod: PaymentMethod;
+    paymentStatus: PaymentStatus;
+    transactionId: string | null;
+    paidAt: string | null;
+    promoCode: string | null;
+    discountPercent: number;
+    discountAmount: number;
     createdAt: string;
     updatedAt: string;
+}
+
+// Mã ưu đãi trúng từ minigame Hộp Quà May Mắn — sinh ở server, dùng thật được ở bước đặt hàng.
+export interface PromoCode {
+    code: string;
+    discountPercent: number;
+    used: boolean;
+    createdAt: string;
 }
 
 export interface RevenueByDay {

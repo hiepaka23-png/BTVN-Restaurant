@@ -1,7 +1,8 @@
+<app-back-link />
+
 <div class="cart-container">
-    <app-back-link />
     <div class="cart-header">
-        <span class="cart-eyebrow">Giỏ hàng</span>
+        <span class="cart-eyebrow">Danh sách gọi món</span>
         <h1 class="cart-title">Món bạn đã chọn</h1>
     </div>
 
@@ -12,10 +13,10 @@
     @if (cart.items().length === 0) {
     <div class="empty-cart">
         <mat-icon class="empty-icon">shopping_cart</mat-icon>
-        <p>Giỏ hàng của bạn đang trống.</p>
+        <p>Bạn chưa chọn món nào.</p>
         <a mat-flat-button routerLink="/recipes" class="empty-back-btn">
             <mat-icon>restaurant_menu</mat-icon>
-            Xem thực đơn
+            Khám phá thực đơn
         </a>
     </div>
     } @else {
@@ -30,7 +31,7 @@
             </div>
             @for (item of cart.items(); track item.recipeId) {
             <div class="cart-item">
-                <img class="cart-item-image" [src]="item.imgUrl" [alt]="item.name" />
+                <img class="cart-item-image" [src]="resolveImageUrl(item.imgUrl)" [alt]="item.name" />
                 <div class="cart-item-info">
                     <span class="cart-item-name">{{ item.name }}</span>
                     <span class="cart-item-price">{{ formatPrice(item.price) }} / phần</span>
@@ -54,13 +55,53 @@
             </div>
             }
 
+            <div class="promo-code-block">
+                <span class="promo-code-title">Mã ưu đãi</span>
+                @if (appliedPromo(); as promo) {
+                <div class="promo-code-applied">
+                    <mat-icon>local_offer</mat-icon>
+                    <span>
+                        Đã áp dụng <strong>{{ promo.code }}</strong> — giảm {{ promo.discountPercent }}%
+                    </span>
+                    <button mat-icon-button type="button" (click)="removePromoCode()" aria-label="Bỏ mã ưu đãi">
+                        <mat-icon>close</mat-icon>
+                    </button>
+                </div>
+                } @else {
+                <div class="promo-code-input-row">
+                    <input type="text" class="promo-code-input" [ngModel]="promoCodeInput()"
+                        (ngModelChange)="promoCodeInput.set($event)" [ngModelOptions]="{ standalone: true }"
+                        placeholder="Nhập mã từ Hộp Quà May Mắn (VD: LUCKY-ABC123)" />
+                    <button type="button" class="promo-code-apply-btn" [disabled]="checkingPromo()"
+                        (click)="applyPromoCode()">
+                        {{ checkingPromo() ? 'Đang kiểm tra...' : 'Áp dụng' }}
+                    </button>
+                </div>
+                @if (promoError()) {
+                <span class="promo-code-error">{{ promoError() }}</span>
+                }
+                }
+            </div>
+
             <div class="cart-summary">
-                <span>Tổng cộng ({{ cart.totalCount() }} phần)</span>
-                <span class="cart-summary-total">{{ formatPrice(cart.totalPrice()) }}</span>
+                <div class="cart-summary-row">
+                    <span>Tạm tính ({{ cart.totalCount() }} phần)</span>
+                    <span>{{ formatPrice(cart.totalPrice()) }}</span>
+                </div>
+                @if (discountAmount() > 0) {
+                <div class="cart-summary-row discount-row">
+                    <span>Giảm giá</span>
+                    <span>-{{ formatPrice(discountAmount()) }}</span>
+                </div>
+                }
+                <div class="cart-summary-row total-row">
+                    <span>Tổng cộng</span>
+                    <span class="cart-summary-total">{{ formatPrice(finalTotal()) }}</span>
+                </div>
             </div>
         </div>
 
-        <form class="delivery-form" [formGroup]="deliveryForm" (ngSubmit)="submitOrder()">
+        <form class="delivery-form" [formGroup]="deliveryForm" #deliveryFormDirective="ngForm" (ngSubmit)="submitOrder()">
             <h2 class="delivery-title">Thông tin giao hàng</h2>
 
             @if (auth.isAdmin()) {
@@ -110,6 +151,24 @@
                 <mat-label>Ghi chú (tùy chọn)</mat-label>
                 <input matInput formControlName="note" placeholder="VD: Giao giờ hành chính..." />
             </mat-form-field>
+
+            <div class="payment-method-block">
+                <span class="payment-method-title">Phương thức thanh toán</span>
+                <mat-radio-group formControlName="paymentMethod" class="payment-method-group">
+                    <mat-radio-button value="cod" class="payment-method-option">
+                        <span class="payment-method-label">
+                            <mat-icon>payments</mat-icon>
+                            Thanh toán khi nhận hàng (COD)
+                        </span>
+                    </mat-radio-button>
+                    <mat-radio-button value="bank_transfer" class="payment-method-option">
+                        <span class="payment-method-label">
+                            <mat-icon>qr_code_2</mat-icon>
+                            Chuyển khoản ngân hàng (quét mã QR)
+                        </span>
+                    </mat-radio-button>
+                </mat-radio-group>
+            </div>
 
             <div *ngIf="errorMessage()" class="server-error">{{ errorMessage() }}</div>
 

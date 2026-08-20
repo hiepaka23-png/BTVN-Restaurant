@@ -1,91 +1,105 @@
-<mat-sidenav-container class="app-shell">
-  <mat-sidenav #drawer class="brand-drawer" mode="over" position="start">
-    @if (showToolbar()) {
-    <div class="drawer-logo">
-      <mat-icon svgIcon="star-medallion" class="drawer-mark"></mat-icon>
-      <span class="drawer-text">
-        <span class="drawer-name">{{ brandName() }}</span>
-        <span class="drawer-tagline">{{ brandTagline() }}</span>
-      </span>
-    </div>
-    <nav class="drawer-nav">
-      <a mat-button routerLink="/recipes" (click)="drawer.close()">
-        <mat-icon>storefront</mat-icon>
-        <span>Trang chủ</span>
-      </a>
-      <a mat-button routerLink="/reservation" (click)="drawer.close()">
-        <mat-icon>event_seat</mat-icon>
-        <span>Đặt bàn</span>
-      </a>
-      <a mat-button routerLink="/careers" (click)="drawer.close()">
-        <mat-icon>work_outline</mat-icon>
-        <span>Tuyển dụng</span>
-      </a>
-      <a mat-button routerLink="/contact" (click)="drawer.close()">
-        <mat-icon>call</mat-icon>
-        <span>Liên hệ</span>
-      </a>
-      <a mat-button routerLink="/orders" (click)="drawer.close()">
-        <mat-icon>receipt_long</mat-icon>
-        <span>Đơn hàng của tôi</span>
-      </a>
-      <a mat-button routerLink="/profile" (click)="drawer.close()">
-        <mat-icon>account_circle</mat-icon>
-        <span>Hồ sơ cá nhân</span>
-      </a>
-      @if (auth.isAdmin()) {
-      <a mat-button routerLink="/admin/dashboard" (click)="drawer.close()">
-        <mat-icon>admin_panel_settings</mat-icon>
-        <span>Khu vực quản trị</span>
-      </a>
-      }
-    </nav>
-    }
-  </mat-sidenav>
+<div class="app-shell">
+  @if (showAppShell()) {
+  <app-announcement-bar class="app-marquee" />
+  }
 
-  <mat-sidenav-content>
-    @if (showToolbar()) {
-    <mat-toolbar class="brand-toolbar">
-      <button mat-icon-button class="menu-btn" (click)="drawer.toggle()" aria-label="Mở menu điều hướng"
-        title="Menu">
-        <mat-icon>menu</mat-icon>
-      </button>
+  <div class="app-body" [class.no-shell]="!showAppShell()">
+    @if (showAppShell()) {
+    @if (sidebarExpanded()) {
+    <div class="sidebar-backdrop" (click)="closeSidebar()"></div>
 
-      <a routerLink="/recipes" class="brand-lockup" aria-label="Trang chủ Nhà Hàng Michelin">
-        <mat-icon svgIcon="star-medallion" class="brand-mark"></mat-icon>
-        <span class="brand-text">
-          <span class="brand-name">{{ brandName() }}</span>
-          <span class="brand-tagline">{{ brandTagline() }}</span>
+    <aside class="sidebar-flyout">
+      <div class="flyout-head">
+        <span class="flyout-brand">
+          <span class="flyout-brand-name">{{ brandName() }}</span>
+          <span class="flyout-brand-tagline">{{ brandTagline() }}</span>
         </span>
-      </a>
+        <button mat-icon-button class="flyout-close" (click)="closeSidebar()" aria-label="Đóng menu" title="Đóng">
+          <mat-icon>close</mat-icon>
+        </button>
+      </div>
 
-      <span class="toolbar-spacer"></span>
-
-      <a routerLink="/cart" mat-icon-button class="cart-btn" aria-label="Giỏ hàng" title="Giỏ hàng">
-        <mat-icon [matBadge]="cart.totalCount()" [matBadgeHidden]="cart.totalCount() === 0" matBadgeColor="warn"
-          matBadgeSize="small">shopping_cart</mat-icon>
-      </a>
-
-      @if (auth.currentUser(); as user) {
-      <a routerLink="/profile" class="account-link" aria-label="Hồ sơ cá nhân" title="Hồ sơ cá nhân">
-        @if (user.avatarUrl) {
-        <img class="toolbar-avatar" [src]="user.avatarUrl" [alt]="'Ảnh đại diện của ' + user.name" />
+      <nav class="sidebar-nav">
+        @for (item of navItems; track item.label) {
+        @if (item.action === 'gift') {
+        <button type="button" class="nav-item" (click)="openGiftBox()">
+          <mat-icon>{{ item.icon }}</mat-icon>
+          <span class="nav-label">{{ item.label }}</span>
+        </button>
         } @else {
-        <mat-icon class="user-icon">account_circle</mat-icon>
+        <a class="nav-item" [class.active]="item.isActive(currentUrl())" [routerLink]="item.link"
+          [queryParams]="item.queryParams ?? null" (click)="onNavLinkClick()">
+          <mat-icon>{{ item.icon }}</mat-icon>
+          <span class="nav-label">{{ item.label }}</span>
+        </a>
         }
-        <span class="username">{{ user.username }}</span>
-      </a>
-      @if (auth.isAdmin()) {
-      <span class="admin-badge">Admin</span>
-      }
-      <button mat-icon-button (click)="auth.logout()" aria-label="Đăng xuất" title="Đăng xuất" class="logout-btn">
-        <mat-icon>logout</mat-icon>
-      </button>
-      }
-    </mat-toolbar>
+        }
+
+        @if (auth.isAdmin()) {
+        <a class="nav-item nav-item-admin" [class.active]="currentUrl().startsWith('/admin')"
+          routerLink="/admin/dashboard" (click)="onNavLinkClick()">
+          <mat-icon>admin_panel_settings</mat-icon>
+          <span class="nav-label">Khu vực quản trị</span>
+        </a>
+        }
+      </nav>
+    </aside>
     }
-    <main>
-      <router-outlet />
-    </main>
-  </mat-sidenav-content>
-</mat-sidenav-container>
+    }
+
+    <div class="app-main">
+      @if (showAppShell()) {
+      <header class="app-header">
+        <button mat-icon-button class="header-menu-btn" (click)="toggleSidebar()" aria-label="Mở menu điều hướng"
+          title="Menu">
+          <mat-icon>menu</mat-icon>
+        </button>
+
+        <a routerLink="/recipes" class="header-brand" aria-label="Trang chủ Nhà Hàng Michelin">
+          <mat-icon svgIcon="star-medallion" class="header-brand-mark"></mat-icon>
+          <span class="header-brand-text">
+            <span class="header-brand-name">{{ brandName() }}</span>
+            <span class="header-brand-tagline">{{ brandTagline() }}</span>
+          </span>
+        </a>
+
+        <span class="header-spacer"></span>
+
+        @if (!giftClaimedToday()) {
+        <button type="button" class="gift-pill" (click)="openGiftBox()">
+          <mat-icon>card_giftcard</mat-icon>
+          <span>Quà mỗi ngày</span>
+        </button>
+        }
+
+        <a routerLink="/cart" mat-icon-button class="cart-btn" aria-label="Giỏ hàng" title="Giỏ hàng">
+          <mat-icon [matBadge]="cart.totalCount()" [matBadgeHidden]="cart.totalCount() === 0" matBadgeColor="warn"
+            matBadgeSize="small">shopping_cart</mat-icon>
+        </a>
+
+        @if (auth.currentUser(); as user) {
+        <a routerLink="/profile" class="account-link" aria-label="Hồ sơ cá nhân" title="Hồ sơ cá nhân">
+          @if (user.avatarUrl) {
+          <img class="header-avatar" [src]="resolveImageUrl(user.avatarUrl)"
+            [alt]="'Ảnh đại diện của ' + user.name" />
+          } @else {
+          <mat-icon class="user-icon">account_circle</mat-icon>
+          }
+          <span class="username">{{ user.username }}</span>
+        </a>
+        <span class="role-badge" [class.role-admin]="auth.isAdmin()">
+          {{ auth.isAdmin() ? 'Admin' : 'Thành viên' }}
+        </span>
+        <button mat-icon-button (click)="auth.logout()" aria-label="Đăng xuất" title="Đăng xuất" class="logout-btn">
+          <mat-icon>logout</mat-icon>
+        </button>
+        }
+      </header>
+      }
+
+      <main class="app-content">
+        <router-outlet />
+      </main>
+    </div>
+  </div>
+</div>

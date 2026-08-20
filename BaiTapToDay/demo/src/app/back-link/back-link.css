@@ -1,37 +1,36 @@
-/* Ghim cố định ở góc trái màn hình, theo người dùng khi cuộn trang — nằm dưới thanh toolbar
-   (72px, z-index 1000) nên đặt z-index thấp hơn để không đè lên toolbar. */
 :host {
     display: block;
-    position: fixed;
-    top: 88px;
-    left: 24px;
-    z-index: 500;
+    margin-top: 20px;
+    margin-bottom: 20px;
+    /* 24px padding trái của .app-header + ~8px lề trong của mat-icon-button (40px) quanh icon
+       "menu" 24px — căn mũi tên quay lại thẳng hàng dọc dưới icon 3 gạch trên header. */
+    padding-left: 32px;
 }
 
 .back-link {
-    height: 40px;
-    border-radius: 10px !important;
-    font-family: var(--brand-mono);
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    color: var(--brand-burgundy);
     font-weight: 700;
-    font-size: 0.78rem;
-    letter-spacing: 1px;
-    background: var(--brand-red) !important;
-    color: var(--brand-ivory) !important;
-    box-shadow: var(--brand-shadow-strong);
+    font-size: 0.88rem;
+    text-decoration: none;
+}
+
+.back-link mat-icon {
+    width: 18px;
+    height: 18px;
+    font-size: 18px;
+}
+
+.back-link:hover {
+    text-decoration: underline;
 }
 
 @media (max-width: 700px) {
+    /* Header thu padding còn 12px ở màn hẹp (xem .app-header trong app.css) — giữ nguyên công thức
+       "padding header + lề trong icon-button" để vẫn thẳng hàng dưới icon 3 gạch. */
     :host {
-        top: 80px;
-        left: 12px;
+        padding-left: 20px;
     }
-}
-
-.btn-label {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    gap: 8px;
-    width: 100%;
-    height: 100%;
 }

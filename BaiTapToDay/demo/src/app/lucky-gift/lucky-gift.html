@@ -1,0 +1,70 @@
+<div class="lucky-gift-panel">
+    <button
+        mat-icon-button
+        type="button"
+        class="lucky-gift-close"
+        aria-label="Đóng"
+        (click)="closePanel()"
+    >
+        <mat-icon>close</mat-icon>
+    </button>
+
+    <div class="lucky-gift-inner">
+        <div class="lucky-gift-header">
+            <span class="lucky-gift-eyebrow">Minigame đặc biệt</span>
+            <h2 class="lucky-gift-title">Hộp Quà May Mắn</h2>
+            <p class="lucky-gift-subtitle">
+                Chọn 1 trong 5 hộp quà để nhận ưu đãi hấp dẫn — mỗi ngày một lượt mở, đừng bỏ lỡ!
+            </p>
+        </div>
+
+        @if (loadingToday()) {
+        <div class="lucky-gift-loading">
+            <mat-icon class="spin-icon">autorenew</mat-icon>
+        </div>
+        } @else if (claimed(); as gift) {
+        <div class="claimed-panel">
+            <mat-icon class="claimed-icon">redeem</mat-icon>
+            <p class="claimed-title">Bạn đã nhận quà hôm nay!</p>
+            <p class="claimed-reward">Giảm {{ gift.discountPercent }}%</p>
+            <p class="claimed-detail">Áp dụng cho đơn hàng tiếp theo</p>
+            <div class="claimed-code">
+                <span>{{ gift.code }}</span>
+                <button
+                    mat-icon-button
+                    type="button"
+                    class="claimed-copy-btn"
+                    aria-label="Sao chép mã"
+                    (click)="copyCode(gift.code)"
+                >
+                    <mat-icon>content_copy</mat-icon>
+                </button>
+            </div>
+            <p class="claimed-hint">Hẹn quý khách quay lại vào ngày mai để mở hộp quà mới!</p>
+        </div>
+        } @else {
+        <div class="gift-box-grid">
+            @for (i of boxIndexes; track i) {
+            <button
+                type="button"
+                class="gift-box"
+                [class.opening]="openingIndex() === i"
+                [style.--float-delay.s]="i * 0.35"
+                [disabled]="isLocked()"
+                [attr.aria-label]="'Mở hộp quà số ' + (i + 1)"
+                (click)="openBox(i)"
+            >
+                <span class="gift-box-glow"></span>
+                <span class="gift-box-lid">
+                    <span class="gift-box-ribbon"></span>
+                </span>
+                <span class="gift-box-body">
+                    <mat-icon class="gift-box-icon">card_giftcard</mat-icon>
+                    <span class="gift-box-ribbon-v"></span>
+                </span>
+            </button>
+            }
+        </div>
+        }
+    </div>
+</div>

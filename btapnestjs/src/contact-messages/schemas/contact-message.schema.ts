@@ -12,6 +12,12 @@ export class ContactMessage {
   @Prop({ required: true })
   email: string;
 
+  @Prop({ type: String, default: '' })
+  phone: string;
+
+  @Prop({ required: true })
+  subject: string;
+
   @Prop({ required: true })
   message: string;
 }

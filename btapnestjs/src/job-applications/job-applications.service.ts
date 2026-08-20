@@ -25,6 +25,8 @@ export class JobApplicationsService {
       phone: dto.phone.trim(),
       position: dto.position.trim(),
       message: dto.message?.trim() ?? '',
+      cvUrl: dto.cvUrl.trim(),
+      cvFileName: dto.cvFileName.trim(),
     });
     return created.toObject();
   }

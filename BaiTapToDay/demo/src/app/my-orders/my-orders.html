@@ -1,5 +1,6 @@
+<app-back-link />
+
 <div class="orders-container">
-    <app-back-link />
     <div class="orders-header">
         <span class="orders-eyebrow">Tài khoản</span>
         <h1 class="orders-title">Đơn hàng của tôi</h1>
@@ -27,36 +28,20 @@
     <div class="orders-list">
         @for (order of orders(); track order._id) {
         <mat-card class="order-card">
+
             <div class="order-card-header">
-                <div>
-                    <span class="order-id">Đơn #{{ order._id.slice(-6) }}</span>
-                    <span class="order-date">{{ formatDate(order.createdAt) }}</span>
+                <div class="order-id-block">
+                    <span class="order-id-icon"><mat-icon>receipt_long</mat-icon></span>
+                    <div>
+                        <span class="order-id">Đơn #{{ order._id.slice(-6) }}</span>
+                        <span class="order-date">{{ formatDate(order.createdAt) }}</span>
+                    </div>
                 </div>
                 <span class="status-badge" [attr.data-status]="order.status">
+                    <mat-icon>{{ statusIcons[order.status] }}</mat-icon>
                     {{ statusLabels[order.status] }}
                 </span>
             </div>
-
-            <div class="order-items">
-                @for (item of order.items; track item.recipeId) {
-                <div class="order-item-row">
-                    <span>{{ item.name }} × {{ item.quantity }}</span>
-                    <span>{{ formatPrice(item.price * item.quantity) }}</span>
-                </div>
-                }
-            </div>
-
-            <div class="order-total-row">
-                <span>Tổng cộng</span>
-                <span class="order-total">{{ formatPrice(order.total) }}</span>
-            </div>
-
-            @if (order.status === 'bi_huy' && order.cancelReason) {
-            <div class="cancel-reason">
-                <mat-icon>info</mat-icon>
-                <span>Lý do huỷ: {{ order.cancelReason }}</span>
-            </div>
-            }
 
             @if (editingId() === order._id) {
             <form class="edit-form" [formGroup]="editForm" (ngSubmit)="saveEdit(order._id)">
@@ -105,26 +90,205 @@
                 </div>
             </form>
             } @else {
-            <div class="order-delivery">
-                <span><strong>Người nhận:</strong> {{ order.recipientName }} — {{ order.phone }}</span>
-                <span><strong>Địa chỉ:</strong> {{ order.address }}</span>
-                @if (order.note) {
-                <span><strong>Ghi chú:</strong> {{ order.note }}</span>
-                }
+
+            <div class="order-body-grid">
+                <div class="info-block">
+                    <div class="info-block-title">
+                        <mat-icon>local_shipping</mat-icon>
+                        Thông tin giao hàng
+                    </div>
+                    <div class="info-row">
+                        <span class="info-label">Địa chỉ</span>
+                        <span class="info-value">{{ order.address }}</span>
+                    </div>
+                    @if (order.note) {
+                    <div class="info-row">
+                        <span class="info-label">Ghi chú</span>
+                        <span class="info-value">{{ order.note }}</span>
+                    </div>
+                    }
+                </div>
+
+                <div class="info-block">
+                    <div class="info-block-title">
+                        <mat-icon>person</mat-icon>
+                        Thông tin người nhận
+                    </div>
+                    <div class="info-row">
+                        <span class="info-label">Họ tên</span>
+                        <span class="info-value">{{ order.recipientName }}</span>
+                    </div>
+                    <div class="info-row">
+                        <span class="info-label">Số điện thoại</span>
+                        <span class="info-value">{{ order.phone }}</span>
+                    </div>
+                    @if (auth.currentUser()?.email; as email) {
+                    <div class="info-row">
+                        <span class="info-label">Email</span>
+                        <span class="info-value">{{ email }}</span>
+                    </div>
+                    }
+                </div>
             </div>
 
-            @if (order.status === 'dang_lam') {
-            <div class="order-actions">
-                <button mat-flat-button type="button" class="edit-order-btn" (click)="startEdit(order)">
+            @if (order.status === 'bi_huy' && order.cancelReason) {
+            <div class="cancel-reason">
+                <mat-icon>info</mat-icon>
+                <span>Lý do huỷ: {{ order.cancelReason }}</span>
+            </div>
+            }
+
+            <div class="items-payment-grid">
+                <div class="info-block">
+                    <div class="info-block-title">
+                        <mat-icon>restaurant_menu</mat-icon>
+                        Món đã đặt
+                    </div>
+                    <div class="items-table">
+                        <div class="items-table-head">
+                            <span>Món ăn</span>
+                            <span>SL</span>
+                            <span>Đơn giá</span>
+                            <span>Thành tiền</span>
+                        </div>
+                        @for (item of order.items; track item.recipeId) {
+                        <div class="items-table-row">
+                            <span class="item-cell-name">
+                                @if (itemImage(item.recipeId); as img) {
+                                <img [src]="img" [alt]="item.name" class="item-thumb" />
+                                } @else {
+                                <span class="item-thumb item-thumb-placeholder">
+                                    <mat-icon>restaurant</mat-icon>
+                                </span>
+                                }
+                                <span>{{ item.name }}</span>
+                            </span>
+                            <span class="item-cell-qty" data-label="SL">× {{ item.quantity }}</span>
+                            <span class="item-cell-price" data-label="Đơn giá">{{ formatPrice(item.price) }}</span>
+                            <span class="item-cell-total" data-label="Thành tiền">{{ formatPrice(item.price * item.quantity) }}</span>
+                        </div>
+                        }
+                    </div>
+                </div>
+
+                <div class="side-rail">
+                    <div class="info-block summary-block">
+                        <div class="info-block-title">
+                            <mat-icon>payments</mat-icon>
+                            Tổng cộng
+                        </div>
+                        @if (order.discountAmount > 0) {
+                        <div class="summary-row">
+                            <span>Tạm tính</span>
+                            <span>{{ formatPrice(order.total + order.discountAmount) }}</span>
+                        </div>
+                        <div class="summary-row discount-row">
+                            <span>Giảm giá ({{ order.promoCode }} — {{ order.discountPercent }}%)</span>
+                            <span>-{{ formatPrice(order.discountAmount) }}</span>
+                        </div>
+                        }
+                        <div class="summary-total-row">
+                            <span>Tổng cộng</span>
+                            <span class="summary-total-value">{{ formatPrice(order.total) }}</span>
+                        </div>
+                    </div>
+
+                    <div class="info-block payment-block">
+                        <div class="info-block-title">
+                            <mat-icon>credit_card</mat-icon>
+                            Thanh toán
+                        </div>
+                        <div class="info-row">
+                            <span class="info-label">Phương thức</span>
+                            <span class="info-value">{{ paymentMethodLabels[order.paymentMethod] }}</span>
+                        </div>
+                        <div class="info-row">
+                            <span class="info-label">Trạng thái</span>
+                            <span class="payment-status-badge" [attr.data-status]="order.paymentStatus">
+                                {{ paymentStatusLabels[order.paymentStatus] }}
+                            </span>
+                        </div>
+                        @if (order.transactionId) {
+                        <div class="info-row">
+                            <span class="info-label">Mã giao dịch</span>
+                            <span class="info-value">{{ order.transactionId }}</span>
+                        </div>
+                        }
+                        @if (order.paidAt) {
+                        <div class="info-row">
+                            <span class="info-label">Thời gian TT</span>
+                            <span class="info-value">{{ formatDate(order.paidAt) }}</span>
+                        </div>
+                        }
+
+                        @if (order.paymentMethod === 'bank_transfer' && order.paymentStatus === 'chua_thanh_toan' && order.status !== 'bi_huy') {
+                        <div class="payment-qr">
+                            <img [src]="paymentQrUrl(order)" alt="Mã QR chuyển khoản" class="payment-qr-img" />
+                            <p class="payment-qr-hint">Quét mã để chuyển khoản đúng số tiền — nhà hàng sẽ xác nhận sau khi nhận được.</p>
+                        </div>
+                        }
+                    </div>
+                </div>
+            </div>
+
+            @if (order.status !== 'bi_huy') {
+            <div class="timeline-block">
+                <div class="info-block-title">
+                    <mat-icon>timeline</mat-icon>
+                    Trạng thái đơn hàng
+                </div>
+                <div class="timeline">
+                    @for (step of buildTimeline(order); track step.label; let last = $last) {
+                    <div class="timeline-step" [class.done]="step.done" [class.current]="step.current">
+                        <span class="timeline-dot">
+                            <mat-icon>{{ step.done ? 'check' : 'schedule' }}</mat-icon>
+                        </span>
+                        <span class="timeline-label">{{ step.label }}</span>
+                        @if (step.time) {
+                        <span class="timeline-time">{{ formatDate(step.time) }}</span>
+                        }
+                    </div>
+                    @if (!last) {
+                    <span class="timeline-connector" [class.done]="step.done"></span>
+                    }
+                    }
+                </div>
+            </div>
+            } @else {
+            <div class="cancelled-banner">
+                <mat-icon>cancel</mat-icon>
+                <div>
+                    <strong>Đơn hàng đã bị huỷ</strong>
+                    <span class="cancelled-time">{{ formatDate(order.updatedAt) }}</span>
+                </div>
+            </div>
+            }
+
+            <div class="order-footer-actions">
+                <a routerLink="/contact" class="footer-btn footer-btn-outline">
+                    <mat-icon>help_outline</mat-icon>
+                    Cần hỗ trợ?
+                </a>
+
+                <span class="footer-spacer"></span>
+
+                @if (order.status === 'dang_lam') {
+                <button type="button" class="footer-btn footer-btn-outline" (click)="startEdit(order)">
                     <mat-icon>edit</mat-icon>
                     Sửa đơn
                 </button>
-                <button mat-flat-button type="button" class="cancel-order-btn" (click)="cancelOrder(order)">
+                <button type="button" class="footer-btn footer-btn-outline danger" (click)="cancelOrder(order)">
                     <mat-icon>cancel</mat-icon>
                     Huỷ đơn
                 </button>
+                } @else {
+                <button type="button" class="footer-btn footer-btn-solid" [disabled]="reorderingId() === order._id"
+                    (click)="reorder(order)">
+                    <mat-icon>refresh</mat-icon>
+                    {{ reorderingId() === order._id ? 'Đang thêm...' : 'Đặt lại đơn này' }}
+                </button>
+                }
             </div>
-            }
             }
         </mat-card>
         }

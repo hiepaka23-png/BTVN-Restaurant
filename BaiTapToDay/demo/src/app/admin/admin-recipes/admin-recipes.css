@@ -36,8 +36,8 @@
 .search-btn {
     height: 40px;
     margin-top: 4px;
-    background: #eef0f4 !important;
-    color: #1f2430 !important;
+    background: #1f2430 !important;
+    color: #e7e9ee !important;
 }
 
 .recipe-thumb {
@@ -58,6 +58,7 @@
 
 .actions-cell {
     display: flex;
+    align-items: center;
     gap: 4px;
     white-space: nowrap;
 }

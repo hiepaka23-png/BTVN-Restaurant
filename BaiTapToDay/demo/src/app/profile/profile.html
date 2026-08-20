@@ -1,117 +1,196 @@
-<div class="profile-container">
-    <app-back-link />
+<app-back-link to="/recipes" label="Trang chủ" />
+
+<div class="profile-page">
     <div class="profile-header">
         <span class="profile-eyebrow">Tài khoản</span>
         <h1 class="profile-title">Hồ sơ cá nhân</h1>
+        <p class="profile-subtitle">Quản lý thông tin cá nhân và bảo mật tài khoản của bạn</p>
     </div>
 
     <div class="profile-layout">
 
         <mat-card class="profile-card avatar-card">
-            <h2 class="card-title">Ảnh đại diện</h2>
-            <img class="avatar-preview" [src]="auth.currentUser()?.avatarUrl || defaultAvatar"
-                [alt]="'Ảnh đại diện của ' + (auth.currentUser()?.name ?? '')" />
-
-            <label class="avatar-upload-btn" for="avatar-input">
-                <mat-icon>upload</mat-icon>
-                {{ avatarUploading() ? 'Đang tải lên...' : 'Đổi ảnh đại diện' }}
-            </label>
+            <div class="avatar-wrap">
+                <img class="avatar-preview" [src]="resolveImageUrl(auth.currentUser()?.avatarUrl) || defaultAvatar"
+                    [alt]="'Ảnh đại diện của ' + (auth.currentUser()?.name ?? '')" />
+                <label class="avatar-camera-btn" for="avatar-input" aria-label="Đổi ảnh đại diện" title="Đổi ảnh đại diện">
+                    <mat-icon>photo_camera</mat-icon>
+                </label>
+            </div>
             <input id="avatar-input" type="file" accept="image/*" class="avatar-input"
                 [disabled]="avatarUploading()" (change)="onAvatarSelected($event)" />
 
-            @if (avatarError()) {
-            <div class="server-error">{{ avatarError() }}</div>
-            }
+            <h2 class="profile-username">{{ auth.currentUser()?.username }}</h2>
+            <span class="role-pill" [class.role-admin]="auth.isAdmin()">
+                {{ auth.isAdmin() ? 'Admin' : 'Thành viên' }}
+            </span>
+
+            <div class="profile-stats">
+                <div class="stat-row">
+                    <mat-icon>event</mat-icon>
+                    <span class="stat-label">Ngày tham gia</span>
+                    <span class="stat-value">{{ joinDate() ? (joinDate() | date: 'dd/MM/yyyy') : '—' }}</span>
+                </div>
+                <div class="stat-row">
+                    <mat-icon>receipt_long</mat-icon>
+                    <span class="stat-label">Tổng đơn hàng</span>
+                    <span class="stat-value">{{ orderCount() ?? '—' }}</span>
+                </div>
+                <div class="stat-row">
+                    <mat-icon>favorite</mat-icon>
+                    <span class="stat-label">Món yêu thích</span>
+                    <span class="stat-value">{{ favoriteCount() }}</span>
+                </div>
+            </div>
+
+            <label class="change-avatar-btn pill-btn" for="avatar-input">
+                <mat-icon>upload</mat-icon>
+                {{ avatarUploading() ? 'Đang tải lên...' : 'Thay đổi ảnh đại diện' }}
+            </label>
         </mat-card>
 
-        <mat-card class="profile-card">
-            <h2 class="card-title">Thông tin cá nhân</h2>
-            <form [formGroup]="profileForm" (ngSubmit)="onSaveProfile()">
-                <mat-form-field appearance="outline" subscriptSizing="dynamic" class="full-width-field">
-                    <mat-label>Họ và tên</mat-label>
-                    <input matInput formControlName="name" placeholder="Nhập họ tên">
-                    @if (profileForm.get('name')?.hasError('required')) {
-                    <mat-error>Họ tên không được để trống!</mat-error>
+        <div class="profile-right">
+
+            <mat-card class="profile-card">
+                <div class="card-title-row">
+                    <mat-icon class="card-icon">person</mat-icon>
+                    <h2 class="card-title">Thông tin cá nhân</h2>
+                </div>
+                <form [formGroup]="profileForm" (ngSubmit)="onSaveProfile()">
+                    <div class="field-grid">
+                        <mat-form-field appearance="outline" subscriptSizing="dynamic" class="pill-field">
+                            <mat-label>Họ và tên</mat-label>
+                            <input matInput formControlName="name" placeholder="Nhập họ tên">
+                            @if (profileForm.get('name')?.hasError('required')) {
+                            <mat-error>Họ tên không được để trống!</mat-error>
+                            }
+                        </mat-form-field>
+
+                        <mat-form-field appearance="outline" subscriptSizing="dynamic" class="pill-field">
+                            <mat-label>Email</mat-label>
+                            <input matInput type="email" formControlName="email">
+                            <mat-icon matSuffix class="locked-icon" aria-hidden="false"
+                                aria-label="Không thể thay đổi">lock</mat-icon>
+                        </mat-form-field>
+                    </div>
+
+                    @if (profileError()) {
+                    <div class="server-error">{{ profileError() }}</div>
                     }
-                </mat-form-field>
-
-                <mat-form-field appearance="outline" subscriptSizing="dynamic" class="full-width-field">
-                    <mat-label>Email</mat-label>
-                    <input matInput type="email" formControlName="email" placeholder="Nhập email">
-                    @if (profileForm.get('email')?.hasError('required')) {
-                    <mat-error>Email không được để trống!</mat-error>
-                    } @else if (profileForm.get('email')?.hasError('email')) {
-                    <mat-error>Email không đúng định dạng!</mat-error>
+                    @if (profileSuccess()) {
+                    <div class="server-success">{{ profileSuccess() }}</div>
                     }
-                </mat-form-field>
 
-                @if (profileError()) {
-                <div class="server-error">{{ profileError() }}</div>
-                }
-                @if (profileSuccess()) {
-                <div class="server-success">{{ profileSuccess() }}</div>
-                }
+                    <button mat-flat-button type="submit" class="pill-btn" [disabled]="profileSubmitting()">
+                        <mat-icon>save</mat-icon>
+                        {{ profileSubmitting() ? 'Đang lưu...' : 'Lưu thay đổi' }}
+                    </button>
+                </form>
+            </mat-card>
 
-                <button mat-raised-button color="primary" type="submit" class="save-btn" [disabled]="profileSubmitting()">
-                    {{ profileSubmitting() ? 'Đang lưu...' : 'Lưu thay đổi' }}
+            <mat-card class="profile-card">
+                <div class="card-title-row">
+                    <mat-icon class="card-icon">shield</mat-icon>
+                    <h2 class="card-title">Bảo mật tài khoản</h2>
+                </div>
+
+                <div class="security-grid">
+                    <form [formGroup]="passwordForm" #passwordFormDirective="ngForm"
+                        (ngSubmit)="onChangePassword()" class="security-form">
+                        <mat-form-field appearance="outline" subscriptSizing="dynamic" class="pill-field full-field">
+                            <mat-label>Mật khẩu hiện tại</mat-label>
+                            <input matInput [type]="hideCurrentPassword() ? 'password' : 'text'"
+                                formControlName="currentPassword" placeholder="Nhập mật khẩu hiện tại" maxlength="20">
+                            <button mat-icon-button matSuffix type="button" class="password-toggle-btn"
+                                (click)="hideCurrentPassword.set(!hideCurrentPassword())"
+                                [attr.aria-label]="hideCurrentPassword() ? 'Hiện mật khẩu' : 'Ẩn mật khẩu'">
+                                <mat-icon>{{ hideCurrentPassword() ? 'visibility_off' : 'visibility' }}</mat-icon>
+                            </button>
+                            @if (passwordForm.get('currentPassword')?.hasError('required')) {
+                            <mat-error>Vui lòng nhập mật khẩu hiện tại!</mat-error>
+                            }
+                        </mat-form-field>
+
+                        <mat-form-field appearance="outline" subscriptSizing="dynamic" class="pill-field full-field">
+                            <mat-label>Mật khẩu mới</mat-label>
+                            <input matInput [type]="hideNewPassword() ? 'password' : 'text'"
+                                formControlName="newPassword" placeholder="Nhập mật khẩu mới" maxlength="20">
+                            <button mat-icon-button matSuffix type="button" class="password-toggle-btn"
+                                (click)="hideNewPassword.set(!hideNewPassword())"
+                                [attr.aria-label]="hideNewPassword() ? 'Hiện mật khẩu' : 'Ẩn mật khẩu'">
+                                <mat-icon>{{ hideNewPassword() ? 'visibility_off' : 'visibility' }}</mat-icon>
+                            </button>
+                            @if (passwordForm.get('newPassword')?.hasError('required')) {
+                            <mat-error>Vui lòng nhập mật khẩu mới!</mat-error>
+                            } @else if (passwordForm.get('newPassword')?.hasError('minlength')) {
+                            <mat-error>Mật khẩu phải có ít nhất 6 ký tự!</mat-error>
+                            } @else if (passwordForm.get('newPassword')?.hasError('maxlength')) {
+                            <mat-error>Mật khẩu tối đa 20 ký tự!</mat-error>
+                            }
+                        </mat-form-field>
+
+                        <mat-form-field appearance="outline" subscriptSizing="dynamic" class="pill-field full-field">
+                            <mat-label>Xác nhận mật khẩu mới</mat-label>
+                            <input matInput [type]="hideConfirmPassword() ? 'password' : 'text'"
+                                formControlName="confirmPassword" placeholder="Nhập lại mật khẩu mới" maxlength="20">
+                            <button mat-icon-button matSuffix type="button" class="password-toggle-btn"
+                                (click)="hideConfirmPassword.set(!hideConfirmPassword())"
+                                [attr.aria-label]="hideConfirmPassword() ? 'Hiện mật khẩu' : 'Ẩn mật khẩu'">
+                                <mat-icon>{{ hideConfirmPassword() ? 'visibility_off' : 'visibility' }}</mat-icon>
+                            </button>
+                            @if (passwordForm.get('confirmPassword')?.hasError('required')) {
+                            <mat-error>Vui lòng xác nhận mật khẩu mới!</mat-error>
+                            } @else if (passwordForm.get('confirmPassword')?.hasError('minlength')) {
+                            <mat-error>Mật khẩu phải có ít nhất 6 ký tự!</mat-error>
+                            } @else if (passwordForm.get('confirmPassword')?.hasError('maxlength')) {
+                            <mat-error>Mật khẩu tối đa 20 ký tự!</mat-error>
+                            }
+                        </mat-form-field>
+
+                        @if (passwordError()) {
+                        <div class="server-error">{{ passwordError() }}</div>
+                        }
+                        @if (passwordSuccess()) {
+                        <div class="server-success">{{ passwordSuccess() }}</div>
+                        }
+
+                        <button mat-flat-button type="submit" class="pill-btn" [disabled]="passwordSubmitting()">
+                            <mat-icon>key</mat-icon>
+                            {{ passwordSubmitting() ? 'Đang lưu...' : 'Đổi mật khẩu' }}
+                        </button>
+                    </form>
+
+                    <aside class="security-tips">
+                        <div class="tips-icon">
+                            <mat-icon>lock</mat-icon>
+                        </div>
+                        <h3>Mẹo bảo mật</h3>
+                        <ul>
+                            <li><mat-icon>check</mat-icon>Sử dụng mật khẩu từ 8 ký tự trở lên</li>
+                            <li><mat-icon>check</mat-icon>Kết hợp chữ hoa, chữ thường, số và ký tự đặc biệt</li>
+                            <li><mat-icon>check</mat-icon>Không sử dụng lại mật khẩu cũ</li>
+                        </ul>
+                    </aside>
+                </div>
+            </mat-card>
+
+            <mat-card class="profile-card danger-card">
+                <div class="card-title-row">
+                    <mat-icon class="card-icon danger-icon">warning</mat-icon>
+                    <h2 class="card-title danger-title">Vùng nguy hiểm</h2>
+                </div>
+                <p class="danger-text">Xóa tài khoản sẽ xóa vĩnh viễn toàn bộ dữ liệu cá nhân của bạn. Hành động này
+                    không thể hoàn tác.</p>
+                @if (deleteError()) {
+                <div class="server-error">{{ deleteError() }}</div>
+                }
+                <button mat-flat-button type="button" class="pill-btn delete-account-btn" [disabled]="deleteSubmitting()"
+                    (click)="onDeleteAccount()">
+                    <mat-icon>delete_forever</mat-icon>
+                    {{ deleteSubmitting() ? 'Đang xóa...' : 'Xóa tài khoản' }}
                 </button>
-            </form>
-        </mat-card>
+            </mat-card>
 
-        <mat-card class="profile-card">
-            <h2 class="card-title">Đổi mật khẩu</h2>
-            <form [formGroup]="passwordForm" #passwordFormDirective="ngForm" (ngSubmit)="onChangePassword()">
-                <mat-form-field appearance="outline" subscriptSizing="dynamic" class="full-width-field">
-                    <mat-label>Mật khẩu hiện tại</mat-label>
-                    <input matInput type="password" formControlName="currentPassword" placeholder="Nhập mật khẩu hiện tại">
-                    @if (passwordForm.get('currentPassword')?.hasError('required')) {
-                    <mat-error>Vui lòng nhập mật khẩu hiện tại!</mat-error>
-                    }
-                </mat-form-field>
-
-                <mat-form-field appearance="outline" subscriptSizing="dynamic" class="full-width-field">
-                    <mat-label>Mật khẩu mới</mat-label>
-                    <input matInput type="password" formControlName="newPassword" placeholder="Nhập mật khẩu mới">
-                    @if (passwordForm.get('newPassword')?.hasError('required')) {
-                    <mat-error>Vui lòng nhập mật khẩu mới!</mat-error>
-                    } @else if (passwordForm.get('newPassword')?.hasError('minlength')) {
-                    <mat-error>Mật khẩu phải có ít nhất 6 ký tự!</mat-error>
-                    }
-                </mat-form-field>
-
-                <mat-form-field appearance="outline" subscriptSizing="dynamic" class="full-width-field">
-                    <mat-label>Xác nhận mật khẩu mới</mat-label>
-                    <input matInput type="password" formControlName="confirmPassword" placeholder="Nhập lại mật khẩu mới">
-                    @if (passwordForm.get('confirmPassword')?.hasError('required')) {
-                    <mat-error>Vui lòng xác nhận mật khẩu mới!</mat-error>
-                    }
-                </mat-form-field>
-
-                @if (passwordError()) {
-                <div class="server-error">{{ passwordError() }}</div>
-                }
-                @if (passwordSuccess()) {
-                <div class="server-success">{{ passwordSuccess() }}</div>
-                }
-
-                <button mat-raised-button color="primary" type="submit" class="save-btn" [disabled]="passwordSubmitting()">
-                    {{ passwordSubmitting() ? 'Đang lưu...' : 'Đổi mật khẩu' }}
-                </button>
-            </form>
-        </mat-card>
-
-        <mat-card class="profile-card danger-card">
-            <h2 class="card-title">Vùng nguy hiểm</h2>
-            <p class="danger-text">Xóa tài khoản sẽ xóa vĩnh viễn toàn bộ dữ liệu cá nhân của bạn. Hành động này không thể hoàn tác.</p>
-            @if (deleteError()) {
-            <div class="server-error">{{ deleteError() }}</div>
-            }
-            <button mat-flat-button type="button" class="delete-account-btn" [disabled]="deleteSubmitting()"
-                (click)="onDeleteAccount()">
-                <mat-icon>delete_forever</mat-icon>
-                {{ deleteSubmitting() ? 'Đang xóa...' : 'Xóa tài khoản' }}
-            </button>
-        </mat-card>
-
+        </div>
     </div>
 </div>

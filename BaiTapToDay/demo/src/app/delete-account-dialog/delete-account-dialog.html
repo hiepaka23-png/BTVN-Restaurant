@@ -1,0 +1,35 @@
+<div class="delete-otp-dialog">
+    <mat-icon class="delete-otp-icon">mark_email_read</mat-icon>
+
+    <h2 mat-dialog-title class="delete-otp-title">Xác thực xóa tài khoản</h2>
+
+    <mat-dialog-content class="delete-otp-message">
+        Vì lý do bảo mật, chúng tôi đã gửi mã xác thực 6 số tới <strong>{{ data.email }}</strong>.
+        Nhập mã để xác nhận xóa vĩnh viễn tài khoản này.
+    </mat-dialog-content>
+
+    @if (devTokenHint()) {
+    <div class="dev-token-hint">
+        <mat-icon>info</mat-icon>
+        <span>Chưa nối dịch vụ email thật — mã demo của bạn: <strong>{{ devTokenHint() }}</strong></span>
+    </div>
+    }
+
+    <form [formGroup]="form" (ngSubmit)="confirm()">
+        <mat-form-field appearance="outline" subscriptSizing="dynamic" class="full-width-field">
+            <mat-label>Mã xác thực (6 số)</mat-label>
+            <input matInput formControlName="token" placeholder="Nhập mã 6 số" inputmode="numeric" maxlength="6"
+                autocomplete="one-time-code">
+            @if (form.get('token')?.hasError('required')) {
+            <mat-error>Vui lòng nhập mã xác thực!</mat-error>
+            } @else if (form.get('token')?.hasError('pattern')) {
+            <mat-error>Mã xác thực gồm đúng 6 chữ số!</mat-error>
+            }
+        </mat-form-field>
+
+        <mat-dialog-actions class="delete-otp-actions">
+            <button mat-flat-button class="cancel-btn" (click)="cancel()" type="button">Hủy</button>
+            <button mat-flat-button class="confirm-btn" type="submit">Xóa tài khoản</button>
+        </mat-dialog-actions>
+    </form>
+</div>

@@ -3,6 +3,9 @@
 /node_modules
 /build
 
+# Ảnh/CV người dùng tải lên (multer) — nội dung sinh ra lúc chạy, không phải asset của source code.
+/public/uploads/
+
 # Logs
 logs
 *.log

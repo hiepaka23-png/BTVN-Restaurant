@@ -3,10 +3,11 @@ import { RecipeModel } from './models';
 import { httpResource, HttpClient } from '@angular/common/http';
 import { toSignal, toObservable } from '@angular/core/rxjs-interop';
 import { debounceTime, distinctUntilChanged, firstValueFrom, map } from 'rxjs';
+import { API_ORIGIN } from './api-config';
 
 // Backend NestJS — CRUD thật, dữ liệu lưu tạm ở service layer (xem RecipesService).
 // Tìm kiếm món ăn cũng do NestJS xử lý (GET /recipes?keyword=...) — không còn gọi TheMealDB nữa.
-export const RECIPES_API_URL = 'http://localhost:3000/recipes';
+export const RECIPES_API_URL = `${API_ORIGIN}/recipes`;
 
 // Số ký tự tối thiểu trước khi thật sự gọi API tìm kiếm — tránh gọi backend ngay ký tự đầu tiên
 // (kết quả gần như vô nghĩa, tốn request) khi người dùng chỉ mới bắt đầu gõ.

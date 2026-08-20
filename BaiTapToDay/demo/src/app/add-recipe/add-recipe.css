@@ -125,6 +125,7 @@ mat-card-content {
     font-family: var(--brand-serif);
     font-size: 1.25rem;
     font-weight: 600;
+    letter-spacing: 0.4px;
     color: var(--brand-burgundy);
 }
 

@@ -2,10 +2,11 @@ import { inject, Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { firstValueFrom } from 'rxjs';
 import { AuthUser } from './auth-service';
+import { API_ORIGIN, BACKEND_ORIGIN } from './api-config';
 
-export const USERS_API_URL = 'http://localhost:3000/users';
-export const UPLOADS_API_URL = 'http://localhost:3000/uploads';
-export const BACKEND_ORIGIN = 'http://localhost:3000';
+export const USERS_API_URL = `${API_ORIGIN}/users`;
+export const UPLOADS_API_URL = `${API_ORIGIN}/uploads`;
+export { BACKEND_ORIGIN };
 
 export interface UpdateProfilePayload {
   name?: string;
@@ -38,8 +39,21 @@ export class UserService {
     );
   }
 
-  deleteMe(): Promise<{ message: string }> {
-    return firstValueFrom(this.http.delete<{ message: string }>(`${USERS_API_URL}/me`));
+  // Xóa tài khoản bắt buộc có mã xác thực gửi qua email trước, để phòng kẻ gian chiếm được phiên
+  // đăng nhập rồi xóa thẳng tài khoản của người dùng.
+  requestDeleteAccount(): Promise<{ message: string; devToken?: string }> {
+    return firstValueFrom(
+      this.http.post<{ message: string; devToken?: string }>(
+        `${USERS_API_URL}/me/delete/request`,
+        {},
+      ),
+    );
+  }
+
+  deleteMe(token: string): Promise<{ message: string }> {
+    return firstValueFrom(
+      this.http.delete<{ message: string }>(`${USERS_API_URL}/me`, { body: { token } }),
+    );
   }
 
   async uploadAvatar(file: File): Promise<string> {

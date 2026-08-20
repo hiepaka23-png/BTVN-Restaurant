@@ -3,8 +3,9 @@ import { MatSnackBar } from '@angular/material/snack-bar';
 import { Subject } from 'rxjs';
 import { AuthService } from './auth-service';
 import { Order } from './models';
+import { API_ORIGIN } from './api-config';
 
-export const SSE_URL = 'http://localhost:3000/notifications/sse';
+export const SSE_URL = `${API_ORIGIN}/notifications/sse`;
 
 export type NotificationEventType = 'order_created' | 'order_status_changed';
 

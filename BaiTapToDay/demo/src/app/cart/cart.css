@@ -1,7 +1,7 @@
 .cart-container {
     max-width: 1000px;
     margin: 0 auto;
-    padding: 116px 24px 60px;
+    padding: 32px 24px 60px;
     font-family: var(--brand-sans);
     color: var(--brand-ink);
 }
@@ -26,6 +26,7 @@
     font-family: var(--brand-serif);
     font-size: 2.2rem;
     font-weight: 600;
+    letter-spacing: 0.5px;
     color: var(--brand-burgundy);
 }
 
@@ -191,13 +192,119 @@
     background-color: #b3261e !important;
 }
 
+/* ---------- Mã ưu đãi ---------- */
+
+.promo-code-block {
+    padding: 16px 0;
+    border-top: 1px dashed var(--brand-cream-dark);
+}
+
+.promo-code-title {
+    display: block;
+    margin-bottom: 10px;
+    font-size: 0.85rem;
+    font-weight: 700;
+    color: var(--brand-ink);
+}
+
+.promo-code-input-row {
+    display: flex;
+    gap: 8px;
+}
+
+.promo-code-input {
+    flex: 1;
+    min-width: 0;
+    height: 44px;
+    padding: 0 14px;
+    border-radius: var(--radius-sm);
+    border: 1.5px solid var(--brand-cream-dark);
+    background: var(--brand-cream);
+    font-family: var(--brand-sans);
+    font-size: 0.88rem;
+    color: var(--brand-ink);
+}
+
+.promo-code-input:focus {
+    outline: none;
+    border-color: var(--brand-burgundy);
+}
+
+.promo-code-apply-btn {
+    flex-shrink: 0;
+    height: 44px;
+    padding: 0 18px;
+    border-radius: var(--radius-sm);
+    border: none;
+    background: var(--brand-burgundy);
+    color: var(--brand-ivory);
+    font-family: var(--brand-sans);
+    font-weight: 700;
+    font-size: 0.84rem;
+    cursor: pointer;
+}
+
+.promo-code-apply-btn:disabled {
+    opacity: 0.6;
+    cursor: default;
+}
+
+.promo-code-error {
+    display: block;
+    margin-top: 6px;
+    font-size: 0.78rem;
+    color: var(--brand-red);
+}
+
+.promo-code-applied {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 10px 14px;
+    border-radius: var(--radius-sm);
+    background: var(--brand-gold-soft);
+    color: var(--brand-burgundy-dark);
+    font-size: 0.85rem;
+}
+
+.promo-code-applied mat-icon {
+    color: var(--brand-burgundy);
+    flex-shrink: 0;
+}
+
+.promo-code-applied span {
+    flex: 1;
+}
+
+/* ---------- Tổng kết ---------- */
+
 .cart-summary {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    padding: 18px 0 4px;
+}
+
+.cart-summary-row {
     display: flex;
     align-items: center;
     justify-content: space-between;
-    padding: 18px 0;
+    font-size: 0.9rem;
+    color: var(--brand-ink-soft);
+}
+
+.cart-summary-row.discount-row {
+    color: #1e6b34;
+    font-weight: 600;
+}
+
+.cart-summary-row.total-row {
+    padding-top: 8px;
+    margin-top: 4px;
+    border-top: 1px solid var(--brand-cream-dark);
     font-weight: 700;
     font-size: 1.05rem;
+    color: var(--brand-ink);
 }
 
 .cart-summary-total {
@@ -218,6 +325,7 @@
     font-family: var(--brand-serif);
     font-size: 1.25rem;
     font-weight: 600;
+    letter-spacing: 0.4px;
     color: var(--brand-burgundy);
 }
 
@@ -225,6 +333,54 @@
     width: 100%;
     display: block;
     margin-bottom: 14px;
+}
+
+.payment-method-block {
+    margin-bottom: 18px;
+}
+
+.payment-method-title {
+    display: block;
+    margin-bottom: 10px;
+    font-size: 0.85rem;
+    font-weight: 700;
+    color: var(--brand-ink);
+}
+
+.payment-method-group {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.payment-method-option {
+    display: block;
+    padding: 12px 14px;
+    border-radius: var(--radius-md);
+    border: 1.5px solid var(--brand-cream-dark);
+    background: var(--brand-cream);
+    transition: border-color 0.15s ease, background-color 0.15s ease;
+}
+
+.payment-method-option.mat-mdc-radio-checked {
+    border-color: var(--brand-burgundy);
+    background: var(--brand-gold-soft);
+}
+
+.payment-method-label {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 0.88rem;
+    font-weight: 600;
+    color: var(--brand-ink);
+}
+
+.payment-method-label mat-icon {
+    color: var(--brand-burgundy);
+    width: 20px;
+    height: 20px;
+    font-size: 20px;
 }
 
 .checkout-btn {

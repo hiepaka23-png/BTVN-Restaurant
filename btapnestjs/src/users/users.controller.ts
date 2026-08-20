@@ -7,6 +7,7 @@ import {
   NotFoundException,
   Param,
   Patch,
+  Post,
   Query,
   Req,
   UseGuards,
@@ -15,6 +16,7 @@ import { UsersService } from './users.service';
 import { UpdateProfileDto } from './dto/update-profile.dto';
 import { ChangePasswordDto } from './dto/change-password.dto';
 import { ChangeRoleDto } from './dto/change-role.dto';
+import { ConfirmDeleteAccountDto } from './dto/confirm-delete-account.dto';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 import { RolesGuard } from '../auth/guards/roles.guard';
 import { Roles } from '../auth/decorators/roles.decorator';
@@ -67,9 +69,17 @@ export class UsersController {
     return { message: 'Đổi mật khẩu thành công' };
   }
 
+  @Post('me/delete/request')
+  async requestDeleteAccount(@Req() req: AuthenticatedRequest) {
+    return this.usersService.requestAccountDeletion(req.user.userId);
+  }
+
   @Delete('me')
-  async deleteMe(@Req() req: AuthenticatedRequest) {
-    await this.usersService.deleteById(req.user.userId);
+  async deleteMe(
+    @Req() req: AuthenticatedRequest,
+    @Body() dto: ConfirmDeleteAccountDto,
+  ) {
+    await this.usersService.deleteById(req.user.userId, dto.token);
     return { message: 'Đã xoá tài khoản' };
   }
 
