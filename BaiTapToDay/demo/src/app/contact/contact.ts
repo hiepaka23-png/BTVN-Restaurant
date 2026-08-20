@@ -29,7 +29,7 @@ const SUBJECT_OPTIONS = [
 
 // Thông tin liên hệ tĩnh của nhà hàng — giữ đúng số liệu đã có sẵn trong project (không đổi theo
 // ảnh tham khảo), "Giờ hoạt động" dùng chung khung giờ với trang Đặt bàn cho nhất quán toàn site.
-const RESTAURANT_HOTLINE = '1900 0102';
+const RESTAURANT_HOTLINE = '1900 2211';
 const RESTAURANT_EMAIL = 'support@michelin5star.vn';
 const RESTAURANT_HOURS = '10:30 – 22:30 (hằng ngày)';
 const RESTAURANT_ADDRESS = '181 đường Cao Thắng, Phường Hòa Hưng, TP.HCM';

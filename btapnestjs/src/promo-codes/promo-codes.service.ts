@@ -26,6 +26,13 @@ function pickWeightedDiscount(): number {
   return DISCOUNT_TIERS[0].percent;
 }
 
+// Mã giảm giá CÔNG KHAI (quảng cáo trên thanh chạy chữ trang chủ) — khác với mã "LUCKY-xxx" nhận
+// từ Hộp Quà May Mắn (riêng từng người, 1 lượt/ngày): mã công khai không gắn với userId cụ thể
+// nào, ai đăng nhập cũng gõ dùng được, và dùng được nhiều lần (không tự khoá lại sau khi dùng).
+const PUBLIC_PROMO_CODES: Record<string, number> = {
+  ANHMANHDZVCL: 50,
+};
+
 function generateCode(): string {
   const chars = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789'; // bỏ ký tự dễ nhầm (0/O, 1/I)
   let code = '';
@@ -79,17 +86,39 @@ export class PromoCodesService {
     return created.toObject();
   }
 
+  // Xem trước mã (không khoá) — dùng cho preview ở giỏ hàng trước khi thật sự đặt đơn. Kiểm tra mã
+  // công khai trước (không cần userId khớp), rồi mới tới mã riêng đã nhận của người này.
+  async preview(
+    userId: string,
+    code: string,
+  ): Promise<{ code: string; discountPercent: number } | null> {
+    const normalized = code.trim().toUpperCase();
+    if (normalized in PUBLIC_PROMO_CODES) {
+      return { code: normalized, discountPercent: PUBLIC_PROMO_CODES[normalized] };
+    }
+    const own = await this.promoCodeModel
+      .findOne({ userId, code: normalized, used: false })
+      .lean();
+    return own ? { code: own.code, discountPercent: own.discountPercent } : null;
+  }
+
   // Dùng lúc đặt đơn: khoá mã ngay lập tức (atomic) theo đúng chủ sở hữu + chưa dùng, tránh trường
   // hợp gọi 2 lần cùng lúc dùng được 1 mã 2 lần. Trả về null nếu mã không hợp lệ/không phải của
-  // người đang đặt/đã dùng rồi — OrdersService tự quyết định báo lỗi gì cho phù hợp.
+  // người đang đặt/đã dùng rồi — OrdersService tự quyết định báo lỗi gì cho phù hợp. Mã công khai
+  // không có document nào để khoá (không gắn userId cụ thể) nên chỉ cần khớp mã là dùng được luôn,
+  // không giới hạn số lần dùng.
   async consume(
     userId: string,
     code: string,
     orderId: string,
-  ): Promise<PromoCode | null> {
+  ): Promise<{ code: string; discountPercent: number } | null> {
+    const normalized = code.trim().toUpperCase();
+    if (normalized in PUBLIC_PROMO_CODES) {
+      return { code: normalized, discountPercent: PUBLIC_PROMO_CODES[normalized] };
+    }
     return this.promoCodeModel
       .findOneAndUpdate(
-        { userId, code: code.trim().toUpperCase(), used: false },
+        { userId, code: normalized, used: false },
         { used: true, usedOrderId: orderId },
       )
       .lean();

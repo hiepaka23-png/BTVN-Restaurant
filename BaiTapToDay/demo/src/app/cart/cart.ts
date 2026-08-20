@@ -13,7 +13,6 @@ import { CartService, MAX_QUANTITY_PER_ITEM } from '../cart-service';
 import { OrderService } from '../order-service';
 import { AuthService } from '../auth-service';
 import { PromoService } from '../promo-service';
-import { PromoCode } from '../models';
 import { NAME_PATTERN, VN_PHONE_PATTERN, ADDRESS_PATTERN } from '../validators';
 import { BackLink } from '../back-link/back-link';
 import { AutofillSyncDirective } from '../autofill-sync-directive';
@@ -63,12 +62,12 @@ export class CartPage {
     paymentMethod: ['cod', Validators.required],
   });
 
-  // Mã ưu đãi trúng từ minigame Hộp Quà May Mắn — kiểm tra thật với server (GET /promo-codes/today
-  // trả về đúng mã CỦA người đang đăng nhập, nếu có), không tự tính giảm giá ở client rồi tin luôn.
-  // Backend vẫn tự xác minh + khoá mã lại lúc tạo đơn (xem OrdersService.create), preview ở đây chỉ
-  // để người dùng thấy trước số tiền được giảm.
+  // Mã ưu đãi — hoặc mã công khai quảng cáo trên thanh chạy chữ trang chủ, hoặc mã riêng trúng từ
+  // Hộp Quà May Mắn — kiểm tra thật với server (GET /promo-codes/preview), không tự tính giảm giá
+  // ở client rồi tin luôn. Backend vẫn tự xác minh + khoá mã lại lúc tạo đơn (xem
+  // OrdersService.create), preview ở đây chỉ để người dùng thấy trước số tiền được giảm.
   protected readonly promoCodeInput = signal('');
-  protected readonly appliedPromo = signal<PromoCode | null>(null);
+  protected readonly appliedPromo = signal<{ code: string; discountPercent: number } | null>(null);
   protected readonly promoError = signal('');
   protected readonly checkingPromo = signal(false);
 
@@ -104,13 +103,9 @@ export class CartPage {
 
     this.checkingPromo.set(true);
     try {
-      const promo = await this.promoService.getToday();
-      if (!promo || promo.code !== typed) {
-        this.promoError.set('Mã không hợp lệ hoặc không phải mã của bạn.');
-        return;
-      }
-      if (promo.used) {
-        this.promoError.set('Mã này đã được sử dụng.');
+      const promo = await this.promoService.previewCode(typed);
+      if (!promo) {
+        this.promoError.set('Mã không hợp lệ hoặc đã được sử dụng.');
         return;
       }
       this.appliedPromo.set(promo);

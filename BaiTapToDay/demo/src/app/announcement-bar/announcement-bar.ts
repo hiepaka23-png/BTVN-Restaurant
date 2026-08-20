@@ -15,7 +15,9 @@ import { Component } from '@angular/core';
 export class AnnouncementBar {
   protected readonly messages = [
     'Chào mừng quý khách đến với Nhà Hàng Michelin 5 Sao',
-    'Mở Hộp Quà May Mắn ngay hôm nay để nhận ưu đãi hấp dẫn',
+    'Trải nghiệm hương vị độc quyền từ các đầu bếp hàng đầu',
+    'Nhập mã ANHMANHDZVCL để giảm chi phí cho hóa đơn đầu tiên',
     'Đặt món hôm nay — trải nghiệm ẩm thực đẳng cấp 5 sao',
+    'Hotline đặt bàn nhanh chóng: 1900 2211 - Phục vụ tận tâm 24/7'
   ];
 }

@@ -71,7 +71,7 @@
                 <div class="promo-code-input-row">
                     <input type="text" class="promo-code-input" [ngModel]="promoCodeInput()"
                         (ngModelChange)="promoCodeInput.set($event)" [ngModelOptions]="{ standalone: true }"
-                        placeholder="Nhập mã từ Hộp Quà May Mắn (VD: LUCKY-ABC123)" />
+                        placeholder="Nhập mã ưu đãi (VD: LUCKY-ABC123)" />
                     <button type="button" class="promo-code-apply-btn" [disabled]="checkingPromo()"
                         (click)="applyPromoCode()">
                         {{ checkingPromo() ? 'Đang kiểm tra...' : 'Áp dụng' }}

@@ -19,4 +19,18 @@ export class PromoService {
   getToday(): Promise<PromoCode | null> {
     return firstValueFrom(this.http.get<PromoCode | null>(`${PROMO_CODES_API_URL}/today`));
   }
+
+  // Xem trước bất kỳ mã nào người dùng tự gõ (mã công khai quảng cáo hoặc mã riêng đã nhận) —
+  // không khoá mã, chỉ để hiện trước số tiền được giảm ở giỏ hàng. null khi mã không hợp lệ.
+  async previewCode(code: string): Promise<{ code: string; discountPercent: number } | null> {
+    try {
+      return await firstValueFrom(
+        this.http.get<{ code: string; discountPercent: number }>(`${PROMO_CODES_API_URL}/preview`, {
+          params: { code },
+        }),
+      );
+    } catch {
+      return null;
+    }
+  }
 }

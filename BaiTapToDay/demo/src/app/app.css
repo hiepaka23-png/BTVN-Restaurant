@@ -210,10 +210,9 @@
 }
 
 .header-brand-mark {
-    width: 30px !important;
-    height: 30px !important;
-    font-size: 30px !important;
-    color: var(--brand-burgundy);
+    width: 30px;
+    height: 30px;
+    object-fit: contain;
     flex-shrink: 0;
 }
 
@@ -287,13 +286,7 @@
     border-radius: var(--radius-full);
     color: var(--brand-ink);
     text-decoration: none;
-    transition: background-color 0.15s ease;
     flex-shrink: 0;
-}
-
-.account-link:hover,
-.account-link:focus-visible {
-    background: var(--brand-cream);
 }
 
 .header-avatar {
