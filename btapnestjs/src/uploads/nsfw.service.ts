@@ -1,4 +1,5 @@
 import { Injectable, Logger } from '@nestjs/common';
+import { readFile } from 'node:fs/promises';
 import * as tf from '@tensorflow/tfjs';
 import { load as loadNsfwModel, NSFWJS, PredictionType } from 'nsfwjs';
 import * as cocoSsd from '@tensorflow-models/coco-ssd';
@@ -40,6 +41,44 @@ export class NsfwService {
   private readonly logger = new Logger(NsfwService.name);
   private nsfwModelPromise: Promise<NSFWJS> | null = null;
   private personModelPromise: Promise<cocoSsd.ObjectDetection> | null = null;
+  private webpDecoderPromise: Promise<
+    (data: ArrayBuffer) => Promise<{ width: number; height: number; data: Uint8ClampedArray }>
+  > | null = null;
+
+  // Gói "jimp" mặc định KHÔNG đọc được WEBP (chỉ có JPEG/PNG/BMP/GIF/TIFF) — trong khi form tải
+  // ảnh ở frontend lại chấp nhận WEBP, nên ảnh WEBP trước đây luôn bị báo nhầm "không đọc được
+  // ảnh". Giải mã WEBP riêng bằng @jsquash/webp (bộ giải mã libwebp biên dịch ra WASM) thay vì
+  // Jimp — nhưng KHÔNG dùng flow mặc định của thư viện (nó tự fetch() file .wasm, mà fetch() của
+  // Node không đọc được đường dẫn cục bộ "file://" nên luôn báo lỗi "fetch failed") — mà tự đọc
+  // file .wasm từ node_modules rồi biên dịch/khởi tạo module thủ công 1 lần, dùng lại cho mọi ảnh
+  // WEBP sau đó.
+  private async getWebpDecoder() {
+    if (!this.webpDecoderPromise) {
+      this.webpDecoderPromise = (async () => {
+        const { default: decode, init } = await import('@jsquash/webp/decode.js');
+        const wasmPath = require.resolve('@jsquash/webp/codec/dec/webp_dec.wasm');
+        const wasmModule = await WebAssembly.compile(await readFile(wasmPath));
+        await init(wasmModule);
+        return decode;
+      })();
+    }
+    return this.webpDecoderPromise;
+  }
+
+  private async readImageBitmap(
+    filePath: string,
+  ): Promise<{ width: number; height: number; data: Buffer }> {
+    if (filePath.toLowerCase().endsWith('.webp')) {
+      const decode = await this.getWebpDecoder();
+      const fileBuffer = await readFile(filePath);
+      const imageData = await decode(
+        fileBuffer.buffer.slice(fileBuffer.byteOffset, fileBuffer.byteOffset + fileBuffer.byteLength),
+      );
+      return { width: imageData.width, height: imageData.height, data: Buffer.from(imageData.data) };
+    }
+    const image = await Jimp.read(filePath);
+    return image.bitmap;
+  }
 
   private getNsfwModel(): Promise<NSFWJS> {
     if (!this.nsfwModelPromise) {
@@ -65,8 +104,7 @@ export class NsfwService {
   ): Promise<string | null> {
     let bitmap: { width: number; height: number; data: Buffer };
     try {
-      const image = await Jimp.read(filePath);
-      bitmap = image.bitmap;
+      bitmap = await this.readImageBitmap(filePath);
     } catch (error) {
       this.logger.warn(`Không đọc được ảnh để kiểm duyệt: ${filePath}`, error);
       return 'Không đọc được ảnh này để kiểm duyệt, vui lòng dùng ảnh định dạng JPG hoặc PNG.';
