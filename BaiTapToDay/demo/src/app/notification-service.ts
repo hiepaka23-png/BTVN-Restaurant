@@ -15,10 +15,12 @@ export interface NotificationEvent {
   timestamp: string;
 }
 
-const STATUS_LABELS: Record<Order['status'], string> = {
-  dang_lam: 'Đang làm',
-  hoan_thanh: 'Hoàn thành',
-  bi_huy: 'Bị huỷ',
+// Câu tự nhiên theo từng trạng thái (thay vì "đã chuyển sang trạng thái X" nghe cứng/máy móc) —
+// ghép sau "Đơn hàng #xxx (của bạn)" nên viết liền mạch, không lặp lại chữ "đơn hàng"/"trạng thái".
+const STATUS_PHRASES: Record<Order['status'], string> = {
+  dang_lam: 'đang được chuẩn bị',
+  hoan_thanh: 'đã hoàn thành',
+  bi_huy: 'đã bị huỷ',
 };
 
 // Kết nối SSE tới GET /notifications/sse để nhận sự kiện đơn hàng theo thời gian thực. Admin nhận
@@ -74,11 +76,15 @@ export class NotificationService {
   }
 
   private showToast(event: NotificationEvent): void {
-    const statusLabel = STATUS_LABELS[event.order.status];
+    const code = `#${event.order._id.slice(-6)}`;
+    // Chỉ thêm "của bạn" khi đúng là đơn của người đang xem — admin xem đơn của người khác thì
+    // không thêm, tránh nghe như đang nhận nhầm đơn hàng của chính mình.
+    const isOwn = event.order.username === this.authService.currentUser()?.username;
+    const subject = isOwn ? `Đơn hàng ${code} của bạn` : `Đơn hàng ${code}`;
     const message =
       event.type === 'order_created'
-        ? `Đơn hàng #${event.order._id.slice(-6)} vừa được tạo.`
-        : `Đơn hàng #${event.order._id.slice(-6)} đã chuyển sang trạng thái "${statusLabel}".`;
+        ? `${subject} vừa được tạo thành công.`
+        : `${subject} ${STATUS_PHRASES[event.order.status]}.`;
 
     this.toast.show(message, 'Thông báo', 5000);
   }
